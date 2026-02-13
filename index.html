@@ -25,14 +25,14 @@ justify-content:center;
 align-items:center;
 text-align:center;
 color:white;
-padding:0 15px; /* espaço lateral para não cortar */
+padding:0 15px;
 background:
 linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
 url('arte_casamento.jpeg') center/cover no-repeat;
 overflow:hidden;
 }
 
-/* PARTÍCULAS DOURADAS */
+/* PARTÍCULAS */
 header::before{
 content:"";
 position:absolute;
@@ -49,21 +49,27 @@ from{transform:translateY(0);}
 to{transform:translateY(-200px);}
 }
 
-/* TÍTULO ASSINATURA CORRIGIDO */
+/* ANIMAÇÃO CINEMATOGRÁFICA */
 .titulo{
 font-family:'Great Vibes', cursive;
 font-size:80px;
-z-index:2;
 padding:0 20px;
-line-height:1.2;
 display:inline-block;
+opacity:0;
+transform:translateY(40px);
+animation:entrada 2s ease forwards, gold 4s linear infinite 2s;
 
 background:linear-gradient(90deg,#d4af37,#fff8dc,#d4af37);
 background-size:200% auto;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+}
 
-animation:gold 4s linear infinite;
+@keyframes entrada{
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
 @keyframes gold{
@@ -75,36 +81,36 @@ animation:gold 4s linear infinite;
 font-family:'Playfair Display';
 font-size:28px;
 margin-top:10px;
-z-index:2;
+opacity:0;
+animation:fadeIn 2s ease forwards 1s;
 }
 
 .data{
 margin-top:10px;
 font-size:18px;
-z-index:2;
+opacity:0;
+animation:fadeIn 2s ease forwards 1.5s;
 }
 
 #contador{
 margin-top:20px;
 font-size:20px;
 font-weight:bold;
-z-index:2;
+opacity:0;
+animation:fadeIn 2s ease forwards 2s;
 }
 
-/* RESPONSIVO */
-@media(max-width:768px){
-.titulo{
-font-size:55px;
-}
+@keyframes fadeIn{
+to{opacity:1;}
 }
 
-/* LISTA DE PRESENTES */
+/* LISTA */
 .container{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
 padding:60px 20px;
-gap:30px;
+gap:25px;
 background:#f9f6f0;
 }
 
@@ -112,13 +118,9 @@ background:#f9f6f0;
 background:white;
 border-radius:15px;
 box-shadow:0 8px 20px rgba(0,0,0,0.15);
-width:280px;
-padding:20px;
+width:260px;
+padding:18px;
 transition:0.4s;
-}
-
-.card:hover{
-transform:translateY(-6px);
 }
 
 .card img{
@@ -127,16 +129,16 @@ border-radius:10px;
 }
 
 input{
-width:90%;
+width:92%;
 padding:8px;
-margin-top:10px;
+margin-top:8px;
 border-radius:8px;
 border:1px solid #ccc;
 }
 
 button{
 margin-top:10px;
-padding:10px 20px;
+padding:9px 18px;
 border:none;
 border-radius:8px;
 background:#d4af37;
@@ -152,7 +154,20 @@ background:#b8962f;
 .reservado{
 color:red;
 font-weight:bold;
-margin-top:10px;
+margin-top:8px;
+}
+
+/* RESPONSIVO CELULAR */
+@media(max-width:768px){
+.titulo{font-size:55px;}
+.container{
+padding:40px 10px;
+gap:15px;
+}
+.card{
+width:90%;
+padding:15px;
+}
 }
 </style>
 </head>
@@ -172,6 +187,7 @@ margin-top:10px;
 <img src="https://images.tcdn.com.br/img/img_prod/1102878/geladeira_branca_375l_2159_1.jpg">
 <h3>Geladeira</h3>
 <input placeholder="Seu nome" id="nome-geladeira">
+<input placeholder="Seu e-mail" id="email-geladeira">
 <button onclick="reservar('geladeira')">Reservar</button>
 <div id="status-geladeira"></div>
 </div>
@@ -180,6 +196,7 @@ margin-top:10px;
 <img src="https://images.tcdn.com.br/img/img_prod/1102878/fogao_branco_4_bocas_2165_1.jpg">
 <h3>Fogão</h3>
 <input placeholder="Seu nome" id="nome-fogao">
+<input placeholder="Seu e-mail" id="email-fogao">
 <button onclick="reservar('fogao')">Reservar</button>
 <div id="status-fogao"></div>
 </div>
@@ -212,9 +229,10 @@ const db = getFirestore(app);
 window.reservar = async function(item){
 
 let nome = document.getElementById("nome-"+item).value;
+let email = document.getElementById("email-"+item).value;
 
-if(!nome){
-alert("Digite seu nome");
+if(!nome || !email){
+alert("Preencha nome e e-mail");
 return;
 }
 
@@ -226,25 +244,32 @@ alert("Item já reservado");
 return;
 }
 
-await setDoc(docRef,{nome:nome});
+await setDoc(docRef,{nome:nome,email:email});
+
+/* MENSAGEM EDITÁVEL */
+let mensagemPersonalizada = `
+vou escrever ainda
+
+(Edite essa mensagem no código quando quiser)
+`;
 
 emailjs.send("service_7b5jpat","template_kl4avko",{
 item:item,
-nome:nome
+nome:nome,
+email:email,
+mensagem:mensagemPersonalizada
 });
 
-alert("Reserva realizada com sucesso!");
+alert("Reserva realizada! Você receberá um e-mail de confirmação.");
 location.reload();
 }
 
 async function verificar(){
 const itens = ["geladeira","fogao"];
-
 for(let item of itens){
 const status = document.getElementById("status-"+item);
 const docRef = doc(db,"reservas",item);
 const docSnap = await getDoc(docRef);
-
 if(docSnap.exists()){
 status.innerHTML = "<div class='reservado'>Item já reservado</div>";
 }
@@ -256,18 +281,14 @@ verificar();
 
 <script>
 const dataEvento = new Date("June 20, 2026 00:00:00");
-
 setInterval(()=>{
 const agora = new Date();
 const diff = dataEvento - agora;
-
 const dias = Math.floor(diff / (1000*60*60*24));
 const horas = Math.floor((diff / (1000*60*60)) % 24);
 const minutos = Math.floor((diff / (1000*60)) % 60);
-
 document.getElementById("contador").innerText =
 `Faltam ${dias} dias ${horas}h ${minutos}m`;
-
 },1000);
 </script>
 
