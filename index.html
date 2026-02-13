@@ -64,20 +64,9 @@ from{opacity:0;transform:translateY(30px)}
 to{opacity:1;transform:translateY(0)}
 }
 
-.date{
-margin-top:15px;
-font-size:20px;
-}
-
-#countdown{
-font-size:22px;
-margin-top:10px;
-}
-
-.location{
-margin-top:10px;
-font-size:18px;
-}
+.date{margin-top:15px;font-size:20px;}
+#countdown{font-size:22px;margin-top:10px;}
+.location{margin-top:10px;font-size:18px;}
 
 .maps-btn{
 margin-top:10px;
@@ -90,10 +79,7 @@ font-weight:bold;
 cursor:pointer;
 transition:0.3s;
 }
-
-.maps-btn:hover{
-background:#fff;
-}
+.maps-btn:hover{background:#fff;}
 
 .container{
 display:flex;
@@ -105,6 +91,7 @@ position:relative;
 z-index:2;
 }
 
+/* 👑 CARTÃO PREMIUM */
 .card{
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
@@ -114,28 +101,80 @@ width:260px;
 transition:0.6s;
 opacity:0;
 transform:translateY(40px);
-animation:cardEntrance 1s forwards;
+animation:cardEntrance 1s forwards, floatCard 6s ease-in-out infinite;
+position:relative;
+overflow:hidden;
 }
 
-.card:nth-child(2){
-animation-delay:0.3s;
-}
+.card:nth-child(2){animation-delay:0.3s;}
 
 @keyframes cardEntrance{
-to{
-opacity:1;
-transform:translateY(0);
-}
+to{opacity:1;transform:translateY(0);}
 }
 
-.card:hover{
-transform:translateY(-8px) scale(1.02);
+/* 🎩 Flutuação suave */
+@keyframes floatCard{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-6px);}
+100%{transform:translateY(0px);}
 }
 
+/* 💎 IMAGEM PREMIUM */
 .card img{
-  width:100%;
-  height:auto;
-  border-radius:15px;
+width:100%;
+height:auto;
+border-radius:15px;
+border:2px solid rgba(212,175,55,0.7);
+box-shadow:0 10px 25px rgba(0,0,0,0.35);
+transition:transform 0.6s ease, box-shadow 0.6s ease;
+position:relative;
+z-index:1;
+}
+
+/* ✨ Zoom */
+.card:hover img{
+transform:scale(1.05);
+box-shadow:0 15px 35px rgba(0,0,0,0.5);
+}
+
+/* ✨ Brilho dourado animado */
+.card::before{
+content:"";
+position:absolute;
+top:-50%;
+left:-50%;
+width:200%;
+height:200%;
+background:linear-gradient(
+120deg,
+transparent 40%,
+rgba(212,175,55,0.3) 50%,
+transparent 60%
+);
+transform:rotate(25deg);
+animation:shineBorder 6s infinite linear;
+}
+
+@keyframes shineBorder{
+0%{transform:translateX(-100%) rotate(25deg);}
+100%{transform:translateX(100%) rotate(25deg);}
+}
+
+/* 💎 Reflexo suave */
+.card::after{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(
+to bottom,
+rgba(255,255,255,0.08),
+transparent 40%
+);
+pointer-events:none;
+border-radius:20px;
 }
 
 button{
@@ -163,7 +202,7 @@ border:none;
 text-align:center;
 }
 
-/* 📱 AJUSTE CELULAR */
+/* 📱 MOBILE */
 @media(max-width:600px){
 
 h1{font-size:42px}
@@ -173,13 +212,7 @@ width:90%;
 padding:12px;
 }
 
-.card img{
-height:140px;
-}
-
-.date, #countdown, .location{
-font-size:16px;
-}
+.date,#countdown,.location{font-size:16px;}
 
 .maps-btn{
 padding:8px 16px;
