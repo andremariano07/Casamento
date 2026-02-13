@@ -28,7 +28,7 @@ color:white;
 padding:0 15px;
 background:
 linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-url('arte_casamento.jpeg') center/cover no-repeat;
+url('arte_casamento.png') center/cover no-repeat;
 overflow:hidden;
 }
 
@@ -157,7 +157,7 @@ font-weight:bold;
 margin-top:8px;
 }
 
-/* RESPONSIVO CELULAR */
+/* RESPONSIVO */
 @media(max-width:768px){
 .titulo{font-size:55px;}
 .container{
@@ -203,13 +203,11 @@ padding:15px;
 
 </div>
 
-<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 emailjs.init("3zU5_d_KcUdDLjXQY");
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -246,12 +244,9 @@ return;
 
 await setDoc(docRef,{nome:nome,email:email});
 
-/* MENSAGEM EDITÁVEL */
-let mensagemPersonalizada = `
-vou escrever ainda
-
-(Edite essa mensagem no código quando quiser)
-`;
+/* MENSAGEM DEFINITIVA */
+let mensagemPersonalizada = 
+"Obrigado por participar deste momento, estamos muito felizes por tudo.";
 
 emailjs.send("service_7b5jpat","template_kl4avko",{
 item:item,
