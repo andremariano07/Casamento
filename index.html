@@ -230,10 +230,10 @@
 
     <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
 
-    <!-- Botão e áudio do Google Drive -->
+    <!-- Botão para tocar música -->
     <button class="maps-btn" onclick="tocarMusica()" id="music-btn">🎵 Tocar Música</button>
     <audio id="bgMusic" loop>
-      <source src="https://drive.google.com/uc?export=download&id=1FkVfpiIwEJbplQi3PG5uDYRnC0wDdOHo" type="audio/mpeg">
+      <source src="https://voca.ro/1c3ZGc93IyZe" type="audio/mpeg">
       Seu navegador não suporta áudio.
     </audio>
 
@@ -243,7 +243,7 @@
         <h3>Geladeira</h3>
         <input type="text" placeholder="Seu nome" id="nome-Geladeira">
         <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
-        <button onclick="reservar('Geladeira')">Reservar</button>
+        <button onclick="Presentear('Geladeira')">Presentear</button>
       </div>
 
       <div class="card" id="Cooktop">
@@ -251,12 +251,13 @@
         <h3>Cooktop</h3>
         <input type="text" placeholder="Seu nome" id="nome-Cooktop">
         <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-        <button onclick="reservar('Cooktop')">Reservar</button>
+        <button onclick="Presentear('Cooktop')">Presentear</button>
       </div>
     </div>
   </div>
 
   <script>
+    // Partículas
     window.addEventListener('DOMContentLoaded', function(){
       if (window.tsParticles) {
         tsParticles.load("tsparticles", {
@@ -273,6 +274,7 @@
       }
     });
 
+    // Contagem regressiva
     var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
     setInterval(function() {
       var now = new Date().getTime();
@@ -285,18 +287,19 @@
         days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
     }, 1000);
 
+    // Maps
     function abrirMapa(){
       const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
       window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank", "noopener");
     }
     window.abrirMapa = abrirMapa;
 
-    // 🎵 Música com fade in/out
+    // Música com fade in/out
     const audio = document.getElementById("bgMusic");
     const musicBtn = document.getElementById("music-btn");
-    audio.volume = 0;  
-    const VOLUME_MAX = 0.3; 
-    const FADE_DURATION = 4000; 
+    audio.volume = 0;
+    const VOLUME_MAX = 0.3;
+    const FADE_DURATION = 4000;
 
     function tocarMusica() {
       if (audio.paused) {
@@ -361,7 +364,7 @@
       card.querySelectorAll("input").forEach(i => i.style.display = "");
       if (botao){
         botao.disabled = false;
-        botao.innerText = "Reservar";
+        botao.innerText = "Presentear";
       }
     }
 
@@ -380,7 +383,7 @@
     }
     iniciarListeners();
 
-    async function reservarItem(item, nome, email){
+    async function PresentearItem(item, nome, email){
       const ref = doc(db, "reservas", item);
       await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(ref);
@@ -391,7 +394,7 @@
       });
     }
 
-    window.reservar = async function(item){
+    window.Presentear = async function(item){
       const nomeEl  = document.getElementById("nome-"+item);
       const emailEl = document.getElementById("email-"+item);
       const card    = document.getElementById(item);
@@ -409,7 +412,7 @@
       botao.innerText = "Reservando...";
 
       try {
-        await reservarItem(item, nome, email);
+        await PresentearItem(item, nome, email);
         aplicarReservado(item, {nome, email});
         try {
           await emailjs.send("service_7b5jpat","template_kl4avko",{nome,email,item,mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."});
@@ -425,7 +428,7 @@
         } else {
           console.error(err);
           alert("Erro ao registrar a reserva. Tente novamente.");
-          if (botao){botao.disabled=false;botao.innerText=oldText||"Reservar";}
+          if (botao){botao.disabled=false;botao.innerText=oldText||"Presentear";}
         }
       }
     };
