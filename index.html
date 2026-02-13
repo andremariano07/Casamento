@@ -25,6 +25,7 @@ justify-content:center;
 align-items:center;
 text-align:center;
 color:white;
+padding:0 15px; /* espaço lateral para não cortar */
 background:
 linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
 url('arte_casamento.jpeg') center/cover no-repeat;
@@ -48,15 +49,20 @@ from{transform:translateY(0);}
 to{transform:translateY(-200px);}
 }
 
-/* TÍTULO ASSINATURA */
+/* TÍTULO ASSINATURA CORRIGIDO */
 .titulo{
 font-family:'Great Vibes', cursive;
 font-size:80px;
 z-index:2;
+padding:0 20px;
+line-height:1.2;
+display:inline-block;
+
 background:linear-gradient(90deg,#d4af37,#fff8dc,#d4af37);
 background-size:200% auto;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+
 animation:gold 4s linear infinite;
 }
 
@@ -83,6 +89,13 @@ margin-top:20px;
 font-size:20px;
 font-weight:bold;
 z-index:2;
+}
+
+/* RESPONSIVO */
+@media(max-width:768px){
+.titulo{
+font-size:55px;
+}
 }
 
 /* LISTA DE PRESENTES */
