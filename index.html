@@ -164,7 +164,7 @@ border:none;
 text-align:center;
 }
 
-/* 📱 AJUSTE CELULAR REAL */
+/* 📱 AJUSTE CELULAR */
 @media(max-width:600px){
 
 h1{font-size:42px}
@@ -218,18 +218,18 @@ Rua Vera Lucia, 215 - Sinimbu
 </div>
 
 <div class="card" id="Fogao">
-<img src="https://images.unsplash.com/photo-1586201375761-83865001e17b">
-<h3>Fogão</h3>
-<input type="text" placeholder="Seu nome" id="nome-Fogao">
-<input type="email" placeholder="Seu e-mail" id="email-Fogao">
-<button onclick="reservar('Fogao')">Reservar</button>
+  <img src="Imagens/fogao.png" alt="Fogão">
+  <h3>Fogão</h3>
+  <input type="text" placeholder="Seu nome" id="nome-Fogao">
+  <input type="email" placeholder="Seu e-mail" id="email-Fogao">
+  <button onclick="reservar('Fogao')">Reservar</button>
 </div>
 
 </div>
 </div>
 
 <script>
-// 🎆 PARTÍCULAS DOURADAS LEVES
+// PARTÍCULAS
 tsParticles.load("tsparticles", {
 particles:{
 number:{value:40},
@@ -237,10 +237,7 @@ color:{value:"#d4af37"},
 shape:{type:"circle"},
 opacity:{value:0.5},
 size:{value:3},
-move:{
-enable:true,
-speed:0.6
-}
+move:{enable:true,speed:0.6}
 },
 background:{color:"transparent"}
 });
@@ -272,25 +269,37 @@ function reservar(item){
 
 let nome = document.getElementById("nome-"+item).value;
 let email = document.getElementById("email-"+item).value;
+let botao = document.querySelector("#"+item+" button");
 
 if(nome==="" || email===""){
 alert("Preencha nome e e-mail");
 return;
 }
 
+botao.disabled = true;
+botao.innerText = "Enviando...";
+
 emailjs.send("service_7b5jpat","template_kl4avko",{
 nome:nome,
 email:email,
 mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
-});
+}).then(function(){
+
+botao.innerText = "Indisponível";
 
 let card = document.getElementById(item);
-card.querySelector("button").disabled = true;
-card.querySelector("button").innerText = "Indisponível";
-
 card.querySelectorAll("input").forEach(input=>{
 input.style.display="none";
 });
+
+alert("Reserva realizada com sucesso!");
+
+}, function(error){
+alert("Erro ao enviar. Tente novamente.");
+botao.disabled = false;
+botao.innerText = "Reservar";
+});
+
 }
 </script>
 
