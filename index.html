@@ -8,9 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
 <script>
 (function(){
-emailjs.init("3zU5_d_KcUdDLjXQY");
+emailjs.init("SUA_PUBLIC_KEY_AQUI");
 })();
 </script>
 
@@ -29,6 +31,15 @@ background:url('arte_casamento.jpeg') no-repeat center center/cover;
 background:rgba(0,0,0,0.65);
 min-height:100vh;
 padding:20px;
+position:relative;
+z-index:2;
+}
+
+#tsparticles{
+position:fixed;
+width:100%;
+height:100%;
+z-index:1;
 }
 
 h1{
@@ -90,23 +101,41 @@ justify-content:center;
 flex-wrap:wrap;
 margin-top:40px;
 gap:20px;
+position:relative;
+z-index:2;
 }
 
 .card{
 background:rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
 border-radius:20px;
 padding:15px;
-width:280px;
-transition:0.4s;
+width:260px;
+transition:0.6s;
+opacity:0;
+transform:translateY(40px);
+animation:cardEntrance 1s forwards;
+}
+
+.card:nth-child(2){
+animation-delay:0.3s;
+}
+
+@keyframes cardEntrance{
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
 .card:hover{
-transform:translateY(-5px);
+transform:translateY(-8px) scale(1.02);
 }
 
 .card img{
 width:100%;
+height:170px;
+object-fit:cover;
 border-radius:15px;
 }
 
@@ -135,14 +164,36 @@ border:none;
 text-align:center;
 }
 
+/* 📱 AJUSTE CELULAR REAL */
 @media(max-width:600px){
-h1{font-size:45px}
-.card{width:90%}
+
+h1{font-size:42px}
+
+.card{
+width:90%;
+padding:12px;
+}
+
+.card img{
+height:140px;
+}
+
+.date, #countdown, .location{
+font-size:16px;
+}
+
+.maps-btn{
+padding:8px 16px;
+font-size:14px;
+}
 }
 </style>
 </head>
 
 <body>
+
+<div id="tsparticles"></div>
+
 <div class="overlay">
 
 <h1>Luiza & André</h1>
@@ -159,7 +210,7 @@ Rua Vera Lucia, 215 - Sinimbu
 <div class="container">
 
 <div class="card" id="Geladeira">
-<img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952" alt="Geladeira">
+<img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952">
 <h3>Geladeira</h3>
 <input type="text" placeholder="Seu nome" id="nome-Geladeira">
 <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
@@ -167,7 +218,7 @@ Rua Vera Lucia, 215 - Sinimbu
 </div>
 
 <div class="card" id="Fogao">
-<img src="https://images.unsplash.com/photo-1586201375761-83865001e17b" alt="Fogão">
+<img src="https://images.unsplash.com/photo-1586201375761-83865001e17b">
 <h3>Fogão</h3>
 <input type="text" placeholder="Seu nome" id="nome-Fogao">
 <input type="email" placeholder="Seu e-mail" id="email-Fogao">
@@ -178,10 +229,26 @@ Rua Vera Lucia, 215 - Sinimbu
 </div>
 
 <script>
+// 🎆 PARTÍCULAS DOURADAS LEVES
+tsParticles.load("tsparticles", {
+particles:{
+number:{value:40},
+color:{value:"#d4af37"},
+shape:{type:"circle"},
+opacity:{value:0.5},
+size:{value:3},
+move:{
+enable:true,
+speed:0.6
+}
+},
+background:{color:"transparent"}
+});
+
 // CONTADOR
 var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
 
-var x = setInterval(function() {
+setInterval(function() {
 var now = new Date().getTime();
 var distance = countDownDate - now;
 
