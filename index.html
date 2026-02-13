@@ -13,13 +13,11 @@
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
   <script>
-    // Inicializa EmailJS após o carregamento
     window.addEventListener('DOMContentLoaded', function () {
       try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error('Falha ao inicializar EmailJS', e); }
     });
   </script>
 
-  <!-- ======= ESTILO PREMIUM (seu CSS aplicado) ======= -->
   <style>
   *{margin:0;padding:0;box-sizing:border-box}
 
@@ -95,7 +93,6 @@
     z-index:2;
   }
 
-  /* 👑 CARTÃO PREMIUM */
   .card{
     background:rgba(255,255,255,0.08);
     backdrop-filter:blur(12px);
@@ -116,14 +113,12 @@
     to{opacity:1;transform:translateY(0);}
   }
 
-  /* 🎩 Flutuação suave */
   @keyframes floatCard{
     0%{transform:translateY(0px);}
     50%{transform:translateY(-6px);}
     100%{transform:translateY(0px);}
   }
 
-  /* 💎 IMAGEM PREMIUM */
   .card img{
     width:100%;
     height:auto;
@@ -135,13 +130,11 @@
     z-index:1;
   }
 
-  /* ✨ Zoom */
   .card:hover img{
     transform:scale(1.05);
     box-shadow:0 15px 35px rgba(0,0,0,0.5);
   }
 
-  /* ✨ Brilho dourado animado */
   .card::before{
     content:"";
     position:absolute;
@@ -164,7 +157,6 @@
     100%{transform:translateX(100%) rotate(25deg);}
   }
 
-  /* 💎 Reflexo suave */
   .card::after{
     content:"";
     position:absolute;
@@ -206,18 +198,13 @@
     text-align:center;
   }
 
-  /* 📱 MOBILE */
   @media(max-width:600px){
-
     h1{font-size:42px}
-
     .card{
       width:90%;
       padding:12px;
     }
-
     .date,#countdown,.location{font-size:16px;}
-
     .maps-btn{
       padding:8px 16px;
       font-size:14px;
@@ -243,8 +230,14 @@
 
     <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
 
-    <div class="container">
+    <!-- Botão para tocar música -->
+    <button class="maps-btn" onclick="tocarMusica()" id="music-btn">🎵 Tocar Música</button>
+    <audio id="bgMusic" loop>
+      <source src="musica.mp3" type="audio/mpeg">
+      Seu navegador não suporta áudio.
+    </audio>
 
+    <div class="container">
       <div class="card" id="Geladeira">
         <img src="Imagens/geladeira.jpg" alt="Geladeira" loading="lazy">
         <h3>Geladeira</h3>
@@ -260,13 +253,10 @@
         <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
         <button onclick="reservar('Cooktop')">Reservar</button>
       </div>
-
     </div>
   </div>
 
-  <!-- Scripts gerais (particles, countdown, maps) -->
   <script>
-    // Partículas
     window.addEventListener('DOMContentLoaded', function(){
       if (window.tsParticles) {
         tsParticles.load("tsparticles", {
@@ -283,37 +273,63 @@
       }
     });
 
-    // Contagem regressiva (mantida)
     var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
     setInterval(function() {
       var now = new Date().getTime();
       var distance = countDownDate - now;
-
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
       var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
       document.getElementById("countdown").innerHTML =
         days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
     }, 1000);
 
-    // Maps
     function abrirMapa(){
       const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
       window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank", "noopener");
     }
-    window.abrirMapa = abrirMapa; // expõe globalmente
+    window.abrirMapa = abrirMapa;
+
+    // 🎵 Música com fade in/out
+    const audio = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("music-btn");
+    audio.volume = 0;  
+    const VOLUME_MAX = 0.3; 
+    const FADE_DURATION = 4000; 
+
+    function tocarMusica() {
+      if (audio.paused) {
+        audio.play().then(() => {
+          const start = Date.now();
+          const fade = setInterval(() => {
+            const elapsed = Date.now() - start;
+            const newVol = Math.min(VOLUME_MAX, (elapsed / FADE_DURATION) * VOLUME_MAX);
+            audio.volume = newVol;
+            if (elapsed >= FADE_DURATION) clearInterval(fade);
+          }, 50);
+        }).catch(err => console.error("Erro ao tocar música:", err));
+        musicBtn.innerText = "🔇 Pausar Música";
+      } else {
+        const startVol = audio.volume;
+        const fadeOut = setInterval(() => {
+          audio.volume -= startVol / (FADE_DURATION / 50);
+          if (audio.volume <= 0) {
+            audio.pause();
+            audio.volume = 0;
+            clearInterval(fadeOut);
+          }
+        }, 50);
+        musicBtn.innerText = "🎵 Tocar Música";
+      }
+    }
   </script>
 
-  <!-- 🔥 Firebase + Firestore (Modular v10) -->
+  <!-- Firebase + Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, doc, onSnapshot, runTransaction, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Your web app's Firebase configuration (como você enviou)
     const firebaseConfig = {
       apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
       authDomain: "casamento-luiza-andre.firebaseapp.com",
@@ -323,20 +339,15 @@
       appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
-
     const ITENS = ["Geladeira","Cooktop"];
 
-    // Helpers de UI
     function aplicarReservado(item, data){
       const card  = document.getElementById(item);
       if (!card) return;
       const botao = card.querySelector("button");
-      // esconde inputs
       card.querySelectorAll("input").forEach(i => i.style.display = "none");
-      // desabilita botão
       if (botao){
         botao.disabled = true;
         botao.innerText = "Indisponível";
@@ -347,16 +358,13 @@
       const card  = document.getElementById(item);
       if (!card) return;
       const botao = card.querySelector("button");
-      // mostra inputs
       card.querySelectorAll("input").forEach(i => i.style.display = "");
-      // habilita botão
       if (botao){
         botao.disabled = false;
         botao.innerText = "Reservar";
       }
     }
 
-    // Listeners em tempo real para refletir reservas de todos
     function iniciarListeners(){
       ITENS.forEach(item => {
         const ref = doc(db, "reservas", item);
@@ -372,25 +380,17 @@
     }
     iniciarListeners();
 
-    // Função de reserva com transação (evita duplicidade)
     async function reservarItem(item, nome, email){
       const ref = doc(db, "reservas", item);
-
       await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(ref);
         if (snap.exists() && snap.data()?.reservado === true) {
           throw new Error("ja_reservado");
         }
-        transaction.set(ref, {
-          reservado: true,
-          nome,
-          email,
-          ts: serverTimestamp()
-        });
+        transaction.set(ref, {reservado: true,nome,email,ts: serverTimestamp()});
       });
     }
 
-    // Expõe para o onclick no HTML
     window.reservar = async function(item){
       const nomeEl  = document.getElementById("nome-"+item);
       const emailEl = document.getElementById("email-"+item);
@@ -400,15 +400,8 @@
       const nome  = (nomeEl?.value || "").trim();
       const email = (emailEl?.value || "").trim();
 
-      if (!nome || !email){
-        alert("Preencha nome e e-mail");
-        return;
-      }
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!emailOk){
-        alert("E-mail inválido");
-        return;
-      }
+      if (!nome || !email){alert("Preencha nome e e-mail");return;}
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("E-mail inválido");return;}
       if (botao?.disabled) return;
 
       const oldText = botao.innerText;
@@ -416,40 +409,27 @@
       botao.innerText = "Reservando...";
 
       try {
-        // 1) Reserva no Firestore (com transação)
         await reservarItem(item, nome, email);
-
-        // 2) Atualiza UI
         aplicarReservado(item, {nome, email});
-
-        // 3) Envia e-mail (não cancela reserva se falhar)
         try {
-          await emailjs.send("service_7b5jpat","template_kl4avko",{
-            nome,
-            email,
-            item,
-            mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
-          });
+          await emailjs.send("service_7b5jpat","template_kl4avko",{nome,email,item,mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."});
           alert("Reserva realizada com sucesso! ✨");
         } catch(e){
           console.error("Falha ao enviar e-mail:", e);
           alert("Reserva efetuada, mas houve um erro ao enviar o e-mail de confirmação.");
         }
-
       } catch (err) {
         if (err?.message === "ja_reservado") {
           alert("Ops! Este item já foi reservado.");
-          aplicarReservado(item); // garante estado
+          aplicarReservado(item);
         } else {
           console.error(err);
           alert("Erro ao registrar a reserva. Tente novamente.");
-          if (botao){
-            botao.disabled = false;
-            botao.innerText = oldText || "Reservar";
-          }
+          if (botao){botao.disabled=false;botao.innerText=oldText||"Reservar";}
         }
       }
     };
   </script>
+
 </body>
 </html>
