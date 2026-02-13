@@ -1,335 +1,455 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chá de Panela - Luiza & André</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chá de Panela - Luiza & André</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <!-- EmailJS e tsParticles -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
-<script>
-(function(){
-emailjs.init("3zU5_d_KcUdDLjXQY");
-})();
-</script>
+  <script>
+    // Inicializa EmailJS após o carregamento
+    window.addEventListener('DOMContentLoaded', function () {
+      try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error('Falha ao inicializar EmailJS', e); }
+    });
+  </script>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
+  <!-- ======= ESTILO PREMIUM (seu CSS aplicado) ======= -->
+  <style>
+  *{margin:0;padding:0;box-sizing:border-box}
 
-body{
-font-family:'Poppins',sans-serif;
-color:white;
-text-align:center;
-overflow-x:hidden;
-background:url('arte_casamento.jpeg') no-repeat center center/cover;
-}
+  body{
+    font-family:'Poppins',sans-serif;
+    color:white;
+    text-align:center;
+    overflow-x:hidden;
+    background:url('arte_casamento.jpeg') no-repeat center center/cover;
+  }
 
-.overlay{
-background:rgba(0,0,0,0.65);
-min-height:100vh;
-padding:20px;
-position:relative;
-z-index:2;
-}
+  .overlay{
+    background:rgba(0,0,0,0.65);
+    min-height:100vh;
+    padding:20px;
+    position:relative;
+    z-index:2;
+  }
 
-#tsparticles{
-position:fixed;
-width:100%;
-height:100%;
-z-index:1;
-}
+  #tsparticles{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:1;
+  }
 
-h1{
-font-family:'Great Vibes',cursive;
-font-size:60px;
-margin-top:40px;
-background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
-background-size:300%;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation:shine 6s infinite linear, fadeIn 2s ease;
-padding:0 20px;
-}
+  h1{
+    font-family:'Great Vibes',cursive;
+    font-size:60px;
+    margin-top:40px;
+    background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
+    background-size:300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:shine 6s infinite linear, fadeIn 2s ease;
+    padding:0 20px;
+  }
 
-@keyframes shine{
-0%{background-position:0%}
-100%{background-position:300%}
-}
+  @keyframes shine{
+    0%{background-position:0%}
+    100%{background-position:300%}
+  }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(30px)}
-to{opacity:1;transform:translateY(0)}
-}
+  @keyframes fadeIn{
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+  }
 
-.date{margin-top:15px;font-size:20px;}
-#countdown{font-size:22px;margin-top:10px;}
-.location{margin-top:10px;font-size:18px;}
+  .date{margin-top:15px;font-size:20px;}
+  #countdown{font-size:22px;margin-top:10px;}
+  .location{margin-top:10px;font-size:18px;}
 
-.maps-btn{
-margin-top:10px;
-padding:10px 20px;
-border:none;
-border-radius:30px;
-background:#d4af37;
-color:black;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-}
-.maps-btn:hover{background:#fff;}
+  .maps-btn{
+    margin-top:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:30px;
+    background:#d4af37;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+  }
+  .maps-btn:hover{background:#fff;}
 
-.container{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-margin-top:40px;
-gap:20px;
-position:relative;
-z-index:2;
-}
+  .container{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:40px;
+    gap:20px;
+    position:relative;
+    z-index:2;
+  }
 
-/* 👑 CARTÃO PREMIUM */
-.card{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(12px);
-border-radius:20px;
-padding:15px;
-width:260px;
-transition:0.6s;
-opacity:0;
-transform:translateY(40px);
-animation:cardEntrance 1s forwards, floatCard 6s ease-in-out infinite;
-position:relative;
-overflow:hidden;
-}
+  /* 👑 CARTÃO PREMIUM */
+  .card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:15px;
+    width:260px;
+    transition:0.6s;
+    opacity:0;
+    transform:translateY(40px);
+    animation:cardEntrance 1s forwards, floatCard 6s ease-in-out infinite;
+    position:relative;
+    overflow:hidden;
+  }
 
-.card:nth-child(2){animation-delay:0.3s;}
+  .card:nth-child(2){animation-delay:0.3s;}
 
-@keyframes cardEntrance{
-to{opacity:1;transform:translateY(0);}
-}
+  @keyframes cardEntrance{
+    to{opacity:1;transform:translateY(0);}
+  }
 
-/* 🎩 Flutuação suave */
-@keyframes floatCard{
-0%{transform:translateY(0px);}
-50%{transform:translateY(-6px);}
-100%{transform:translateY(0px);}
-}
+  /* 🎩 Flutuação suave */
+  @keyframes floatCard{
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-6px);}
+    100%{transform:translateY(0px);}
+  }
 
-/* 💎 IMAGEM PREMIUM */
-.card img{
-width:100%;
-height:auto;
-border-radius:15px;
-border:2px solid rgba(212,175,55,0.7);
-box-shadow:0 10px 25px rgba(0,0,0,0.35);
-transition:transform 0.6s ease, box-shadow 0.6s ease;
-position:relative;
-z-index:1;
-}
+  /* 💎 IMAGEM PREMIUM */
+  .card img{
+    width:100%;
+    height:auto;
+    border-radius:15px;
+    border:2px solid rgba(212,175,55,0.7);
+    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+    transition:transform 0.6s ease, box-shadow 0.6s ease;
+    position:relative;
+    z-index:1;
+  }
 
-/* ✨ Zoom */
-.card:hover img{
-transform:scale(1.05);
-box-shadow:0 15px 35px rgba(0,0,0,0.5);
-}
+  /* ✨ Zoom */
+  .card:hover img{
+    transform:scale(1.05);
+    box-shadow:0 15px 35px rgba(0,0,0,0.5);
+  }
 
-/* ✨ Brilho dourado animado */
-.card::before{
-content:"";
-position:absolute;
-top:-50%;
-left:-50%;
-width:200%;
-height:200%;
-background:linear-gradient(
-120deg,
-transparent 40%,
-rgba(212,175,55,0.3) 50%,
-transparent 60%
-);
-transform:rotate(25deg);
-animation:shineBorder 6s infinite linear;
-}
+  /* ✨ Brilho dourado animado */
+  .card::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background:linear-gradient(
+      120deg,
+      transparent 40%,
+      rgba(212,175,55,0.3) 50%,
+      transparent 60%
+    );
+    transform:rotate(25deg);
+    animation:shineBorder 6s infinite linear;
+  }
 
-@keyframes shineBorder{
-0%{transform:translateX(-100%) rotate(25deg);}
-100%{transform:translateX(100%) rotate(25deg);}
-}
+  @keyframes shineBorder{
+    0%{transform:translateX(-100%) rotate(25deg);}
+    100%{transform:translateX(100%) rotate(25deg);}
+  }
 
-/* 💎 Reflexo suave */
-.card::after{
-content:"";
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(
-to bottom,
-rgba(255,255,255,0.08),
-transparent 40%
-);
-pointer-events:none;
-border-radius:20px;
-}
+  /* 💎 Reflexo suave */
+  .card::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.08),
+      transparent 40%
+    );
+    pointer-events:none;
+    border-radius:20px;
+  }
 
-button{
-margin-top:10px;
-padding:8px 15px;
-border:none;
-border-radius:20px;
-background:#d4af37;
-color:black;
-cursor:pointer;
-font-weight:bold;
-}
+  button{
+    margin-top:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:20px;
+    background:#d4af37;
+    color:black;
+    cursor:pointer;
+    font-weight:bold;
+  }
 
-button:disabled{
-background:gray;
-cursor:not-allowed;
-}
+  button:disabled{
+    background:gray;
+    cursor:not-allowed;
+  }
 
-input{
-margin-top:8px;
-padding:8px;
-width:90%;
-border-radius:15px;
-border:none;
-text-align:center;
-}
+  input{
+    margin-top:8px;
+    padding:8px;
+    width:90%;
+    border-radius:15px;
+    border:none;
+    text-align:center;
+  }
 
-/* 📱 MOBILE */
-@media(max-width:600px){
+  /* 📱 MOBILE */
+  @media(max-width:600px){
 
-h1{font-size:42px}
+    h1{font-size:42px}
 
-.card{
-width:90%;
-padding:12px;
-}
+    .card{
+      width:90%;
+      padding:12px;
+    }
 
-.date,#countdown,.location{font-size:16px;}
+    .date,#countdown,.location{font-size:16px;}
 
-.maps-btn{
-padding:8px 16px;
-font-size:14px;
-}
-}
-</style>
+    .maps-btn{
+      padding:8px 16px;
+      font-size:14px;
+    }
+  }
+  </style>
 </head>
 
 <body>
 
-<div id="tsparticles"></div>
+  <div id="tsparticles"></div>
 
-<div class="overlay">
+  <div class="overlay">
 
-<h1>Luiza & André</h1>
+    <h1>Luiza & André</h1>
 
-<div class="date">20/06/2026 - 18:00 horas</div>
-<div id="countdown"></div>
+    <div class="date">20/06/2026 - 18:00 horas</div>
+    <div id="countdown"></div>
 
-<div class="location">
-Rua Vera Lucia, 215 - Sinimbu
-</div>
+    <div class="location">
+      Rua Vera Lucia, 215 - Sinimbu
+    </div>
 
-<button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
+    <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
 
-<div class="container">
+    <div class="container">
 
-<div class="card" id="Geladeira">
-  <img src="Imagens/geladeira.jpg" alt="Geladeira">
-  <h3>Geladeira</h3>
-  <input type="text" placeholder="Seu nome" id="nome-Geladeira">
-  <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
-  <button onclick="reservar('Geladeira')">Reservar</button>
-</div>
+      <div class="card" id="Geladeira">
+        <img src="Imagens/geladeira.jpg" alt="Geladeira" loading="lazy">
+        <h3>Geladeira</h3>
+        <input type="text" placeholder="Seu nome" id="nome-Geladeira">
+        <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
+        <button onclick="reservar('Geladeira')">Reservar</button>
+      </div>
 
-<div class="card" id="Cooktop">
-  <img src="Imagens/cooktop.png" alt="Cooktop">
-  <h3>Cooktop</h3>
-  <input type="text" placeholder="Seu nome" id="nome-Cooktop">
-  <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-  <button onclick="reservar('Cooktop')">Reservar</button>
-</div>
+      <div class="card" id="Cooktop">
+        <img src="Imagens/cooktop.png" alt="Cooktop" loading="lazy">
+        <h3>Cooktop</h3>
+        <input type="text" placeholder="Seu nome" id="nome-Cooktop">
+        <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+        <button onclick="reservar('Cooktop')">Reservar</button>
+      </div>
 
-</div>
-</div>
+    </div>
+  </div>
 
-<script>
-tsParticles.load("tsparticles", {
-particles:{
-number:{value:40},
-color:{value:"#d4af37"},
-shape:{type:"circle"},
-opacity:{value:0.5},
-size:{value:3},
-move:{enable:true,speed:0.6}
-},
-background:{color:"transparent"}
-});
+  <!-- Scripts gerais (particles, countdown, maps) -->
+  <script>
+    // Partículas
+    window.addEventListener('DOMContentLoaded', function(){
+      if (window.tsParticles) {
+        tsParticles.load("tsparticles", {
+          particles:{
+            number:{value:40},
+            color:{value:"#d4af37"},
+            shape:{type:"circle"},
+            opacity:{value:0.5},
+            size:{value:3},
+            move:{enable:true,speed:0.6}
+          },
+          background:{color:"transparent"}
+        });
+      }
+    });
 
-var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
+    // Contagem regressiva (mantida)
+    var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
+    setInterval(function() {
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
 
-setInterval(function() {
-var now = new Date().getTime();
-var distance = countDownDate - now;
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      document.getElementById("countdown").innerHTML =
+        days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
+    }, 1000);
 
-document.getElementById("countdown").innerHTML =
-days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
+    // Maps
+    function abrirMapa(){
+      const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank", "noopener");
+    }
+    window.abrirMapa = abrirMapa; // expõe globalmente
+  </script>
 
-}, 1000);
+  <!-- 🔥 Firebase + Firestore (Modular v10) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, doc, onSnapshot, runTransaction, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-function abrirMapa(){
-window.open("https://www.google.com/maps/search/?api=1&query=Rua+Vera+Lucia+215+Sinimbu");
-}
+    // Your web app's Firebase configuration (como você enviou)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
+      authDomain: "casamento-luiza-andre.firebaseapp.com",
+      projectId: "casamento-luiza-andre",
+      storageBucket: "casamento-luiza-andre.firebasestorage.app",
+      messagingSenderId: "79078651574",
+      appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
+    };
 
-function reservar(item){
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
 
-let nome = document.getElementById("nome-"+item).value;
-let email = document.getElementById("email-"+item).value;
-let botao = document.querySelector("#"+item+" button");
+    const ITENS = ["Geladeira","Cooktop"];
 
-if(nome==="" || email===""){
-alert("Preencha nome e e-mail");
-return;
-}
+    // Helpers de UI
+    function aplicarReservado(item, data){
+      const card  = document.getElementById(item);
+      if (!card) return;
+      const botao = card.querySelector("button");
+      // esconde inputs
+      card.querySelectorAll("input").forEach(i => i.style.display = "none");
+      // desabilita botão
+      if (botao){
+        botao.disabled = true;
+        botao.innerText = "Indisponível";
+      }
+    }
 
-botao.disabled = true;
-botao.innerText = "Enviando...";
+    function aplicarDisponivel(item){
+      const card  = document.getElementById(item);
+      if (!card) return;
+      const botao = card.querySelector("button");
+      // mostra inputs
+      card.querySelectorAll("input").forEach(i => i.style.display = "");
+      // habilita botão
+      if (botao){
+        botao.disabled = false;
+        botao.innerText = "Reservar";
+      }
+    }
 
-emailjs.send("service_7b5jpat","template_kl4avko",{
-nome:nome,
-email:email,
-mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
-}).then(function(){
+    // Listeners em tempo real para refletir reservas de todos
+    function iniciarListeners(){
+      ITENS.forEach(item => {
+        const ref = doc(db, "reservas", item);
+        onSnapshot(ref, (snap) => {
+          const data = snap.data();
+          if (snap.exists() && data?.reservado === true){
+            aplicarReservado(item, data);
+          } else {
+            aplicarDisponivel(item);
+          }
+        });
+      });
+    }
+    iniciarListeners();
 
-botao.innerText = "Indisponível";
+    // Função de reserva com transação (evita duplicidade)
+    async function reservarItem(item, nome, email){
+      const ref = doc(db, "reservas", item);
 
-let card = document.getElementById(item);
-card.querySelectorAll("input").forEach(input=>{
-input.style.display="none";
-});
+      await runTransaction(db, async (transaction) => {
+        const snap = await transaction.get(ref);
+        if (snap.exists() && snap.data()?.reservado === true) {
+          throw new Error("ja_reservado");
+        }
+        transaction.set(ref, {
+          reservado: true,
+          nome,
+          email,
+          ts: serverTimestamp()
+        });
+      });
+    }
 
-alert("Reserva realizada com sucesso!");
+    // Expõe para o onclick no HTML
+    window.reservar = async function(item){
+      const nomeEl  = document.getElementById("nome-"+item);
+      const emailEl = document.getElementById("email-"+item);
+      const card    = document.getElementById(item);
+      const botao   = card?.querySelector("button");
 
-}, function(error){
-alert("Erro ao enviar. Tente novamente.");
-botao.disabled = false;
-botao.innerText = "Reservar";
-});
+      const nome  = (nomeEl?.value || "").trim();
+      const email = (emailEl?.value || "").trim();
 
-}
-</script>
+      if (!nome || !email){
+        alert("Preencha nome e e-mail");
+        return;
+      }
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk){
+        alert("E-mail inválido");
+        return;
+      }
+      if (botao?.disabled) return;
 
+      const oldText = botao.innerText;
+      botao.disabled = true;
+      botao.innerText = "Reservando...";
+
+      try {
+        // 1) Reserva no Firestore (com transação)
+        await reservarItem(item, nome, email);
+
+        // 2) Atualiza UI
+        aplicarReservado(item, {nome, email});
+
+        // 3) Envia e-mail (não cancela reserva se falhar)
+        try {
+          await emailjs.send("service_7b5jpat","template_kl4avko",{
+            nome,
+            email,
+            item,
+            mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
+          });
+          alert("Reserva realizada com sucesso! ✨");
+        } catch(e){
+          console.error("Falha ao enviar e-mail:", e);
+          alert("Reserva efetuada, mas houve um erro ao enviar o e-mail de confirmação.");
+        }
+
+      } catch (err) {
+        if (err?.message === "ja_reservado") {
+          alert("Ops! Este item já foi reservado.");
+          aplicarReservado(item); // garante estado
+        } else {
+          console.error(err);
+          alert("Erro ao registrar a reserva. Tente novamente.");
+          if (botao){
+            botao.disabled = false;
+            botao.innerText = oldText || "Reservar";
+          }
+        }
+      }
+    };
+  </script>
 </body>
 </html>
