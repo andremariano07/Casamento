@@ -5,42 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chá de Panela - Luiza & André</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 body{
 margin:0;
 font-family:Poppins;
-background:linear-gradient(135deg,#ffffff,#f8f5ef);
-text-align:center;
+background:#ffffff;
+overflow-x:hidden;
 }
 
+/* HEADER PREMIUM */
 header{
-background:linear-gradient(45deg,#d4af37,#f1e2a6);
-padding:40px 20px;
+position:relative;
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
 color:white;
-animation:fade 1.5s ease;
+background:
+linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+url('arte_casamento.png') center/cover no-repeat;
+overflow:hidden;
 }
 
-.logo-casamento{
-max-width:350px;
-width:90%;
-margin-bottom:20px;
-animation:fade 1.5s ease;
+/* PARTÍCULAS DOURADAS */
+header::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background-image:radial-gradient(circle, rgba(212,175,55,0.8) 1px, transparent 1px);
+background-size:40px 40px;
+animation:particles 40s linear infinite;
+opacity:0.3;
+}
+
+@keyframes particles{
+from{transform:translateY(0);}
+to{transform:translateY(-200px);}
+}
+
+/* TÍTULO ASSINATURA */
+.titulo{
+font-family:'Great Vibes', cursive;
+font-size:80px;
+z-index:2;
+background:linear-gradient(90deg,#d4af37,#fff8dc,#d4af37);
+background-size:200% auto;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:gold 4s linear infinite;
+}
+
+@keyframes gold{
+0%{background-position:0% center;}
+100%{background-position:200% center;}
+}
+
+.subtitulo{
+font-family:'Playfair Display';
+font-size:28px;
+margin-top:10px;
+z-index:2;
+}
+
+.data{
+margin-top:10px;
+font-size:18px;
+z-index:2;
 }
 
 #contador{
+margin-top:20px;
 font-size:20px;
-margin-top:10px;
 font-weight:bold;
+z-index:2;
 }
 
+/* LISTA DE PRESENTES */
 .container{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
-padding:40px 20px;
+padding:60px 20px;
 gap:30px;
+background:#f9f6f0;
 }
 
 .card{
@@ -50,7 +102,6 @@ box-shadow:0 8px 20px rgba(0,0,0,0.15);
 width:280px;
 padding:20px;
 transition:0.4s;
-animation:fadeUp 1s ease;
 }
 
 .card:hover{
@@ -90,24 +141,15 @@ color:red;
 font-weight:bold;
 margin-top:10px;
 }
-
-@keyframes fade{
-from{opacity:0}
-to{opacity:1}
-}
-
-@keyframes fadeUp{
-from{opacity:0; transform:translateY(40px)}
-to{opacity:1; transform:translateY(0)}
-}
 </style>
 </head>
 
 <body>
 
 <header>
-<img src="arte_casamento.jpeg" class="logo-casamento">
-<p>20/06/2026</p>
+<h1 class="titulo">Luiza & André</h1>
+<p class="subtitulo">Chá de Panela</p>
+<p class="data">20/06/2026</p>
 <div id="contador"></div>
 </header>
 
@@ -183,11 +225,9 @@ location.reload();
 }
 
 async function verificar(){
-
 const itens = ["geladeira","fogao"];
 
 for(let item of itens){
-
 const status = document.getElementById("status-"+item);
 const docRef = doc(db,"reservas",item);
 const docSnap = await getDoc(docRef);
@@ -201,12 +241,10 @@ status.innerHTML = "<div class='reservado'>Item já reservado</div>";
 verificar();
 </script>
 
-<!-- CONTADOR -->
 <script>
 const dataEvento = new Date("June 20, 2026 00:00:00");
 
 setInterval(()=>{
-
 const agora = new Date();
 const diff = dataEvento - agora;
 
