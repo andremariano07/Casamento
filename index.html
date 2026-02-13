@@ -1,81 +1,100 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chá de Panela - Luiza & André</title>
+<title>Chá de Panela Luiza & André</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
 
 <style>
 body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#ffffff,#f8f5f0);
-  text-align:center;
+margin:0;
+font-family:Poppins;
+background:#fafafa;
+text-align:center;
 }
+
 header{
-  padding:40px 20px;
+background:linear-gradient(45deg,#d4af37,#f5e6a3);
+padding:30px;
+color:white;
+animation:fade 1.5s ease;
 }
+
 h1{
-  font-family:'Playfair Display',serif;
-  color:#c6a64b;
-  font-size:40px;
+font-family:'Playfair Display';
 }
-h2{
-  font-weight:300;
-  color:#444;
-}
-.countdown{
-  font-size:20px;
-  margin:20px 0;
-  color:#b8962e;
-}
+
 .container{
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  flex-wrap:wrap;
-  margin:40px 20px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+padding:20px;
+gap:20px;
 }
+
 .card{
-  background:white;
-  padding:20px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
-  width:250px;
-  transition:0.3s;
+background:white;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+width:280px;
+padding:15px;
+transition:0.4s;
+animation:fadeUp 1s ease;
 }
+
 .card:hover{
-  transform:translateY(-5px);
+transform:translateY(-5px);
 }
+
 .card img{
-  width:100%;
-  border-radius:10px;
+width:100%;
+border-radius:10px;
 }
-button{
-  background:#c6a64b;
-  color:white;
-  border:none;
-  padding:10px 15px;
-  border-radius:8px;
-  cursor:pointer;
-  margin-top:10px;
-}
-button:disabled{
-  background:gray;
-}
+
 input{
-  padding:8px;
-  width:90%;
-  margin-top:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
+width:90%;
+padding:8px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ccc;
 }
-.reserved{
-  color:red;
-  font-weight:bold;
-  margin-top:10px;
+
+button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:#d4af37;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#b8962f;
+}
+
+.reservado{
+color:red;
+font-weight:bold;
+margin-top:10px;
+}
+
+#contador{
+font-size:22px;
+margin-top:10px;
+}
+
+@keyframes fade{
+from{opacity:0}
+to{opacity:1}
+}
+
+@keyframes fadeUp{
+from{opacity:0; transform:translateY(40px)}
+to{opacity:1; transform:translateY(0)}
 }
 </style>
 </head>
@@ -83,102 +102,126 @@ input{
 <body>
 
 <header>
-<h1>Chá de Panela</h1>
-<h2>Luiza & André</h2>
+<h1>Luiza & André</h1>
+<h3>Chá de Panela</h3>
 <p>20/06/2026</p>
-<div class="countdown" id="countdown"></div>
+<div id="contador"></div>
 </header>
 
 <div class="container">
 
-<div class="card" id="geladeiraCard">
-<img src="https://images.unsplash.com/photo-1586201375761-83865001e31c" alt="Geladeira">
+<!-- GELADEIRA -->
+<div class="card">
+<img src="https://images.tcdn.com.br/img/img_prod/1102878/geladeira_branca_375l_2159_1.jpg">
 <h3>Geladeira</h3>
-<input type="text" id="geladeiraNome" placeholder="Seu nome">
-<button onclick="reservar('Geladeira')">Reservar</button>
-<div class="reserved" id="geladeiraStatus"></div>
+
+<input placeholder="Seu nome" id="nome-geladeira">
+<button onclick="reservar('geladeira')">Reservar</button>
+<div id="status-geladeira"></div>
 </div>
 
-<div class="card" id="fogaoCard">
-<img src="https://images.unsplash.com/photo-1586201375795-0d4b6a9d4f55" alt="Fogão">
+<!-- FOGÃO -->
+<div class="card">
+<img src="https://images.tcdn.com.br/img/img_prod/1102878/fogao_branco_4_bocas_2165_1.jpg">
 <h3>Fogão</h3>
-<input type="text" id="fogaoNome" placeholder="Seu nome">
-<button onclick="reservar('Fogão')">Reservar</button>
-<div class="reserved" id="fogaoStatus"></div>
+
+<input placeholder="Seu nome" id="nome-fogao">
+<button onclick="reservar('fogao')">Reservar</button>
+<div id="status-fogao"></div>
 </div>
 
 </div>
 
+<!-- EMAIL JS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+emailjs.init("3zU5_d_KcUdDLjXQY");
+</script>
+
+<!-- FIREBASE -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
-  authDomain: "casamento-luiza-andre.firebaseapp.com",
-  projectId: "casamento-luiza-andre",
-  storageBucket: "casamento-luiza-andre.firebasestorage.app",
-  messagingSenderId: "79078651574",
-  appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
+apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
+authDomain: "casamento-luiza-andre.firebaseapp.com",
+projectId: "casamento-luiza-andre",
+storageBucket: "casamento-luiza-andre.firebasestorage.app",
+messagingSenderId: "79078651574",
+appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.reservar = async function(item){
-  const nomeInput = document.getElementById(item.toLowerCase()+"Nome");
-  const nome = nomeInput.value;
 
-  if(!nome){
-    alert("Digite seu nome!");
-    return;
-  }
+let nome = document.getElementById("nome-"+item).value;
 
-  const docRef = doc(db,"lista",item);
-  const docSnap = await getDoc(docRef);
-
-  if(docSnap.exists()){
-    alert("Esse item já foi reservado!");
-    return;
-  }
-
-  await setDoc(docRef,{ nome:nome });
-  nomeInput.value="";
-};
-
-function escutar(item){
-  const docRef = doc(db,"lista",item);
-  onSnapshot(docRef,(docSnap)=>{
-    const status = document.getElementById(item.toLowerCase()+"Status");
-    const button = document.querySelector(`#${item.toLowerCase()}Card button`);
-    const input = document.getElementById(item.toLowerCase()+"Nome");
-
-    if(docSnap.exists()){
-      status.innerText = "Reservado por " + docSnap.data().nome;
-      button.disabled = true;
-      input.disabled = true;
-    }
-  });
+if(!nome){
+alert("Digite seu nome");
+return;
 }
 
-escutar("Geladeira");
-escutar("Fogão");
+const docRef = doc(db,"reservas",item);
+const docSnap = await getDoc(docRef);
+
+if(docSnap.exists()){
+alert("Item já reservado");
+return;
+}
+
+await setDoc(docRef,{nome:nome});
+
+// EMAIL
+emailjs.send("service_7b5jpat","template_kl4avko",{
+item:item,
+nome:nome
+});
+
+alert("Reserva realizada com sucesso!");
+location.reload();
+}
+
+// Verificar reservas ao carregar
+async function verificar(){
+
+const itens = ["geladeira","fogao"];
+
+for(let item of itens){
+
+const status = document.getElementById("status-"+item);
+const docRef = doc(db,"reservas",item);
+const docSnap = await getDoc(docRef);
+
+if(docSnap.exists()){
+status.innerHTML = "<div class='reservado'>Item já reservado</div>";
+}
+}
+}
+
+verificar();
+
 </script>
 
+<!-- CONTADOR -->
 <script>
-const countdown = document.getElementById("countdown");
-const dataCasamento = new Date("June 20, 2026 00:00:00").getTime();
+const dataEvento = new Date("June 20, 2026 00:00:00");
 
 setInterval(()=>{
-  const agora = new Date().getTime();
-  const distancia = dataCasamento - agora;
 
-  const dias = Math.floor(distancia/(1000*60*60*24));
-  const horas = Math.floor((distancia%(1000*60*60*24))/(1000*60*60));
-  const minutos = Math.floor((distancia%(1000*60*60))/(1000*60));
-  const segundos = Math.floor((distancia%(1000*60))/1000);
+const agora = new Date();
+const diff = dataEvento - agora;
 
-  countdown.innerHTML = `Faltam ${dias} dias ${horas}h ${minutos}m ${segundos}s`;
+const dias = Math.floor(diff / (1000*60*60*24));
+const horas = Math.floor((diff / (1000*60*60)) % 24);
+const minutos = Math.floor((diff / (1000*60)) % 60);
+
+document.getElementById("contador").innerText =
+`Faltam ${dias} dias ${horas}h ${minutos}m`;
+
 },1000);
 </script>
 
