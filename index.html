@@ -5,286 +5,226 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chá de Panela - Luiza & André</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+emailjs.init("3zU5_d_KcUdDLjXQY");
+})();
+</script>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+
 body{
-margin:0;
-font-family:Poppins;
-background:#ffffff;
-overflow-x:hidden;
-}
-
-/* HEADER PREMIUM */
-header{
-position:relative;
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
+font-family:'Poppins',sans-serif;
 color:white;
-padding:0 15px;
-background:
-linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-url('arte_casamento.jpeg') center/cover no-repeat;
-overflow:hidden;
+text-align:center;
+overflow-x:hidden;
+background:url('arte_casamento.jpeg') no-repeat center center/cover;
 }
 
-/* PARTÍCULAS */
-header::before{
-content:"";
-position:absolute;
-width:200%;
-height:200%;
-background-image:radial-gradient(circle, rgba(212,175,55,0.8) 1px, transparent 1px);
-background-size:40px 40px;
-animation:particles 40s linear infinite;
-opacity:0.3;
+.overlay{
+background:rgba(0,0,0,0.65);
+min-height:100vh;
+padding:20px;
 }
 
-@keyframes particles{
-from{transform:translateY(0);}
-to{transform:translateY(-200px);}
-}
-
-/* ANIMAÇÃO CINEMATOGRÁFICA */
-.titulo{
-font-family:'Great Vibes', cursive;
-font-size:80px;
-padding:0 20px;
-display:inline-block;
-opacity:0;
-transform:translateY(40px);
-animation:entrada 2s ease forwards, gold 4s linear infinite 2s;
-
-background:linear-gradient(90deg,#d4af37,#fff8dc,#d4af37);
-background-size:200% auto;
+h1{
+font-family:'Great Vibes',cursive;
+font-size:60px;
+margin-top:40px;
+background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
+background-size:300%;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+animation:shine 6s infinite linear, fadeIn 2s ease;
+padding:0 20px;
 }
 
-@keyframes entrada{
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
-@keyframes gold{
-0%{background-position:0% center;}
-100%{background-position:200% center;}
-}
-
-.subtitulo{
-font-family:'Playfair Display';
-font-size:28px;
-margin-top:10px;
-opacity:0;
-animation:fadeIn 2s ease forwards 1s;
-}
-
-.data{
-margin-top:10px;
-font-size:18px;
-opacity:0;
-animation:fadeIn 2s ease forwards 1.5s;
-}
-
-#contador{
-margin-top:20px;
-font-size:20px;
-font-weight:bold;
-opacity:0;
-animation:fadeIn 2s ease forwards 2s;
+@keyframes shine{
+0%{background-position:0%}
+100%{background-position:300%}
 }
 
 @keyframes fadeIn{
-to{opacity:1;}
+from{opacity:0;transform:translateY(30px)}
+to{opacity:1;transform:translateY(0)}
 }
 
-/* LISTA */
+.date{
+margin-top:15px;
+font-size:20px;
+}
+
+#countdown{
+font-size:22px;
+margin-top:10px;
+}
+
+.location{
+margin-top:10px;
+font-size:18px;
+}
+
+.maps-btn{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:30px;
+background:#d4af37;
+color:black;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.maps-btn:hover{
+background:#fff;
+}
+
 .container{
 display:flex;
-flex-wrap:wrap;
 justify-content:center;
-padding:60px 20px;
-gap:25px;
-background:#f9f6f0;
+flex-wrap:wrap;
+margin-top:40px;
+gap:20px;
 }
 
 .card{
-background:white;
-border-radius:15px;
-box-shadow:0 8px 20px rgba(0,0,0,0.15);
-width:260px;
-padding:18px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-radius:20px;
+padding:15px;
+width:280px;
 transition:0.4s;
+}
+
+.card:hover{
+transform:translateY(-5px);
 }
 
 .card img{
 width:100%;
-border-radius:10px;
-}
-
-input{
-width:92%;
-padding:8px;
-margin-top:8px;
-border-radius:8px;
-border:1px solid #ccc;
+border-radius:15px;
 }
 
 button{
 margin-top:10px;
-padding:9px 18px;
+padding:8px 15px;
 border:none;
-border-radius:8px;
+border-radius:20px;
 background:#d4af37;
-color:white;
-font-weight:bold;
+color:black;
 cursor:pointer;
-}
-
-button:hover{
-background:#b8962f;
-}
-
-.reservado{
-color:red;
 font-weight:bold;
-margin-top:8px;
 }
 
-/* RESPONSIVO */
-@media(max-width:768px){
-.titulo{font-size:55px;}
-.container{
-padding:40px 10px;
-gap:15px;
+button:disabled{
+background:gray;
+cursor:not-allowed;
 }
-.card{
+
+input{
+margin-top:8px;
+padding:8px;
 width:90%;
-padding:15px;
+border-radius:15px;
+border:none;
+text-align:center;
 }
+
+@media(max-width:600px){
+h1{font-size:45px}
+.card{width:90%}
 }
 </style>
 </head>
 
 <body>
+<div class="overlay">
 
-<header>
-<h1 class="titulo">Luiza & André</h1>
-<p class="subtitulo">Chá de Panela</p>
-<p class="data">20/06/2026</p>
-<div id="contador"></div>
-</header>
+<h1>Luiza & André</h1>
+
+<div class="date">20/06/2026 - 18:00 horas</div>
+<div id="countdown"></div>
+
+<div class="location">
+Rua Vera Lucia, 215 - Sinimbu
+</div>
+
+<button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
 
 <div class="container">
 
-<div class="card">
-<img src="https://images.tcdn.com.br/img/img_prod/1102878/geladeira_branca_375l_2159_1.jpg">
+<div class="card" id="Geladeira">
+<img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952" alt="Geladeira">
 <h3>Geladeira</h3>
-<input placeholder="Seu nome" id="nome-geladeira">
-<input placeholder="Seu e-mail" id="email-geladeira">
-<button onclick="reservar('geladeira')">Reservar</button>
-<div id="status-geladeira"></div>
+<input type="text" placeholder="Seu nome" id="nome-Geladeira">
+<input type="email" placeholder="Seu e-mail" id="email-Geladeira">
+<button onclick="reservar('Geladeira')">Reservar</button>
 </div>
 
-<div class="card">
-<img src="https://images.tcdn.com.br/img/img_prod/1102878/fogao_branco_4_bocas_2165_1.jpg">
+<div class="card" id="Fogao">
+<img src="https://images.unsplash.com/photo-1586201375761-83865001e17b" alt="Fogão">
 <h3>Fogão</h3>
-<input placeholder="Seu nome" id="nome-fogao">
-<input placeholder="Seu e-mail" id="email-fogao">
-<button onclick="reservar('fogao')">Reservar</button>
-<div id="status-fogao"></div>
+<input type="text" placeholder="Seu nome" id="nome-Fogao">
+<input type="email" placeholder="Seu e-mail" id="email-Fogao">
+<button onclick="reservar('Fogao')">Reservar</button>
 </div>
 
 </div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-emailjs.init("3zU5_d_KcUdDLjXQY");
-</script>
+// CONTADOR
+var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+var x = setInterval(function() {
+var now = new Date().getTime();
+var distance = countDownDate - now;
 
-const firebaseConfig = {
-apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
-authDomain: "casamento-luiza-andre.firebaseapp.com",
-projectId: "casamento-luiza-andre",
-storageBucket: "casamento-luiza-andre.firebasestorage.app",
-messagingSenderId: "79078651574",
-appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
-};
+var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+document.getElementById("countdown").innerHTML =
+days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
 
-window.reservar = async function(item){
+}, 1000);
+
+// MAPS
+function abrirMapa(){
+window.open("https://www.google.com/maps/search/?api=1&query=Rua+Vera+Lucia+215+Sinimbu");
+}
+
+// RESERVA
+function reservar(item){
 
 let nome = document.getElementById("nome-"+item).value;
 let email = document.getElementById("email-"+item).value;
 
-if(!nome || !email){
+if(nome==="" || email===""){
 alert("Preencha nome e e-mail");
 return;
 }
 
-const docRef = doc(db,"reservas",item);
-const docSnap = await getDoc(docRef);
-
-if(docSnap.exists()){
-alert("Item já reservado");
-return;
-}
-
-await setDoc(docRef,{nome:nome,email:email});
-
-/* MENSAGEM DEFINITIVA */
-let mensagemPersonalizada = 
-"Obrigado por participar deste momento, estamos muito felizes por tudo.";
-
 emailjs.send("service_7b5jpat","template_kl4avko",{
-item:item,
 nome:nome,
 email:email,
-mensagem:mensagemPersonalizada
+mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
 });
 
-alert("Reserva realizada! Você receberá um e-mail de confirmação.");
-location.reload();
-}
+let card = document.getElementById(item);
+card.querySelector("button").disabled = true;
+card.querySelector("button").innerText = "Indisponível";
 
-async function verificar(){
-const itens = ["geladeira","fogao"];
-for(let item of itens){
-const status = document.getElementById("status-"+item);
-const docRef = doc(db,"reservas",item);
-const docSnap = await getDoc(docRef);
-if(docSnap.exists()){
-status.innerHTML = "<div class='reservado'>Item já reservado</div>";
+card.querySelectorAll("input").forEach(input=>{
+input.style.display="none";
+});
 }
-}
-}
-
-verificar();
-</script>
-
-<script>
-const dataEvento = new Date("June 20, 2026 00:00:00");
-setInterval(()=>{
-const agora = new Date();
-const diff = dataEvento - agora;
-const dias = Math.floor(diff / (1000*60*60*24));
-const horas = Math.floor((diff / (1000*60*60)) % 24);
-const minutos = Math.floor((diff / (1000*60)) % 60);
-document.getElementById("contador").innerText =
-`Faltam ${dias} dias ${horas}h ${minutos}m`;
-},1000);
 </script>
 
 </body>
