@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chá de Panela Luiza & André</title>
+<title>Chá de Panela - Luiza & André</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
 
@@ -11,41 +11,50 @@
 body{
 margin:0;
 font-family:Poppins;
-background:#fafafa;
+background:linear-gradient(135deg,#ffffff,#f8f5ef);
 text-align:center;
 }
 
 header{
-background:linear-gradient(45deg,#d4af37,#f5e6a3);
-padding:30px;
+background:linear-gradient(45deg,#d4af37,#f1e2a6);
+padding:40px 20px;
 color:white;
 animation:fade 1.5s ease;
 }
 
-h1{
-font-family:'Playfair Display';
+.logo-casamento{
+max-width:350px;
+width:90%;
+margin-bottom:20px;
+animation:fade 1.5s ease;
+}
+
+#contador{
+font-size:20px;
+margin-top:10px;
+font-weight:bold;
 }
 
 .container{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
-padding:20px;
-gap:20px;
+padding:40px 20px;
+gap:30px;
 }
 
 .card{
 background:white;
 border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.15);
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
 width:280px;
-padding:15px;
+padding:20px;
 transition:0.4s;
 animation:fadeUp 1s ease;
 }
 
 .card:hover{
-transform:translateY(-5px);
+transform:translateY(-6px);
 }
 
 .card img{
@@ -82,11 +91,6 @@ font-weight:bold;
 margin-top:10px;
 }
 
-#contador{
-font-size:22px;
-margin-top:10px;
-}
-
 @keyframes fade{
 from{opacity:0}
 to{opacity:1}
@@ -102,29 +106,24 @@ to{opacity:1; transform:translateY(0)}
 <body>
 
 <header>
-<h1>Luiza & André</h1>
-<h3>Chá de Panela</h3>
+<img src="arte_casamento.jpeg" class="logo-casamento">
 <p>20/06/2026</p>
 <div id="contador"></div>
 </header>
 
 <div class="container">
 
-<!-- GELADEIRA -->
 <div class="card">
 <img src="https://images.tcdn.com.br/img/img_prod/1102878/geladeira_branca_375l_2159_1.jpg">
 <h3>Geladeira</h3>
-
 <input placeholder="Seu nome" id="nome-geladeira">
 <button onclick="reservar('geladeira')">Reservar</button>
 <div id="status-geladeira"></div>
 </div>
 
-<!-- FOGÃO -->
 <div class="card">
 <img src="https://images.tcdn.com.br/img/img_prod/1102878/fogao_branco_4_bocas_2165_1.jpg">
 <h3>Fogão</h3>
-
 <input placeholder="Seu nome" id="nome-fogao">
 <button onclick="reservar('fogao')">Reservar</button>
 <div id="status-fogao"></div>
@@ -132,7 +131,7 @@ to{opacity:1; transform:translateY(0)}
 
 </div>
 
-<!-- EMAIL JS -->
+<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 emailjs.init("3zU5_d_KcUdDLjXQY");
@@ -140,7 +139,6 @@ emailjs.init("3zU5_d_KcUdDLjXQY");
 
 <!-- FIREBASE -->
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -175,7 +173,6 @@ return;
 
 await setDoc(docRef,{nome:nome});
 
-// EMAIL
 emailjs.send("service_7b5jpat","template_kl4avko",{
 item:item,
 nome:nome
@@ -185,7 +182,6 @@ alert("Reserva realizada com sucesso!");
 location.reload();
 }
 
-// Verificar reservas ao carregar
 async function verificar(){
 
 const itens = ["geladeira","fogao"];
@@ -203,7 +199,6 @@ status.innerHTML = "<div class='reservado'>Item já reservado</div>";
 }
 
 verificar();
-
 </script>
 
 <!-- CONTADOR -->
