@@ -1,81 +1,81 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chá de Panela - Luiza & André</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: #ffffff;
-    text-align: center;
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#ffffff,#f8f5f0);
+  text-align:center;
 }
-
-header {
-    background: linear-gradient(135deg, #d4af37, #f5e6b3);
-    padding: 40px 20px;
-    color: white;
+header{
+  padding:40px 20px;
 }
-
-h1 {
-    margin: 0;
-    font-size: 36px;
+h1{
+  font-family:'Playfair Display',serif;
+  color:#c6a64b;
+  font-size:40px;
 }
-
-.data {
-    font-size: 18px;
-    margin-top: 10px;
+h2{
+  font-weight:300;
+  color:#444;
 }
-
-.lista {
-    max-width: 900px;
-    margin: 40px auto;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+.countdown{
+  font-size:20px;
+  margin:20px 0;
+  color:#b8962e;
 }
-
-.item {
-    background: #fff;
-    border: 2px solid #d4af37;
-    border-radius: 12px;
-    width: 300px;
-    padding: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.container{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  flex-wrap:wrap;
+  margin:40px 20px;
 }
-
-.item img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  width:250px;
+  transition:0.3s;
 }
-
-.item h3 {
-    margin: 15px 0 10px;
+.card:hover{
+  transform:translateY(-5px);
 }
-
-button {
-    background: #d4af37;
-    border: none;
-    padding: 10px 20px;
-    color: white;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
+.card img{
+  width:100%;
+  border-radius:10px;
 }
-
-button:hover {
-    background: #b8962e;
+button{
+  background:#c6a64b;
+  color:white;
+  border:none;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
 }
-
-button:disabled {
-    background: gray;
-    cursor: not-allowed;
+button:disabled{
+  background:gray;
+}
+input{
+  padding:8px;
+  width:90%;
+  margin-top:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+.reserved{
+  color:red;
+  font-weight:bold;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -83,69 +83,103 @@ button:disabled {
 <body>
 
 <header>
-    <h1>💍 Chá de Panela</h1>
-    <h2>Luiza & André</h2>
-    <div class="data">20/06/2026</div>
+<h1>Chá de Panela</h1>
+<h2>Luiza & André</h2>
+<p>20/06/2026</p>
+<div class="countdown" id="countdown"></div>
 </header>
 
-<div class="lista" id="lista"></div>
+<div class="container">
+
+<div class="card" id="geladeiraCard">
+<img src="https://images.unsplash.com/photo-1586201375761-83865001e31c" alt="Geladeira">
+<h3>Geladeira</h3>
+<input type="text" id="geladeiraNome" placeholder="Seu nome">
+<button onclick="reservar('Geladeira')">Reservar</button>
+<div class="reserved" id="geladeiraStatus"></div>
+</div>
+
+<div class="card" id="fogaoCard">
+<img src="https://images.unsplash.com/photo-1586201375795-0d4b6a9d4f55" alt="Fogão">
+<h3>Fogão</h3>
+<input type="text" id="fogaoNome" placeholder="Seu nome">
+<button onclick="reservar('Fogão')">Reservar</button>
+<div class="reserved" id="fogaoStatus"></div>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
+  authDomain: "casamento-luiza-andre.firebaseapp.com",
+  projectId: "casamento-luiza-andre",
+  storageBucket: "casamento-luiza-andre.firebasestorage.app",
+  messagingSenderId: "79078651574",
+  appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.reservar = async function(item){
+  const nomeInput = document.getElementById(item.toLowerCase()+"Nome");
+  const nome = nomeInput.value;
+
+  if(!nome){
+    alert("Digite seu nome!");
+    return;
+  }
+
+  const docRef = doc(db,"lista",item);
+  const docSnap = await getDoc(docRef);
+
+  if(docSnap.exists()){
+    alert("Esse item já foi reservado!");
+    return;
+  }
+
+  await setDoc(docRef,{ nome:nome });
+  nomeInput.value="";
+};
+
+function escutar(item){
+  const docRef = doc(db,"lista",item);
+  onSnapshot(docRef,(docSnap)=>{
+    const status = document.getElementById(item.toLowerCase()+"Status");
+    const button = document.querySelector(`#${item.toLowerCase()}Card button`);
+    const input = document.getElementById(item.toLowerCase()+"Nome");
+
+    if(docSnap.exists()){
+      status.innerText = "Reservado por " + docSnap.data().nome;
+      button.disabled = true;
+      input.disabled = true;
+    }
+  });
+}
+
+escutar("Geladeira");
+escutar("Fogão");
+</script>
 
 <script>
+const countdown = document.getElementById("countdown");
+const dataCasamento = new Date("June 20, 2026 00:00:00").getTime();
 
-const itens = [
-    {
-        nome: "Geladeira",
-        imagem: "https://images.unsplash.com/photo-1586201375761-83865001e31c"
-    },
-    {
-        nome: "Fogão",
-        imagem: "https://images.unsplash.com/photo-1588854337118-1c67c0c6f9a0"
-    }
-];
+setInterval(()=>{
+  const agora = new Date().getTime();
+  const distancia = dataCasamento - agora;
 
-const lista = document.getElementById("lista");
-let reservados = JSON.parse(localStorage.getItem("reservados")) || {};
+  const dias = Math.floor(distancia/(1000*60*60*24));
+  const horas = Math.floor((distancia%(1000*60*60*24))/(1000*60*60));
+  const minutos = Math.floor((distancia%(1000*60*60))/(1000*60));
+  const segundos = Math.floor((distancia%(1000*60))/1000);
 
-function salvar() {
-    localStorage.setItem("reservados", JSON.stringify(reservados));
-}
-
-function criarLista() {
-    lista.innerHTML = "";
-    itens.forEach(item => {
-
-        const div = document.createElement("div");
-        div.className = "item";
-
-        const img = document.createElement("img");
-        img.src = item.imagem;
-
-        const titulo = document.createElement("h3");
-        titulo.textContent = item.nome;
-
-        const botao = document.createElement("button");
-
-        if (reservados[item.nome]) {
-            botao.textContent = "Reservado ❤️";
-            botao.disabled = true;
-        } else {
-            botao.textContent = "Presentear";
-            botao.onclick = () => {
-                reservados[item.nome] = true;
-                salvar();
-                criarLista();
-            }
-        }
-
-        div.appendChild(img);
-        div.appendChild(titulo);
-        div.appendChild(botao);
-        lista.appendChild(div);
-    });
-}
-
-criarLista();
-
+  countdown.innerHTML = `Faltam ${dias} dias ${horas}h ${minutos}m ${segundos}s`;
+},1000);
 </script>
 
 </body>
