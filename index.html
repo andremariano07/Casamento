@@ -169,38 +169,56 @@ h1{
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
-/* Animação dourada contornando os itens */
+/* ✅ NOVO: filete dourado girando no contorno (não preenchido) */
 .card::before{
   content:"";
   position:absolute;
   inset:-2px;
   border-radius:22px;
-  padding:2px;
-  background:conic-gradient(
-    from 0deg,
-    rgba(212,175,55,0) 0deg,
-    rgba(212,175,55,.85) 70deg,
-    rgba(248,231,176,.55) 130deg,
-    rgba(212,175,55,.85) 190deg,
-    rgba(255,255,255,.22) 260deg,
-    rgba(212,175,55,0) 360deg
-  );
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:.6;
-  filter:blur(.2px);
-  animation:borderSpin 3.6s linear infinite;
+  padding:2px;                 /* espessura do contorno */
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(212,175,55,0) 0deg,
+      rgba(212,175,55,0) 310deg,
+      rgba(248,231,176,.95) 332deg,
+      rgba(212,175,55,.85) 350deg,
+      rgba(212,175,55,0) 360deg
+    );
+  /* deixa só a borda */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity:.85;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,.25));
+  animation: orbitStroke 2.8s linear infinite;
   pointer-events:none;
 }
-@keyframes borderSpin{to{transform:rotate(360deg)}}
+
+/* ✅ opcional: uma borda “base” bem suave atrás do filete */
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  border:1px solid rgba(212,175,55,.18);
+  pointer-events:none;
+}
+
+@keyframes orbitStroke{
+  to{ transform:rotate(360deg); }
+}
 
 .card:hover{
   transform:translateY(-6px) scale(1.01);
   box-shadow:0 18px 40px rgba(0,0,0,.35);
   border-color:rgba(212,175,55,.45);
 }
-.card:hover::before{opacity:.95;filter:blur(0px)}
+.card:hover::before{
+  opacity:1;
+  filter: drop-shadow(0 0 10px rgba(212,175,55,.45));
+}
 
 /* Imagem padronizada */
 .product-img{
@@ -294,7 +312,7 @@ input{
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.65;
-  animation:borderSpin 3.2s linear infinite;
+  animation:orbitStroke 3.2s linear infinite;
   pointer-events:none;
 }
 @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
@@ -383,7 +401,7 @@ input{
       <button class="btn" id="btn-Jogo De Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
     </div>
 
-     <div class="card" id="Jarra" data-item="Jarra">
+    <div class="card" id="Jarra" data-item="Jarra">
       <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
       <h3>Jarra</h3>
       <div class="badge" id="badge-Jarra">Disponível</div>
@@ -544,12 +562,11 @@ function uiAviso({title, text, note, buttonText="Fechar"}){
   return new Promise((resolve)=>{ uiResolve = resolve; });
 }
 
-/* ✅ FUNÇÃO GLOBAL: sempre existe (resolve o “não acontece nada”) */
+/* ✅ FUNÇÃO GLOBAL: sempre existe */
 async function Presentear(item){
   if(typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
   }
-  // Se o módulo ainda não carregou/erro, mostra aviso bonito
   await uiAviso({
     title:"Carregando...",
     text:"Aguarde 1 segundo e tente novamente.",
@@ -576,7 +593,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* UI realtime */
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
   const card = document.querySelector(`.card[data-item="${item}"]`);
@@ -610,7 +626,6 @@ document.querySelectorAll(".card[data-item]").forEach((card)=>{
   });
 });
 
-/* ===== Reserva ===== */
 async function doReserve(item){
   const nome = document.getElementById("nome-"+item)?.value.trim();
   const email = document.getElementById("email-"+item)?.value.trim();
@@ -635,7 +650,6 @@ async function doReserve(item){
       tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
-    // Email (se falhar, não cancela a reserva)
     try{
       if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
@@ -668,7 +682,6 @@ async function doReserve(item){
   }
 }
 
-/* ===== Clique no Presentear (real) ===== */
 async function presentearImpl(item){
   const ok = await window.uiConfirmar({
     title:"Confirmar presente",
@@ -681,14 +694,12 @@ async function presentearImpl(item){
   await doReserve(item);
 }
 
-/* ✅ Exporta para o escopo global (botões sempre funcionam) */
 window.__presentearImpl = presentearImpl;
 </script>
 
 <script>
-/* expõe os helpers do modal globalmente (usados pelo module também) */
-window.uiConfirmar = window.uiConfirmar || (async (o)=>{ return false; });
-window.uiAviso = window.uiAviso || (async (o)=>{ return false; });
+window.uiConfirmar = window.uiConfirmar || (async ()=> false);
+window.uiAviso = window.uiAviso || (async ()=> false);
 </script>
 
 </body>
