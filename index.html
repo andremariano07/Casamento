@@ -475,6 +475,68 @@ document.addEventListener("click", (e)=>{
   btn.appendChild(ripple);
   ripple.addEventListener("animationend", ()=> ripple.remove());
 });
+
+/* ===== MODAL helpers também no escopo global (para fallback) ===== */
+const uiModal = document.getElementById("modal");
+const uiTitle = document.getElementById("modalTitle");
+const uiText = document.getElementById("modalText");
+const uiNote = document.getElementById("modalNote");
+const uiCancel = document.getElementById("modalCancel");
+const uiConfirm = document.getElementById("modalConfirm");
+const uiBackdrop = document.getElementById("modalBackdrop");
+
+let uiResolve = null;
+
+function uiCloseModal(result=false){
+  uiModal.classList.remove("show");
+  const r = uiResolve;
+  uiResolve = null;
+  if(r) r(result);
+}
+
+uiBackdrop.addEventListener("click", ()=> uiCloseModal(false));
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape" && uiModal.classList.contains("show")) uiCloseModal(false);
+});
+uiCancel.addEventListener("click", ()=> uiCloseModal(false));
+uiConfirm.addEventListener("click", ()=> uiCloseModal(true));
+
+function uiConfirmar({title, text, note, confirmText="Confirmar", cancelText="Cancelar"}){
+  uiTitle.textContent = title || "Confirmar";
+  uiText.textContent = text || "";
+  uiNote.textContent = note || "";
+  uiConfirm.style.display = "inline-block";
+  uiConfirm.textContent = confirmText;
+  uiCancel.textContent = cancelText;
+  uiModal.classList.add("show");
+  uiConfirm.focus();
+  return new Promise((resolve)=>{ uiResolve = resolve; });
+}
+
+function uiAviso({title, text, note, buttonText="Fechar"}){
+  uiTitle.textContent = title || "Aviso";
+  uiText.textContent = text || "";
+  uiNote.textContent = note || "";
+  uiConfirm.style.display = "none";
+  uiCancel.textContent = buttonText;
+  uiModal.classList.add("show");
+  uiCancel.focus();
+  return new Promise((resolve)=>{ uiResolve = resolve; });
+}
+
+/* ✅ FUNÇÃO GLOBAL: sempre existe (resolve o “não acontece nada”) */
+async function Presentear(item){
+  if(typeof window.__presentearImpl === "function"){
+    return window.__presentearImpl(item);
+  }
+  // Se o módulo ainda não carregou/erro, mostra aviso bonito
+  await uiAviso({
+    title:"Carregando...",
+    text:"Aguarde 1 segundo e tente novamente.",
+    note:"Se continuar, abra o site pelo link normal (não pelo preview do WhatsApp)."
+  });
+}
+window.Presentear = Presentear;
 </script>
 
 <!-- FIREBASE + MODAL -->
@@ -494,83 +556,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* ===== MODAL REUTILIZÁVEL (CONFIRMAÇÃO / ALERTA) ===== */
-const modal = document.getElementById("modal");
-const modalTitle = document.getElementById("modalTitle");
-const modalText = document.getElementById("modalText");
-const modalNote = document.getElementById("modalNote");
-const modalCancel = document.getElementById("modalCancel");
-const modalConfirm = document.getElementById("modalConfirm");
-const modalBackdrop = document.getElementById("modalBackdrop");
-
-let pendingResolve = null;
-
-function openModalBase(){
-  modal.classList.add("show");
-  modalConfirm.focus();
-}
-function closeModal(){
-  modal.classList.remove("show");
-  pendingResolve = null;
-}
-
-modalBackdrop.addEventListener("click", ()=>{
-  // Fecha como cancel
-  if(pendingResolve) pendingResolve(false);
-  closeModal();
-});
-
-document.addEventListener("keydown",(e)=>{
-  if(e.key === "Escape" && modal.classList.contains("show")){
-    if(pendingResolve) pendingResolve(false);
-    closeModal();
-  }
-});
-
-modalCancel.addEventListener("click", ()=>{
-  if(pendingResolve) pendingResolve(false);
-  closeModal();
-});
-
-modalConfirm.addEventListener("click", ()=>{
-  if(pendingResolve) pendingResolve(true);
-  closeModal();
-});
-
-/* Confirm (2 botões) */
-function modalConfirmar({title, text, note, confirmText="Confirmar", cancelText="Cancelar"}){
-  modalTitle.textContent = title || "Confirmar";
-  modalText.textContent  = text  || "";
-  modalNote.textContent  = note  || "";
-  modalConfirm.style.display = "inline-block";
-  modalConfirm.textContent = confirmText;
-  modalCancel.textContent  = cancelText;
-
-  openModalBase();
-  return new Promise((resolve)=>{
-    pendingResolve = resolve;
-  });
-}
-
-/* Alerta bonito (1 botão) */
-function modalAviso({title, text, note, buttonText="Fechar"}){
-  modalTitle.textContent = title || "Aviso";
-  modalText.textContent  = text  || "";
-  modalNote.textContent  = note  || "";
-  modalConfirm.style.display = "none";
-  modalCancel.textContent = buttonText;
-
-  modal.classList.add("show");
-  modalCancel.focus();
-  return new Promise((resolve)=>{
-    pendingResolve = resolve;
-  });
-}
-
-/* ===== UI realtime ===== */
+/* UI realtime */
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
+  const card = document.querySelector(`.card[data-item="${item}"]`);
   const badge = document.getElementById("badge-"+item);
   const note  = document.getElementById("note-"+item);
   const btn   = document.getElementById("btn-"+item);
@@ -607,7 +596,7 @@ async function doReserve(item){
   const email = document.getElementById("email-"+item)?.value.trim();
 
   if(!nome || !email){
-    await modalAviso({
+    await window.uiAviso({
       title:"Campos obrigatórios",
       text:"Preencha nome e e-mail para continuar.",
       note:""
@@ -636,7 +625,7 @@ async function doReserve(item){
       }
     }catch(e){}
 
-    await modalAviso({
+    await window.uiAviso({
       title:"Reserva confirmada",
       text:"Obrigado por fazer parte deste momento 💛",
       note:"Sua reserva foi registrada com sucesso."
@@ -644,42 +633,42 @@ async function doReserve(item){
 
   }catch(e){
     if(String(e?.message || e) === "ja_reservado"){
-      await modalAviso({
+      await window.uiAviso({
         title:"Ops!",
         text:"Este item já foi reservado.",
         note:"Escolha outro presente disponível."
       });
     }else{
-      await modalAviso({
+      await window.uiAviso({
         title:"Erro",
         text:"Erro ao reservar. Tente novamente.",
         note:"Se continuar, recarregue a página."
       });
     }
-  }finally{
-    // Se não estiver reservado (ex: erro), reabilita o botão
-    // (o onSnapshot também vai ajustar sozinho)
-    if(btn){
-      btn.textContent = btn.disabled ? btn.textContent : "Presentear";
-    }
   }
 }
 
-/* ===== Clique no Presentear ===== */
-async function Presentear(item){
-  const ok = await modalConfirmar({
+/* ===== Clique no Presentear (real) ===== */
+async function presentearImpl(item){
+  const ok = await window.uiConfirmar({
     title:"Confirmar presente",
     text:`Você escolheu: ${item}. Deseja confirmar?`,
     note:"Após confirmar, este item ficará reservado.",
     confirmText:"Confirmar",
     cancelText:"Cancelar"
   });
-
   if(!ok) return;
   await doReserve(item);
 }
 
-window.Presentear = Presentear;
+/* ✅ Exporta para o escopo global (botões sempre funcionam) */
+window.__presentearImpl = presentearImpl;
+</script>
+
+<script>
+/* expõe os helpers do modal globalmente (usados pelo module também) */
+window.uiConfirmar = window.uiConfirmar || (async (o)=>{ return false; });
+window.uiAviso = window.uiAviso || (async (o)=>{ return false; });
 </script>
 
 </body>
