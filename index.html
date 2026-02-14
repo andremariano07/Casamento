@@ -13,7 +13,7 @@
 window.addEventListener('DOMContentLoaded', function () {
   try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error(e); }
 
-  // Partículas douradas bem leves no fundo (bolinhas subindo)
+  // Bolinhas douradas no fundo (bem leve)
   try {
     if (window.tsParticles) {
       tsParticles.load("tsparticles", {
@@ -23,14 +23,9 @@ window.addEventListener('DOMContentLoaded', function () {
         particles: {
           number: { value: 28, density: { enable: true, area: 900 } },
           color: { value: ["#d4af37", "#f8e7b0", "#ffffff"] },
-          opacity: { value: 0.18, random: { enable: true, minimumValue: 0.06 } },
+          opacity: { value: 0.16, random: { enable: true, minimumValue: 0.06 } },
           size: { value: { min: 1, max: 4 }, random: true },
-          move: {
-            enable: true,
-            speed: 0.7,
-            direction: "top",
-            outModes: { default: "out" }
-          },
+          move: { enable: true, speed: 0.7, direction: "top", outModes: { default: "out" } },
           shape: { type: "circle" }
         },
         detectRetina: true
@@ -44,15 +39,20 @@ window.addEventListener('DOMContentLoaded', function () {
 *{margin:0;padding:0;box-sizing:border-box}
 html, body{height:100%}
 
-/* Fundo: garante que no mobile NÃO “corta” na segunda página */
+:root{
+  --gold:#d4af37;
+  --gold2:#f8e7b0;
+}
+
+/* Fundo (corrige “corte” no celular) */
 body{
   font-family:'Poppins',sans-serif;
   color:white;
   text-align:center;
   overflow-x:hidden;
-  min-height:100svh; /* melhor que 100vh no mobile */
+  min-height:100svh;
   background:
-    linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.25)),
+    linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.22)),
     url('arte_casamento.jpeg');
   background-position:center top;
   background-repeat:no-repeat;
@@ -60,12 +60,10 @@ body{
   background-attachment:fixed;
 }
 
-/* iOS/Android: fixed pode dar bug/corte — troca para scroll */
+/* Mobile: fixed pode causar corte/bug */
 @media(max-width:768px){
   body{
     background-attachment:scroll;
-    background-position:center top;
-    background-size:cover;
     min-height:100svh;
   }
 }
@@ -79,11 +77,10 @@ body{
   pointer-events:none;
 }
 
+/* PRÉ CAPA */
 .precover{
   position:fixed;
   inset:0;
-  width:100%;
-  height:100%;
   background:rgba(0,0,0,0.65);
   display:flex;
   flex-direction:column;
@@ -94,11 +91,10 @@ body{
 }
 
 .circle-photo{
-  width:180px;
-  height:180px;
+  width:180px;height:180px;
   border-radius:50%;
   overflow:hidden;
-  border:5px solid #d4af37;
+  border:5px solid var(--gold);
   margin-bottom:20px;
   box-shadow:0 0 15px rgba(212,175,55,0.6);
 }
@@ -112,17 +108,13 @@ h1{
   max-width:95vw;
   padding:0 8px;
   overflow-wrap:anywhere;
-  background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
+  background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
   background-size:300%;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   animation:shine 6s infinite linear;
 }
-
-@keyframes shine{
-  0%{background-position:0%}
-  100%{background-position:300%}
-}
+@keyframes shine{0%{background-position:0%}100%{background-position:300%}}
 
 .date, .countdown, .location{margin:8px 0;font-size:20px}
 
@@ -131,7 +123,7 @@ h1{
   padding:10px 20px;
   border:none;
   border-radius:30px;
-  background:#d4af37;
+  background:var(--gold);
   color:black;
   font-weight:bold;
   cursor:pointer;
@@ -139,13 +131,24 @@ h1{
 }
 .maps-btn:hover, .back-btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
 
+/* CONTEÚDO: coloca o mesmo fundo aqui também (pra não “cortar” ao rolar) */
 .overlay{
-  background:rgba(0,0,0,0.65);
-  min-height:100svh; /* evita corte no mobile ao rolar */
-  padding:20px 20px 60px;
+  display:none;
   position:relative;
   z-index:2;
-  display:none;
+  min-height:100svh;
+  padding:20px 20px 60px;
+
+  background:
+    linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65)),
+    url('arte_casamento.jpeg');
+  background-position:center top;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
+}
+@media(max-width:768px){
+  .overlay{ background-attachment:scroll; }
 }
 
 .container{
@@ -175,7 +178,7 @@ h1{
   border-color:rgba(212,175,55,0.45);
 }
 
-/* Animação dourada contornando (sempre ligada, mais forte no hover) */
+/* Animação dourada contornando os itens */
 .card::before{
   content:"";
   position:absolute;
@@ -185,10 +188,10 @@ h1{
   background:conic-gradient(
     from 0deg,
     rgba(212,175,55,0) 0deg,
-    rgba(212,175,55,.85) 60deg,
-    rgba(248,231,176,.55) 120deg,
-    rgba(212,175,55,.85) 180deg,
-    rgba(255,255,255,.25) 240deg,
+    rgba(212,175,55,.85) 70deg,
+    rgba(248,231,176,.55) 130deg,
+    rgba(212,175,55,.85) 190deg,
+    rgba(255,255,255,.22) 260deg,
     rgba(212,175,55,0) 360deg
   );
   -webkit-mask:
@@ -196,26 +199,26 @@ h1{
     linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
-  opacity:.55;
-  filter:blur(.25px);
+  opacity:.6;
+  filter:blur(.2px);
   animation:borderSpin 3.6s linear infinite;
   pointer-events:none;
 }
+.card:hover::before{opacity:.95;filter:blur(0px)}
+@keyframes borderSpin{to{transform:rotate(360deg)}}
 
-.card:hover::before{opacity:.9;filter:blur(0px)}
-
-@keyframes borderSpin{
-  to{transform:rotate(360deg)}
+.card img{
+  width:100%;
+  border-radius:15px;
+  display:block;
 }
-
-.card img{width:100%;border-radius:15px}
 
 button{
   margin-top:10px;
   padding:8px 15px;
   border:none;
   border-radius:20px;
-  background:#d4af37;
+  background:var(--gold);
   color:black;
   font-weight:bold;
   cursor:pointer;
@@ -264,7 +267,7 @@ input{
   <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
   <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
   <button class="maps-btn" onclick="tocarMusica()">🎵 Tocar Música</button>
-  <button class="maps-btn" onclick="entrarEvento()">Entrar no Evento</button>
+  <button class="maps-btn" onclick="entrarEvento()">Lista de Presente</button>
 </div>
 
 <audio id="bgMusic" loop>
@@ -273,7 +276,6 @@ input{
 
 <!-- CONTEÚDO -->
 <div class="overlay" id="mainContent">
-
   <h1>Luiza & André</h1>
   <div class="date">20/06/2026 - 18:00 horas</div>
   <div class="countdown" id="countdown-main"></div>
@@ -397,9 +399,17 @@ document.querySelectorAll(".card[data-item]").forEach((card) => {
 });
 
 async function Presentear(item){
+  // Confirmação ao escolher o presente
+  const ok = confirm(`Confirmar o presente: ${item}?`);
+  if (!ok) return;
+
   const nome = document.getElementById("nome-"+item)?.value.trim();
   const email = document.getElementById("email-"+item)?.value.trim();
   if(!nome || !email){ alert("Preencha nome e e-mail"); return; }
+
+  // Confirmação final antes de reservar
+  const ok2 = confirm("Deseja confirmar a reserva agora?");
+  if (!ok2) return;
 
   const ref = doc(db,"reservas",item);
 
@@ -415,18 +425,20 @@ async function Presentear(item){
       transaction.set(ref,{reservado:true,nome,email,ts:serverTimestamp()});
     });
 
+    // Email (não bloqueia a reserva se falhar)
     try{
       if (window.emailjs?.send) {
         await emailjs.send("service_7b5jpat","template_kl4avko",{
           nome,email,item,
-          mensagem:"Obrigado por participar deste momento!"
+          mensagem:"Obrigado por fazer parte deste momento 💛"
         });
       }
     } catch (e) {
       console.warn("Falha ao enviar e-mail (EmailJS):", e);
     }
 
-    alert("Reserva realizada com sucesso!");
+    // Mensagem depois de confirmar
+    alert("Reserva realizada com sucesso!\nObrigado por fazer parte deste momento 💛");
   }catch(e){
     if (String(e?.message || e) === "ja_reservado") {
       alert("Este item já foi reservado.");
