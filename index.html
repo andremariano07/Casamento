@@ -11,10 +11,9 @@
 
 <script>
 window.addEventListener('DOMContentLoaded', function () {
-  // EmailJS
   try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error(e); }
 
-  // Partículas douradas bem leves no fundo
+  // Partículas douradas bem leves no fundo (bolinhas subindo)
   try {
     if (window.tsParticles) {
       tsParticles.load("tsparticles", {
@@ -43,28 +42,31 @@ window.addEventListener('DOMContentLoaded', function () {
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 html, body{height:100%}
 
+/* Fundo: garante que no mobile NÃO “corta” na segunda página */
 body{
   font-family:'Poppins',sans-serif;
   color:white;
   text-align:center;
   overflow-x:hidden;
-  min-height:100vh;
-  background-image:url('arte_casamento.jpeg');
-  background-position:center center;
+  min-height:100svh; /* melhor que 100vh no mobile */
+  background:
+    linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.25)),
+    url('arte_casamento.jpeg');
+  background-position:center top;
   background-repeat:no-repeat;
   background-size:cover;
   background-attachment:fixed;
 }
 
-/* Correção mobile */
+/* iOS/Android: fixed pode dar bug/corte — troca para scroll */
 @media(max-width:768px){
   body{
-    background-size:cover;
-    background-position:top center;
     background-attachment:scroll;
+    background-position:center top;
+    background-size:cover;
+    min-height:100svh;
   }
 }
 
@@ -74,13 +76,14 @@ body{
   width:100%;
   height:100%;
   z-index:1;
-  pointer-events:none; /* não atrapalha cliques */
+  pointer-events:none;
 }
 
 .precover{
   position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
+  inset:0;
+  width:100%;
+  height:100%;
   background:rgba(0,0,0,0.65);
   display:flex;
   flex-direction:column;
@@ -99,19 +102,14 @@ body{
   margin-bottom:20px;
   box-shadow:0 0 15px rgba(212,175,55,0.6);
 }
-
-.circle-photo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+.circle-photo img{width:100%;height:100%;object-fit:cover}
 
 h1{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(38px, 7vw, 64px); /* evita cortar no mobile */
+  font-size:clamp(38px, 7vw, 64px);
   margin-top:20px;
   line-height:1.1;
-  max-width:95vw;                 /* evita “cortar” */
+  max-width:95vw;
   padding:0 8px;
   overflow-wrap:anywhere;
   background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
@@ -126,10 +124,7 @@ h1{
   100%{background-position:300%}
 }
 
-.date, .countdown, .location{
-  margin:8px 0;
-  font-size:20px;
-}
+.date, .countdown, .location{margin:8px 0;font-size:20px}
 
 .maps-btn, .back-btn{
   margin-top:15px;
@@ -140,12 +135,14 @@ h1{
   color:black;
   font-weight:bold;
   cursor:pointer;
+  transition:transform .18s ease, filter .18s ease;
 }
+.maps-btn:hover, .back-btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
 
 .overlay{
   background:rgba(0,0,0,0.65);
-  min-height:100vh;
-  padding:20px;
+  min-height:100svh; /* evita corte no mobile ao rolar */
+  padding:20px 20px 60px;
   position:relative;
   z-index:2;
   display:none;
@@ -160,6 +157,7 @@ h1{
 }
 
 .card{
+  position:relative;
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(12px);
   border-radius:20px;
@@ -167,19 +165,50 @@ h1{
   width:260px;
   border:1px solid rgba(212,175,55,0.18);
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  overflow:hidden;
 }
 
-/* Animação hover nos produtos */
+/* Hover lift */
 .card:hover{
   transform:translateY(-6px) scale(1.01);
   box-shadow:0 18px 40px rgba(0,0,0,0.35);
   border-color:rgba(212,175,55,0.45);
 }
 
-.card img{
-  width:100%;
-  border-radius:15px;
+/* Animação dourada contornando (sempre ligada, mais forte no hover) */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:22px;
+  padding:2px;
+  background:conic-gradient(
+    from 0deg,
+    rgba(212,175,55,0) 0deg,
+    rgba(212,175,55,.85) 60deg,
+    rgba(248,231,176,.55) 120deg,
+    rgba(212,175,55,.85) 180deg,
+    rgba(255,255,255,.25) 240deg,
+    rgba(212,175,55,0) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:.55;
+  filter:blur(.25px);
+  animation:borderSpin 3.6s linear infinite;
+  pointer-events:none;
 }
+
+.card:hover::before{opacity:.9;filter:blur(0px)}
+
+@keyframes borderSpin{
+  to{transform:rotate(360deg)}
+}
+
+.card img{width:100%;border-radius:15px}
 
 button{
   margin-top:10px;
@@ -192,15 +221,8 @@ button{
   cursor:pointer;
   transition:transform .18s ease, filter .18s ease;
 }
-
-button:hover{ transform:translateY(-1px); filter:brightness(1.05); }
-
-button:disabled{
-  background:gray;
-  cursor:not-allowed;
-  filter:none;
-  transform:none;
-}
+button:hover{transform:translateY(-1px);filter:brightness(1.05)}
+button:disabled{background:gray;cursor:not-allowed;filter:none;transform:none}
 
 input{
   margin-top:8px;
@@ -318,20 +340,20 @@ function tocarMusica(){
 function entrarEvento(){
   document.getElementById("precover").style.display="none";
   document.getElementById("mainContent").style.display="block";
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 function voltarPreCapa(){
   document.getElementById("mainContent").style.display="none";
   document.getElementById("precover").style.display="flex";
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 </script>
 
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, doc, onSnapshot, runTransaction, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
@@ -345,7 +367,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// Atualiza UI quando reservado (em tempo real)
 function setReservadoUI(item, data) {
   const btn = document.getElementById("btn-" + item);
   const badge = document.getElementById("badge-" + item);
@@ -366,7 +387,6 @@ function setReservadoUI(item, data) {
   if (inEmail) inEmail.disabled = reservado;
 }
 
-// Observa todos os cards existentes
 document.querySelectorAll(".card[data-item]").forEach((card) => {
   const item = card.getAttribute("data-item");
   const ref = doc(db, "reservas", item);
@@ -376,7 +396,6 @@ document.querySelectorAll(".card[data-item]").forEach((card) => {
   }, (err) => console.error("onSnapshot erro:", err));
 });
 
-// IMPORTANTE: tornar Presentear global (para funcionar com onclick="Presentear(...)")
 async function Presentear(item){
   const nome = document.getElementById("nome-"+item)?.value.trim();
   const email = document.getElementById("email-"+item)?.value.trim();
@@ -385,7 +404,6 @@ async function Presentear(item){
   const ref = doc(db,"reservas",item);
 
   try{
-    // trava botão enquanto processa
     const btn = document.getElementById("btn-" + item);
     if (btn) { btn.disabled = true; btn.textContent = "Reservando..."; }
 
@@ -397,7 +415,6 @@ async function Presentear(item){
       transaction.set(ref,{reservado:true,nome,email,ts:serverTimestamp()});
     });
 
-    // Email (se EmailJS estiver carregado)
     try{
       if (window.emailjs?.send) {
         await emailjs.send("service_7b5jpat","template_kl4avko",{
@@ -407,7 +424,6 @@ async function Presentear(item){
       }
     } catch (e) {
       console.warn("Falha ao enviar e-mail (EmailJS):", e);
-      // não bloqueia a reserva
     }
 
     alert("Reserva realizada com sucesso!");
@@ -421,7 +437,6 @@ async function Presentear(item){
   }
 }
 
-// deixa acessível no HTML (onclick)
 window.Presentear = Presentear;
 </script>
 
