@@ -5,36 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Chá de Panela - Luiza & André</title>
 
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-<!-- EmailJS e tsParticles -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
 <script>
 window.addEventListener('DOMContentLoaded', function () {
-  try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error('Falha ao inicializar EmailJS', e); }
+  try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error(e); }
 });
 </script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
+html, body{
+  height:100%;
+}
+
 body{
   font-family:'Poppins',sans-serif;
   color:white;
   text-align:center;
   overflow-x:hidden;
-  background:url('arte_casamento.jpeg') no-repeat center center/cover;
+  min-height:100vh;
+  background-image:url('arte_casamento.jpeg');
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
 }
 
-#tsparticles{position:fixed;width:100%;height:100%;z-index:1;}
+/* Correção mobile */
+@media(max-width:768px){
+  body{
+    background-size:cover;
+    background-position:top center;
+    background-attachment:scroll;
+  }
+}
 
-/* PRÉ-CAPA */
+#tsparticles{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
 .precover{
   position:fixed;
-  top:0;left:0;width:100%;height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,0.65);
   display:flex;
   flex-direction:column;
@@ -44,18 +64,6 @@ body{
   padding:20px;
 }
 
-.precover h1{
-  font-family:'Great Vibes',cursive;
-  font-size:60px;
-  background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
-  background-size:300%;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shine 6s infinite linear, fadeIn 2s ease;
-  margin-bottom:15px;
-}
-
-/* Bolinha da foto com borda animada */
 .circle-photo{
   width:180px;
   height:180px;
@@ -64,7 +72,6 @@ body{
   border:5px solid #d4af37;
   margin-bottom:20px;
   box-shadow:0 0 15px rgba(212,175,55,0.6);
-  animation:shineBorder 3s linear infinite;
 }
 
 .circle-photo img{
@@ -73,18 +80,28 @@ body{
   object-fit:cover;
 }
 
-@keyframes shineBorder{
-  0%{box-shadow:0 0 10px rgba(212,175,55,0.4);}
-  50%{box-shadow:0 0 25px rgba(212,175,55,0.8);}
-  100%{box-shadow:0 0 10px rgba(212,175,55,0.4);}
+h1{
+  font-family:'Great Vibes',cursive;
+  font-size:60px;
+  margin-top:20px;
+  background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
+  background-size:300%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine 6s infinite linear;
 }
 
-.precover .date, .precover #countdown, .precover .location{
-  margin:5px 0;
+@keyframes shine{
+  0%{background-position:0%}
+  100%{background-position:300%}
+}
+
+.date, #countdown, .location{
+  margin:8px 0;
   font-size:20px;
 }
 
-.precover .maps-btn, .precover #music-btn{
+.maps-btn, .back-btn{
   margin-top:15px;
   padding:10px 20px;
   border:none;
@@ -93,20 +110,8 @@ body{
   color:black;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
-}
-.precover .maps-btn:hover, .precover #music-btn:hover{background:#fff;}
-
-@keyframes shine{
-  0%{background-position:0%}
-  100%{background-position:300%}
-}
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:translateY(0)}
 }
 
-/* CONTEÚDO PRINCIPAL */
 .overlay{
   background:rgba(0,0,0,0.65);
   min-height:100vh;
@@ -116,68 +121,49 @@ body{
   display:none;
 }
 
-h1{
-  font-family:'Great Vibes',cursive;
-  font-size:60px;
+.container{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
   margin-top:40px;
-  background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
-  background-size:300%;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shine 6s infinite linear, fadeIn 2s ease;
-  padding:0 20px;
+  gap:20px;
 }
 
-.date{margin-top:15px;font-size:20px;}
-#countdown{font-size:22px;margin-top:10px;}
-.location{margin-top:10px;font-size:18px;}
-
-.maps-btn{margin-top:10px;padding:10px 20px;border:none;border-radius:30px;background:#d4af37;color:black;font-weight:bold;cursor:pointer;transition:0.3s;}
-.maps-btn:hover{background:#fff;}
-
-.container{display:flex;justify-content:center;flex-wrap:wrap;margin-top:40px;gap:20px;position:relative;z-index:2;}
 .card{
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(12px);
   border-radius:20px;
   padding:15px;
   width:260px;
-  transition:0.6s;
-  opacity:0;
-  transform:translateY(40px);
-  animation:cardEntrance 1s forwards, floatCard 6s ease-in-out infinite;
-  position:relative;
-  overflow:hidden;
 }
 
-.card img{width:100%;height:auto;border-radius:15px;border:2px solid rgba(212,175,55,0.7);box-shadow:0 10px 25px rgba(0,0,0,0.35);transition:transform 0.6s ease, box-shadow 0.6s ease;position:relative;z-index:1;}
-.card:hover img{transform:scale(1.05);box-shadow:0 15px 35px rgba(0,0,0,0.5);}
+.card img{
+  width:100%;
+  border-radius:15px;
+}
 
-@keyframes cardEntrance{to{opacity:1;transform:translateY(0);}}
-@keyframes floatCard{0%{transform:translateY(0px);}50%{transform:translateY(-6px);}100%{transform:translateY(0px);}}
-
-button{margin-top:10px;padding:8px 15px;border:none;border-radius:20px;background:#d4af37;color:black;cursor:pointer;font-weight:bold;}
-button:disabled{background:gray;cursor:not-allowed;}
-input{margin-top:8px;padding:8px;width:90%;border-radius:15px;border:none;text-align:center;}
-
-.back-btn{
-  margin-top:15px;
-  padding:10px 20px;
+button{
+  margin-top:10px;
+  padding:8px 15px;
   border:none;
-  border-radius:30px;
+  border-radius:20px;
   background:#d4af37;
   color:black;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
 }
-.back-btn:hover{background:#fff;}
 
-@media(max-width:600px){
-h1{font-size:42px}
-.card{width:90%;padding:12px;}
-.date,#countdown,.location{font-size:16px;}
-.maps-btn, .back-btn{padding:8px 16px;font-size:14px;}
+button:disabled{
+  background:gray;
+}
+
+input{
+  margin-top:8px;
+  padding:8px;
+  width:90%;
+  border-radius:15px;
+  border:none;
+  text-align:center;
 }
 </style>
 </head>
@@ -186,27 +172,25 @@ h1{font-size:42px}
 
 <div id="tsparticles"></div>
 
-<!-- PRÉ-CAPA -->
+<!-- PRÉ CAPA -->
 <div class="precover" id="precover">
   <div class="circle-photo">
-    <img src="nos.png" alt="Nos Foto">
+    <img src="nos.png" alt="Foto">
   </div>
   <h1>Luiza & André</h1>
   <div class="date">20/06/2026 - 18:00 horas</div>
   <div id="countdown"></div>
   <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
   <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
-  <button class="maps-btn" id="music-btn-pre" onclick="tocarMusica()">🎵 Tocar Música</button>
+  <button class="maps-btn" onclick="tocarMusica()">🎵 Tocar Música</button>
   <button class="maps-btn" onclick="entrarEvento()">Entrar no Evento</button>
 </div>
 
-<!-- MÚSICA -->
 <audio id="bgMusic" loop>
   <source src="musica.mp3" type="audio/mpeg">
-  Seu navegador não suporta áudio.
 </audio>
 
-<!-- CONTEÚDO PRINCIPAL -->
+<!-- CONTEÚDO -->
 <div class="overlay" id="mainContent">
 
 <h1>Luiza & André</h1>
@@ -214,30 +198,26 @@ h1{font-size:42px}
 <div id="countdown"></div>
 <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
 <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
-<button class="back-btn" onclick="voltarPreCapa()">🔙 Voltar à Pré-Capa</button>
+<button class="back-btn" onclick="voltarPreCapa()">🔙 Voltar</button>
 
 <div class="container">
-  <div class="card" id="Geladeira">
-    <img src="Imagens/geladeira.jpg" alt="Geladeira" loading="lazy">
-    <h3>Geladeira</h3>
-    <input type="text" placeholder="Seu nome" id="nome-Geladeira">
-    <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
-    <button onclick="Presentear('Geladeira')">Presentear</button>
-  </div>
-  <div class="card" id="Microondas">
-    <img src="Imagens/microondas.jpg" alt="Microondas" loading="lazy">
-    <h3>Microondas</h3>
-    <input type="text" placeholder="Seu nome" id="nome-Microondas">
-    <input type="email" placeholder="Seu e-mail" id="email-Microondas">
-    <button onclick="Presentear('Microondas')">Presentear</button>
-  </div>
-  <div class="card" id="Cooktop">
-    <img src="Imagens/cooktop.png" alt="Cooktop" loading="lazy">
-    <h3>Cooktop</h3>
-    <input type="text" placeholder="Seu nome" id="nome-Cooktop">
-    <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-    <button onclick="Presentear('Cooktop')">Presentear</button>
-  </div>
+
+<div class="card" id="Geladeira">
+<img src="Imagens/geladeira.jpg">
+<h3>Geladeira</h3>
+<input type="text" placeholder="Seu nome" id="nome-Geladeira">
+<input type="email" placeholder="Seu e-mail" id="email-Geladeira">
+<button onclick="Presentear('Geladeira')">Presentear</button>
+</div>
+
+<div class="card" id="Cooktop">
+<img src="Imagens/cooktop.png">
+<h3>Cooktop</h3>
+<input type="text" placeholder="Seu nome" id="nome-Cooktop">
+<input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+<button onclick="Presentear('Cooktop')">Presentear</button>
+</div>
+
 </div>
 </div>
 
@@ -251,22 +231,21 @@ setInterval(() => {
   const hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
   const minutes = Math.floor((distance % (1000*60*60))/(1000*60));
   const seconds = Math.floor((distance % (1000*60))/1000);
-  document.querySelectorAll("#countdown").forEach(d => d.innerHTML = `${days} dias ${hours}h ${minutes}m ${seconds}s`);
+  document.querySelectorAll("#countdown").forEach(d => 
+    d.innerHTML = `${days} dias ${hours}h ${minutes}m ${seconds}s`
+  );
 },1000);
 
-// Maps
 function abrirMapa(){
   const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
-  window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank","noopener");
+  window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
 }
 
-// Pré-capa e música
 const audio = document.getElementById("bgMusic");
-const precover = document.getElementById("precover");
-const mainContent = document.getElementById("mainContent");
 
 function tocarMusica(){
   if(audio.paused){
+    audio.volume = 0.3;
     audio.play().catch(console.error);
   } else {
     audio.pause();
@@ -274,26 +253,17 @@ function tocarMusica(){
 }
 
 function entrarEvento(){
-  precover.style.display="none";
-  mainContent.style.display="block";
-  audio.volume=0;
-  audio.play().then(() => {
-    const start = Date.now();
-    const fade = setInterval(() => {
-      const elapsed = Date.now()-start;
-      audio.volume = Math.min(0.3,(elapsed/4000)*0.3);
-      if (elapsed>=4000) clearInterval(fade);
-    },50);
-  }).catch(console.error);
+  document.getElementById("precover").style.display="none";
+  document.getElementById("mainContent").style.display="block";
 }
 
 function voltarPreCapa(){
-  mainContent.style.display="none";
-  precover.style.display="flex";
+  document.getElementById("mainContent").style.display="none";
+  document.getElementById("precover").style.display="flex";
 }
 </script>
 
-<!-- Firebase + Firestore -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -309,94 +279,32 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
-const ITENS = ["Geladeira","Cooktop"];
 
-function aplicarReservado(item, data){
-  const card  = document.getElementById(item);
-  if (!card) return;
-  const botao = card.querySelector("button");
-  card.querySelectorAll("input").forEach(i => i.style.display="none");
-  if (botao){
-    botao.disabled = true;
-    botao.innerText = "Indisponível";
-  }
-}
+async function Presentear(item){
+  const nome = document.getElementById("nome-"+item).value.trim();
+  const email = document.getElementById("email-"+item).value.trim();
+  if(!nome || !email){ alert("Preencha nome e e-mail"); return; }
 
-function aplicarDisponivel(item){
-  const card  = document.getElementById(item);
-  if (!card) return;
-  const botao = card.querySelector("button");
-  card.querySelectorAll("input").forEach(i => i.style.display = "");
-  if (botao){
-    botao.disabled = false;
-    botao.innerText = "Presentear";
-  }
-}
-
-function iniciarListeners(){
-  ITENS.forEach(item => {
-    const ref = doc(db, "reservas", item);
-    onSnapshot(ref, (snap) => {
-      const data = snap.data();
-      if (snap.exists() && data?.reservado === true){
-        aplicarReservado(item, data);
-      } else {
-        aplicarDisponivel(item);
+  const ref = doc(db,"reservas",item);
+  try{
+    await runTransaction(db, async (transaction)=>{
+      const snap = await transaction.get(ref);
+      if(snap.exists() && snap.data().reservado){
+        throw "ja_reservado";
       }
+      transaction.set(ref,{reservado:true,nome,email,ts:serverTimestamp()});
     });
-  });
-}
-iniciarListeners();
 
-async function PresentearItem(item, nome, email){
-  const ref = doc(db, "reservas", item);
-  await runTransaction(db, async (transaction) => {
-    const snap = await transaction.get(ref);
-    if (snap.exists() && snap.data()?.reservado === true) {
-      throw new Error("ja_reservado");
-    }
-    transaction.set(ref, {reservado: true,nome,email,ts: serverTimestamp()});
-  });
-}
+    await emailjs.send("service_7b5jpat","template_kl4avko",{
+      nome,email,item,
+      mensagem:"Obrigado por participar deste momento!"
+    });
 
-window.Presentear = async function(item){
-  const nomeEl  = document.getElementById("nome-"+item);
-  const emailEl = document.getElementById("email-"+item);
-  const card    = document.getElementById(item);
-  const botao   = card?.querySelector("button");
-
-  const nome  = (nomeEl?.value || "").trim();
-  const email = (emailEl?.value || "").trim();
-
-  if (!nome || !email){alert("Preencha nome e e-mail");return;}
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("E-mail inválido");return;}
-  if (botao?.disabled) return;
-
-  const oldText = botao.innerText;
-  botao.disabled = true;
-  botao.innerText = "Reservando...";
-
-  try {
-    await PresentearItem(item, nome, email);
-    aplicarReservado(item, {nome, email});
-    try {
-      await emailjs.send("service_7b5jpat","template_kl4avko",{nome,email,item,mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."});
-      alert("Reserva realizada com sucesso! ✨");
-    } catch(e){
-      console.error("Falha ao enviar e-mail:", e);
-      alert("Reserva efetuada, mas houve um erro ao enviar o e-mail de confirmação.");
-    }
-  } catch (err) {
-    if (err?.message === "ja_reservado") {
-      alert("Ops! Este item já foi reservado.");
-      aplicarReservado(item);
-    } else {
-      console.error(err);
-      alert("Erro ao registrar a reserva. Tente novamente.");
-      if (botao){botao.disabled=false;botao.innerText=oldText||"Presentear";}
-    }
+    alert("Reserva realizada com sucesso!");
+  }catch(e){
+    alert("Item já reservado ou erro.");
   }
-};
+}
 </script>
 
 </body>
