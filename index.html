@@ -255,7 +255,7 @@ input{
   opacity:.9;
 }
 
-/* MODAL */
+/* MODAL (reutilizável para todas notificações) */
 .modal{
   position:fixed; inset:0;
   display:none;
@@ -386,16 +386,16 @@ input{
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL (CONFIRMAÇÃO + NOTIFICAÇÕES) -->
 <div class="modal" id="modal">
   <div class="modal-backdrop" id="modalBackdrop"></div>
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-title" id="modalTitle">Confirmar presente</div>
+    <div class="modal-title" id="modalTitle">Mensagem</div>
     <div class="modal-text" id="modalText"></div>
 
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="modalCancel">Cancelar</button>
-      <button class="btn btn-primary" id="modalConfirm">Confirmar</button>
+    <div class="modal-actions" id="modalActions">
+      <button class="btn btn-secondary" id="modalCancel">Fechar</button>
+      <button class="btn btn-primary" id="modalConfirm" style="display:none;">Ok</button>
     </div>
 
     <div class="small-note" id="modalNote"></div>
@@ -422,10 +422,9 @@ function abrirMapa(){
   window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
 }
 
-/* ✅ Música com FADE IN (começa baixa e vai aumentando) */
+/* Música com FADE IN */
 const audio = document.getElementById("bgMusic");
 let fadeTimer = null;
-
 function fadeInAudio(targetVol = 0.35, step = 0.02, intervalMs = 140){
   clearInterval(fadeTimer);
   audio.volume = Math.max(0, Math.min(1, audio.volume || 0));
@@ -438,13 +437,12 @@ function fadeInAudio(targetVol = 0.35, step = 0.02, intervalMs = 140){
     }
   }, intervalMs);
 }
-
 async function tocarMusica(){
   if(audio.paused){
-    audio.volume = 0.03;            // começa bem baixinho
+    audio.volume = 0.03;
     try{
-      await audio.play();           // play (precisa clique do usuário)
-      fadeInAudio(0.35);            // sobe até 0.35
+      await audio.play();
+      fadeInAudio(0.35);
     }catch(e){}
   }else{
     audio.pause();
@@ -496,7 +494,80 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* UI realtime */
+/* ===== MODAL REUTILIZÁVEL (CONFIRMAÇÃO / ALERTA) ===== */
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modalTitle");
+const modalText = document.getElementById("modalText");
+const modalNote = document.getElementById("modalNote");
+const modalCancel = document.getElementById("modalCancel");
+const modalConfirm = document.getElementById("modalConfirm");
+const modalBackdrop = document.getElementById("modalBackdrop");
+
+let pendingResolve = null;
+
+function openModalBase(){
+  modal.classList.add("show");
+  modalConfirm.focus();
+}
+function closeModal(){
+  modal.classList.remove("show");
+  pendingResolve = null;
+}
+
+modalBackdrop.addEventListener("click", ()=>{
+  // Fecha como cancel
+  if(pendingResolve) pendingResolve(false);
+  closeModal();
+});
+
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape" && modal.classList.contains("show")){
+    if(pendingResolve) pendingResolve(false);
+    closeModal();
+  }
+});
+
+modalCancel.addEventListener("click", ()=>{
+  if(pendingResolve) pendingResolve(false);
+  closeModal();
+});
+
+modalConfirm.addEventListener("click", ()=>{
+  if(pendingResolve) pendingResolve(true);
+  closeModal();
+});
+
+/* Confirm (2 botões) */
+function modalConfirmar({title, text, note, confirmText="Confirmar", cancelText="Cancelar"}){
+  modalTitle.textContent = title || "Confirmar";
+  modalText.textContent  = text  || "";
+  modalNote.textContent  = note  || "";
+  modalConfirm.style.display = "inline-block";
+  modalConfirm.textContent = confirmText;
+  modalCancel.textContent  = cancelText;
+
+  openModalBase();
+  return new Promise((resolve)=>{
+    pendingResolve = resolve;
+  });
+}
+
+/* Alerta bonito (1 botão) */
+function modalAviso({title, text, note, buttonText="Fechar"}){
+  modalTitle.textContent = title || "Aviso";
+  modalText.textContent  = text  || "";
+  modalNote.textContent  = note  || "";
+  modalConfirm.style.display = "none";
+  modalCancel.textContent = buttonText;
+
+  modal.classList.add("show");
+  modalCancel.focus();
+  return new Promise((resolve)=>{
+    pendingResolve = resolve;
+  });
+}
+
+/* ===== UI realtime ===== */
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
   const card = document.querySelector(\`.card[data-item="\${item}"]\`);
@@ -530,40 +601,19 @@ document.querySelectorAll(".card[data-item]").forEach((card)=>{
   });
 });
 
-/* MODAL */
-const modal = document.getElementById("modal");
-const modalText = document.getElementById("modalText");
-const modalTitle = document.getElementById("modalTitle");
-const modalNote = document.getElementById("modalNote");
-const modalCancel = document.getElementById("modalCancel");
-const modalConfirm = document.getElementById("modalConfirm");
-const modalBackdrop = document.getElementById("modalBackdrop");
-
-let pendingItem = null;
-
-function openModal({title, text, note, confirmText="Confirmar"}){
-  modalTitle.textContent = title || "Confirmar";
-  modalText.textContent = text || "";
-  modalNote.textContent = note || "";
-  modalConfirm.textContent = confirmText;
-  modal.classList.add("show");
-  modalConfirm.focus();
-}
-function closeModal(){
-  modal.classList.remove("show");
-  pendingItem = null;
-}
-modalCancel.addEventListener("click", closeModal);
-modalBackdrop.addEventListener("click", closeModal);
-document.addEventListener("keydown",(e)=>{
-  if(e.key === "Escape" && modal.classList.contains("show")) closeModal();
-});
-
-/* Reserva */
+/* ===== Reserva ===== */
 async function doReserve(item){
   const nome = document.getElementById("nome-"+item)?.value.trim();
   const email = document.getElementById("email-"+item)?.value.trim();
-  if(!nome || !email){ alert("Preencha nome e e-mail"); return; }
+
+  if(!nome || !email){
+    await modalAviso({
+      title:"Campos obrigatórios",
+      text:"Preencha nome e e-mail para continuar.",
+      note:""
+    });
+    return;
+  }
 
   const ref = doc(db,"reservas",item);
   const btn = document.getElementById("btn-"+item);
@@ -576,6 +626,7 @@ async function doReserve(item){
       tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
+    // Email (se falhar, não cancela a reserva)
     try{
       if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
@@ -585,33 +636,48 @@ async function doReserve(item){
       }
     }catch(e){}
 
-    alert("Reserva realizada com sucesso!\nObrigado por fazer parte deste momento 💛");
+    await modalAviso({
+      title:"Reserva confirmada",
+      text:"Obrigado por fazer parte deste momento 💛",
+      note:"Sua reserva foi registrada com sucesso."
+    });
+
   }catch(e){
     if(String(e?.message || e) === "ja_reservado"){
-      alert("Este item já foi reservado.");
+      await modalAviso({
+        title:"Ops!",
+        text:"Este item já foi reservado.",
+        note:"Escolha outro presente disponível."
+      });
     }else{
-      alert("Erro ao reservar. Tente novamente.");
+      await modalAviso({
+        title:"Erro",
+        text:"Erro ao reservar. Tente novamente.",
+        note:"Se continuar, recarregue a página."
+      });
+    }
+  }finally{
+    // Se não estiver reservado (ex: erro), reabilita o botão
+    // (o onSnapshot também vai ajustar sozinho)
+    if(btn){
+      btn.textContent = btn.disabled ? btn.textContent : "Presentear";
     }
   }
 }
 
-/* Chama modal */
-function Presentear(item){
-  pendingItem = item;
-  openModal({
-    title: "Confirmar presente",
-    text: `Você escolheu: ${item}. Deseja confirmar?`,
-    note: "Após confirmar, este item ficará reservado.",
-    confirmText: "Confirmar"
+/* ===== Clique no Presentear ===== */
+async function Presentear(item){
+  const ok = await modalConfirmar({
+    title:"Confirmar presente",
+    text:`Você escolheu: ${item}. Deseja confirmar?`,
+    note:"Após confirmar, este item ficará reservado.",
+    confirmText:"Confirmar",
+    cancelText:"Cancelar"
   });
-}
 
-modalConfirm.addEventListener("click", async ()=>{
-  if(!pendingItem) return;
-  const item = pendingItem;
-  closeModal();
+  if(!ok) return;
   await doReserve(item);
-});
+}
 
 window.Presentear = Presentear;
 </script>
