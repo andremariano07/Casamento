@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luiza & André</title>
+<title>Lista de Casamento</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -29,56 +29,13 @@ body{
   background-attachment:fixed;
 }
 
-/* PRE CAPA */
-.precapa{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.7);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
-}
-
-.foto-casal{
-  width:160px;
-  height:160px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid gold;
-  box-shadow:0 0 25px rgba(255,215,0,0.6);
-  margin-bottom:20px;
-}
-
-.precapa h1{
-  font-weight:600;
-  margin-bottom:20px;
-}
-
-.precapa button{
-  padding:12px 30px;
-  border:none;
-  border-radius:25px;
-  background:gold;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.precapa button:hover{
-  transform:scale(1.05);
-}
-
-/* CONTAINER PRINCIPAL */
 .container{
   padding:40px 20px;
-  display:none;
 }
 
-h2{
-  margin-bottom:20px;
+h1{
+  margin-bottom:30px;
+  font-weight:600;
 }
 
 .card{
@@ -93,7 +50,11 @@ h2{
 
 .card.reservado{
   border:2px solid gold;
-  box-shadow:0 0 25px rgba(255,215,0,0.7);
+  box-shadow:0 0 25px rgba(255,215,0,0.6);
+}
+
+.card h2{
+  margin-bottom:15px;
 }
 
 .card input{
@@ -120,6 +81,7 @@ h2{
   cursor:not-allowed;
 }
 
+/* animação elegante */
 @keyframes brilho{
   0%{transform:scale(1);}
   50%{transform:scale(1.05);}
@@ -133,49 +95,24 @@ h2{
 </head>
 <body>
 
-<!-- PRÉ CAPA -->
-<div class="precapa" id="precapa">
-<img src="nos.jpeg" class="foto-casal">
-<h1>Luiza & André</h1>
-<button onclick="entrar()">Entrar</button>
-</div>
-
-<!-- CONTEÚDO -->
-<div class="container" id="conteudo">
-<h2>Lista de Casamento</h2>
+<div class="container">
+<h1>Lista de Casamento</h1>
 
 <div class="card" id="card-Geladeira">
-<h3>Geladeira</h3>
+<h2>Geladeira</h2>
 <input type="text" id="nome-Geladeira" placeholder="Seu nome">
 <input type="email" id="email-Geladeira" placeholder="Seu e-mail">
 <button id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
 </div>
 
+<div class="card" id="card-Microondas">
+<h2>Microondas</h2>
+<input type="text" id="nome-Microondas" placeholder="Seu nome">
+<input type="email" id="email-Microondas" placeholder="Seu e-mail">
+<button id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
 </div>
 
-<!-- MÚSICA -->
-<audio id="bgMusic" loop>
-<source src="https://media.vocaroo.com/mp3/1c3ZGc93IyZe" type="audio/mpeg">
-</audio>
-
-<script>
-function entrar(){
-  document.getElementById("precapa").style.display="none";
-  document.getElementById("conteudo").style.display="block";
-
-  const audio = document.getElementById("bgMusic");
-  audio.volume=0;
-  audio.play();
-
-  let fade=setInterval(()=>{
-    if(audio.volume<0.3){
-      audio.volume+=0.02;
-    }else{
-      clearInterval(fade);
-    }
-  },200);
-}
-</script>
+</div>
 
 <!-- FIREBASE -->
 <script type="module">
@@ -232,22 +169,23 @@ window.Presentear = async function(item){
       mensagem:"Obrigado por participar deste momento!"
     });
 
-    btn.innerText="Reservado ✓";
-    btn.disabled=true;
+    // 🔥 Atualização visual automática
+    btn.innerText = "Reservado ✓";
+    btn.disabled = true;
     card.classList.add("reservado");
     card.classList.add("animar");
 
     alert("Reserva realizada com sucesso! ✨");
 
   }catch(e){
-    if(e==="ja_reservado"){
-      btn.innerText="Reservado ✓";
-      btn.disabled=true;
-      card.classList.add("reservado");
+    if(e === "ja_reservado"){
       alert("Este item já foi reservado.");
-    }else{
+      btn.innerText = "Reservado ✓";
+      btn.disabled = true;
+      card.classList.add("reservado");
+    } else {
       console.error(e);
-      alert("Erro ao reservar.");
+      alert("Erro ao reservar. Tente novamente.");
     }
   }
 }
