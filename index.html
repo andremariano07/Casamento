@@ -11,171 +11,171 @@
 
 <script>
 window.addEventListener('DOMContentLoaded', function () {
-  try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error(e); }
+  try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
 
   // Bolinhas douradas no fundo (bem leve)
-  try {
-    if (window.tsParticles) {
-      tsParticles.load("tsparticles", {
-        fpsLimit: 60,
-        fullScreen: { enable: false },
-        background: { color: "transparent" },
-        particles: {
-          number: { value: 28, density: { enable: true, area: 900 } },
-          color: { value: ["#d4af37", "#f8e7b0", "#ffffff"] },
-          opacity: { value: 0.16, random: { enable: true, minimumValue: 0.06 } },
-          size: { value: { min: 1, max: 4 }, random: true },
-          move: { enable: true, speed: 0.7, direction: "top", outModes: { default: "out" } },
-          shape: { type: "circle" }
+  try{
+    if(window.tsParticles){
+      tsParticles.load("tsparticles",{
+        fpsLimit:60,
+        fullScreen:{ enable:false },
+        background:{ color:"transparent" },
+        particles:{
+          number:{ value:28, density:{ enable:true, area:900 } },
+          color:{ value:["#d4af37","#f8e7b0","#fff"] },
+          opacity:{ value:0.15, random:{ enable:true, minimumValue:0.06 } },
+          size:{ value:{ min:1, max:4 }, random:true },
+          move:{ enable:true, speed:.7, direction:"top", outModes:{ default:"out" } },
+          shape:{ type:"circle" }
         },
-        detectRetina: true
+        detectRetina:true
       });
     }
-  } catch (e) { console.error(e); }
+  }catch(e){}
 });
 </script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html, body{height:100%}
+html,body{height:100%}
+:root{ --gold:#d4af37; --gold2:#f8e7b0; }
 
-:root{
-  --gold:#d4af37;
-  --gold2:#f8e7b0;
-}
-
-/* Fundo (corrige “corte” no celular) */
 body{
-  font-family:'Poppins',sans-serif;
-  color:white;
+  font-family:Poppins,sans-serif;
+  color:#fff;
   text-align:center;
-  overflow-x:hidden;
   min-height:100svh;
-  background:
-    linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.22)),
-    url('arte_casamento.jpeg');
+  overflow-x:hidden;
+  background:linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url('arte_casamento.jpeg');
+  background-size:cover;
   background-position:center top;
   background-repeat:no-repeat;
-  background-size:cover;
   background-attachment:fixed;
 }
-
-/* Mobile: fixed pode causar corte/bug */
 @media(max-width:768px){
-  body{
-    background-attachment:scroll;
-    min-height:100svh;
-  }
+  body{background-attachment:scroll;}
 }
 
 #tsparticles{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:1;
-  pointer-events:none;
+  position:fixed; inset:0; width:100%; height:100%;
+  pointer-events:none; z-index:1;
 }
 
 /* PRÉ CAPA */
 .precover{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.65);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
-  padding:20px;
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.65);
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  padding:20px; z-index:10;
 }
 
 .circle-photo{
-  width:180px;height:180px;
-  border-radius:50%;
-  overflow:hidden;
-  border:5px solid var(--gold);
+  width:180px;height:180px;border-radius:50%;
+  overflow:hidden;border:5px solid var(--gold);
   margin-bottom:20px;
-  box-shadow:0 0 15px rgba(212,175,55,0.6);
+  box-shadow:0 0 15px rgba(212,175,55,.6);
 }
 .circle-photo img{width:100%;height:100%;object-fit:cover}
 
 h1{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(38px, 7vw, 64px);
-  margin-top:20px;
+  font-size:clamp(38px,7vw,64px);
   line-height:1.1;
   max-width:95vw;
   padding:0 8px;
-  overflow-wrap:anywhere;
   background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
   background-size:300%;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   animation:shine 6s infinite linear;
 }
-@keyframes shine{0%{background-position:0%}100%{background-position:300%}}
+@keyframes shine{to{background-position:300%}}
 
-.date, .countdown, .location{margin:8px 0;font-size:20px}
+.date,.countdown,.location{margin:8px 0;font-size:20px}
 
-.maps-btn, .back-btn{
-  margin-top:15px;
-  padding:10px 20px;
+/* Botões + efeito clique dourado */
+.btn, .maps-btn, .back-btn, button{
+  position:relative;
+  margin-top:12px;
+  padding:10px 22px;
   border:none;
   border-radius:30px;
   background:var(--gold);
-  color:black;
-  font-weight:bold;
+  color:#111;
+  font-weight:700;
   cursor:pointer;
+  outline:none;
   transition:transform .18s ease, filter .18s ease;
+  overflow:hidden; /* para ripple */
 }
-.maps-btn:hover, .back-btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.btn:hover, .maps-btn:hover, .back-btn:hover, button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+.btn:disabled, button:disabled{
+  background:gray;
+  cursor:not-allowed;
+  filter:none;
+  transform:none;
+}
 
-/* CONTEÚDO: coloca o mesmo fundo aqui também (pra não “cortar” ao rolar) */
+/* Ripple dourado */
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  transform:scale(0);
+  animation:ripple .65s ease-out;
+  background:radial-gradient(circle, rgba(248,231,176,.95) 0%, rgba(212,175,55,.55) 35%, rgba(212,175,55,0) 70%);
+  pointer-events:none;
+}
+@keyframes ripple{
+  to{ transform:scale(4); opacity:0; }
+}
+
+/* CONTEÚDO */
 .overlay{
   display:none;
   position:relative;
   z-index:2;
   min-height:100svh;
-  padding:20px 20px 60px;
-
-  background:
-    linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65)),
-    url('arte_casamento.jpeg');
-  background-position:center top;
-  background-repeat:no-repeat;
+  padding:20px 20px 70px;
+  background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('arte_casamento.jpeg');
   background-size:cover;
+  background-position:center top;
   background-attachment:fixed;
 }
 @media(max-width:768px){
-  .overlay{ background-attachment:scroll; }
+  .overlay{background-attachment:scroll;}
 }
 
+/* Container centralizado de verdade no mobile */
 .container{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  margin-top:40px;
+  width:min(980px, 100%);
+  margin:40px auto 0;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 260px));
+  justify-content:center; /* centraliza colunas */
+  justify-items:center;   /* centraliza os cards */
   gap:20px;
+}
+@media(max-width:420px){
+  .container{
+    grid-template-columns: 1fr; /* um por linha */
+    justify-items:center;
+  }
 }
 
 .card{
   position:relative;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  border-radius:20px;
-  padding:15px;
   width:260px;
-  border:1px solid rgba(212,175,55,0.18);
-  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  padding:15px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(212,175,55,.18);
   overflow:hidden;
-}
-
-/* Hover lift */
-.card:hover{
-  transform:translateY(-6px) scale(1.01);
-  box-shadow:0 18px 40px rgba(0,0,0,0.35);
-  border-color:rgba(212,175,55,0.45);
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
 /* Animação dourada contornando os itens */
@@ -194,9 +194,7 @@ h1{
     rgba(255,255,255,.22) 260deg,
     rgba(212,175,55,0) 360deg
   );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.6;
@@ -204,56 +202,122 @@ h1{
   animation:borderSpin 3.6s linear infinite;
   pointer-events:none;
 }
-.card:hover::before{opacity:.95;filter:blur(0px)}
 @keyframes borderSpin{to{transform:rotate(360deg)}}
 
-.card img{
-  width:100%;
-  border-radius:15px;
-  display:block;
+.card:hover{
+  transform:translateY(-6px) scale(1.01);
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  border-color:rgba(212,175,55,.45);
 }
+.card:hover::before{opacity:.95;filter:blur(0px)}
 
-button{
-  margin-top:10px;
-  padding:8px 15px;
-  border:none;
-  border-radius:20px;
-  background:var(--gold);
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
-  transition:transform .18s ease, filter .18s ease;
-}
-button:hover{transform:translateY(-1px);filter:brightness(1.05)}
-button:disabled{background:gray;cursor:not-allowed;filter:none;transform:none}
+.card img{width:100%;border-radius:12px;display:block}
 
 input{
   margin-top:8px;
-  padding:8px;
-  width:90%;
-  border-radius:15px;
+  padding:10px;
+  width:92%;
+  border-radius:18px;
   border:none;
   text-align:center;
 }
 
 .badge{
-  margin-top:10px;
   display:inline-block;
-  padding:6px 10px;
+  margin-top:10px;
+  padding:6px 12px;
   border-radius:999px;
   font-size:12px;
-  background:rgba(212,175,55,0.18);
-  border:1px solid rgba(212,175,55,0.25);
+  background:rgba(212,175,55,.22);
+  border:1px solid rgba(212,175,55,.28);
 }
 .badge.reservado{
-  background:rgba(255,255,255,0.10);
-  border-color:rgba(255,255,255,0.22);
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.22);
 }
+
+/* MODAL BONITO */
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:18px;
+}
+.modal.show{display:flex}
+
+.modal-backdrop{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(4px);
+}
+
+.modal-box{
+  position:relative;
+  width:min(420px, 100%);
+  border-radius:22px;
+  padding:18px 16px 16px;
+  background:rgba(28,28,28,.72);
+  border:1px solid rgba(212,175,55,.28);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  overflow:hidden;
+  transform:translateY(10px) scale(.98);
+  opacity:0;
+  animation:modalIn .22s ease forwards;
+}
+
+.modal-box::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:24px;
+  padding:2px;
+  background:conic-gradient(from 0deg, rgba(212,175,55,0), rgba(212,175,55,.85), rgba(248,231,176,.6), rgba(212,175,55,0));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:.65;
+  animation:borderSpin 3.2s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes modalIn{
+  to{ transform:translateY(0) scale(1); opacity:1; }
+}
+
+.modal-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.modal-text{
+  font-size:14px;
+  opacity:.92;
+  margin-bottom:14px;
+  line-height:1.35;
+}
+.modal-actions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.modal-actions .btn-secondary{
+  background:rgba(255,255,255,.14);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.18);
+}
+.modal-actions .btn-primary{
+  background:var(--gold);
+  color:#111;
+}
+.small-note{font-size:12px; opacity:.75; margin-top:10px;}
 </style>
 </head>
 
 <body>
-
 <div id="tsparticles"></div>
 
 <!-- PRÉ CAPA -->
@@ -265,9 +329,9 @@ input{
   <div class="date">20/06/2026 - 18:00 horas</div>
   <div class="countdown" id="countdown-pre"></div>
   <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
-  <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
-  <button class="maps-btn" onclick="tocarMusica()">🎵 Tocar Música</button>
-  <button class="maps-btn" onclick="entrarEvento()">Lista de Presente</button>
+  <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
+  <button class="maps-btn btn" onclick="tocarMusica()">Tocar Música</button>
+  <button class="maps-btn btn" onclick="entrarEvento()">Lista de Presente</button>
 </div>
 
 <audio id="bgMusic" loop>
@@ -280,18 +344,17 @@ input{
   <div class="date">20/06/2026 - 18:00 horas</div>
   <div class="countdown" id="countdown-main"></div>
   <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
-  <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
-  <button class="back-btn" onclick="voltarPreCapa()">🔙 Voltar</button>
+  <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
+  <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
   <div class="container">
-
     <div class="card" id="Geladeira" data-item="Geladeira">
       <img src="Imagens/geladeira.jpg" alt="Geladeira">
       <h3>Geladeira</h3>
       <div class="badge" id="badge-Geladeira">Disponível</div>
       <input type="text" placeholder="Seu nome" id="nome-Geladeira">
       <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
-      <button id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
+      <button class="btn" id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
     </div>
 
     <div class="card" id="Cooktop" data-item="Cooktop">
@@ -300,28 +363,41 @@ input{
       <div class="badge" id="badge-Cooktop">Disponível</div>
       <input type="text" placeholder="Seu nome" id="nome-Cooktop">
       <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-      <button id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+      <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-title" id="modalTitle">Confirmar presente</div>
+    <div class="modal-text" id="modalText"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modalCancel">Cancelar</button>
+      <button class="btn btn-primary" id="modalConfirm">Confirmar</button>
     </div>
 
+    <div class="small-note" id="modalNote"></div>
   </div>
 </div>
 
 <script>
-// Contagem regressiva
-const countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
-setInterval(() => {
-  const now = new Date().getTime();
-  const distance = countDownDate - now;
-
-  const days = Math.max(0, Math.floor(distance / (1000*60*60*24)));
-  const hours = Math.max(0, Math.floor((distance % (1000*60*60*24))/(1000*60*60)));
-  const minutes = Math.max(0, Math.floor((distance % (1000*60*60))/(1000*60)));
-  const seconds = Math.max(0, Math.floor((distance % (1000*60))/1000));
-
-  const txt = `${days} dias ${hours}h ${minutes}m ${seconds}s`;
+/* countdown */
+const target = new Date("Jun 20, 2026 18:00:00").getTime();
+setInterval(()=>{
+  const diff = target - Date.now();
+  const t = Math.max(0, diff);
+  const s = Math.floor(t/1000)%60;
+  const m = Math.floor(t/60000)%60;
+  const h = Math.floor(t/3600000)%24;
+  const days = Math.floor(t/86400000);
+  const txt = `${days} dias ${h}h ${m}m ${s}s`;
   document.getElementById("countdown-pre").textContent = txt;
   document.getElementById("countdown-main").textContent = txt;
-}, 1000);
+},1000);
 
 function abrirMapa(){
   const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
@@ -329,30 +405,38 @@ function abrirMapa(){
 }
 
 const audio = document.getElementById("bgMusic");
-
-function tocarMusica(){
-  if(audio.paused){
-    audio.volume = 0.3;
-    audio.play().catch(console.error);
-  } else {
-    audio.pause();
-  }
-}
+function tocarMusica(){ audio.paused ? audio.play().catch(()=>{}) : audio.pause(); }
 
 function entrarEvento(){
   document.getElementById("precover").style.display="none";
   document.getElementById("mainContent").style.display="block";
-  window.scrollTo({ top: 0, behavior: "instant" });
+  window.scrollTo({top:0, behavior:"instant"});
 }
 
 function voltarPreCapa(){
   document.getElementById("mainContent").style.display="none";
   document.getElementById("precover").style.display="flex";
-  window.scrollTo({ top: 0, behavior: "instant" });
+  window.scrollTo({top:0, behavior:"instant"});
 }
+
+/* Ripple dourado em todos os botões */
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button");
+  if(!btn || btn.disabled) return;
+
+  const rect = btn.getBoundingClientRect();
+  const ripple = document.createElement("span");
+  ripple.className = "ripple";
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + "px";
+  ripple.style.left = (e.clientX - rect.left - size/2) + "px";
+  ripple.style.top  = (e.clientY - rect.top  - size/2) + "px";
+  btn.appendChild(ripple);
+  ripple.addEventListener("animationend", ()=> ripple.remove());
+});
 </script>
 
-<!-- FIREBASE -->
+<!-- FIREBASE + MODAL LÓGICA -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -369,85 +453,118 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-function setReservadoUI(item, data) {
-  const btn = document.getElementById("btn-" + item);
-  const badge = document.getElementById("badge-" + item);
-  const inNome = document.getElementById("nome-" + item);
-  const inEmail = document.getElementById("email-" + item);
-
+/* UI realtime */
+function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
+  const badge = document.getElementById("badge-"+item);
+  const btn = document.getElementById("btn-"+item);
+  const inNome = document.getElementById("nome-"+item);
+  const inEmail = document.getElementById("email-"+item);
 
-  if (badge) {
+  if(badge){
     badge.textContent = reservado ? "Reservado" : "Disponível";
     badge.classList.toggle("reservado", reservado);
   }
-  if (btn) {
+  if(btn){
     btn.disabled = reservado;
     btn.textContent = reservado ? "Já reservado" : "Presentear";
   }
-  if (inNome) inNome.disabled = reservado;
-  if (inEmail) inEmail.disabled = reservado;
+  if(inNome) inNome.disabled = reservado;
+  if(inEmail) inEmail.disabled = reservado;
 }
 
-document.querySelectorAll(".card[data-item]").forEach((card) => {
+document.querySelectorAll(".card[data-item]").forEach((card)=>{
   const item = card.getAttribute("data-item");
-  const ref = doc(db, "reservas", item);
-
-  onSnapshot(ref, (snap) => {
-    setReservadoUI(item, snap.exists() ? snap.data() : null);
-  }, (err) => console.error("onSnapshot erro:", err));
+  onSnapshot(doc(db,"reservas",item), (snap)=>{
+    setReservadoUI(item, snap.exists()? snap.data() : null);
+  });
 });
 
-async function Presentear(item){
-  // Confirmação ao escolher o presente
-  const ok = confirm(`Confirmar o presente: ${item}?`);
-  if (!ok) return;
+/* MODAL */
+const modal = document.getElementById("modal");
+const modalText = document.getElementById("modalText");
+const modalTitle = document.getElementById("modalTitle");
+const modalNote = document.getElementById("modalNote");
+const modalCancel = document.getElementById("modalCancel");
+const modalConfirm = document.getElementById("modalConfirm");
+const modalBackdrop = document.getElementById("modalBackdrop");
 
+let pendingItem = null;
+
+function openModal({title, text, note, confirmText="Confirmar"}){
+  modalTitle.textContent = title || "Confirmar";
+  modalText.textContent = text || "";
+  modalNote.textContent = note || "";
+  modalConfirm.textContent = confirmText;
+  modal.classList.add("show");
+  modalConfirm.focus();
+}
+function closeModal(){
+  modal.classList.remove("show");
+  pendingItem = null;
+}
+modalCancel.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", closeModal);
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape" && modal.classList.contains("show")) closeModal();
+});
+
+/* Presentear com modal */
+async function doReserve(item){
   const nome = document.getElementById("nome-"+item)?.value.trim();
   const email = document.getElementById("email-"+item)?.value.trim();
   if(!nome || !email){ alert("Preencha nome e e-mail"); return; }
 
-  // Confirmação final antes de reservar
-  const ok2 = confirm("Deseja confirmar a reserva agora?");
-  if (!ok2) return;
-
   const ref = doc(db,"reservas",item);
 
-  try{
-    const btn = document.getElementById("btn-" + item);
-    if (btn) { btn.disabled = true; btn.textContent = "Reservando..."; }
+  const btn = document.getElementById("btn-"+item);
+  if(btn){ btn.disabled = true; btn.textContent = "Reservando..."; }
 
-    await runTransaction(db, async (transaction)=>{
-      const snap = await transaction.get(ref);
-      if(snap.exists() && snap.data().reservado){
-        throw new Error("ja_reservado");
-      }
-      transaction.set(ref,{reservado:true,nome,email,ts:serverTimestamp()});
+  try{
+    await runTransaction(db, async (tx)=>{
+      const snap = await tx.get(ref);
+      if(snap.exists() && snap.data().reservado) throw new Error("ja_reservado");
+      tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
-    // Email (não bloqueia a reserva se falhar)
+    // Email (se falhar, não cancela a reserva)
     try{
-      if (window.emailjs?.send) {
+      if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
           nome,email,item,
           mensagem:"Obrigado por fazer parte deste momento 💛"
         });
       }
-    } catch (e) {
-      console.warn("Falha ao enviar e-mail (EmailJS):", e);
-    }
+    }catch(e){}
 
-    // Mensagem depois de confirmar
     alert("Reserva realizada com sucesso!\nObrigado por fazer parte deste momento 💛");
   }catch(e){
-    if (String(e?.message || e) === "ja_reservado") {
+    if(String(e?.message || e) === "ja_reservado"){
       alert("Este item já foi reservado.");
-    } else {
-      console.error(e);
+    }else{
       alert("Erro ao reservar. Tente novamente.");
     }
   }
 }
+
+/* Função chamada pelo onclick do botão */
+function Presentear(item){
+  pendingItem = item;
+  openModal({
+    title: "Confirmar presente",
+    text: `Você escolheu: ${item}. Deseja confirmar?`,
+    note: "Após confirmar, este item ficará reservado.",
+    confirmText: "Confirmar"
+  });
+}
+
+/* Ao confirmar no modal */
+modalConfirm.addEventListener("click", async ()=>{
+  if(!pendingItem) return;
+  const item = pendingItem;
+  closeModal();
+  await doReserve(item);
+});
 
 window.Presentear = Presentear;
 </script>
