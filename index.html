@@ -202,7 +202,7 @@ h1{
 }
 .card:hover::before{opacity:.95;filter:blur(0px)}
 
-/* ✅ Corrige “Geladeira gigante”: imagem com área fixa e contain */
+/* Imagem padronizada */
 .product-img{
   width:100%;
   aspect-ratio: 4 / 3;
@@ -244,16 +244,10 @@ input{
   border-color:rgba(255,255,255,.22);
 }
 
-/* ✅ Quando reservado, fica mais “compacto” e bonito */
-.card.is-reservado{
-  opacity:.92;
-}
-.card.is-reservado input{
-  display:none;
-}
-.card.is-reservado .reserved-note{
-  display:block;
-}
+/* Quando reservado */
+.card.is-reservado{opacity:.92}
+.card.is-reservado input{display:none}
+.card.is-reservado .reserved-note{display:block}
 .reserved-note{
   display:none;
   margin-top:10px;
@@ -261,7 +255,7 @@ input{
   opacity:.9;
 }
 
-/* MODAL BONITO */
+/* MODAL */
 .modal{
   position:fixed; inset:0;
   display:none;
@@ -271,13 +265,11 @@ input{
   padding:18px;
 }
 .modal.show{display:flex}
-
 .modal-backdrop{
   position:absolute; inset:0;
   background:rgba(0,0,0,.65);
   backdrop-filter:blur(4px);
 }
-
 .modal-box{
   position:relative;
   width:min(420px, 100%);
@@ -291,7 +283,6 @@ input{
   opacity:0;
   animation:modalIn .22s ease forwards;
 }
-
 .modal-box::before{
   content:"";
   position:absolute;
@@ -306,9 +297,7 @@ input{
   animation:borderSpin 3.2s linear infinite;
   pointer-events:none;
 }
-
 @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
-
 .modal-title{font-size:18px;font-weight:700;margin-bottom:8px}
 .modal-text{font-size:14px;opacity:.92;margin-bottom:14px;line-height:1.35}
 .modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -339,7 +328,7 @@ input{
   <button class="maps-btn btn" onclick="entrarEvento()">Lista de Presente</button>
 </div>
 
-<audio id="bgMusic" loop>
+<audio id="bgMusic" loop preload="auto">
   <source src="musica.mp3" type="audio/mpeg">
 </audio>
 
@@ -352,13 +341,10 @@ input{
   <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
   <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
-  <!-- ✅ APENAS 1 container (corrige o layout quebrado) -->
   <div class="container">
 
     <div class="card" id="Geladeira" data-item="Geladeira">
-      <div class="product-img">
-        <img src="Imagens/geladeira.jpg" alt="Geladeira">
-      </div>
+      <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
       <h3>Geladeira</h3>
       <div class="badge" id="badge-Geladeira">Disponível</div>
       <div class="reserved-note" id="note-Geladeira">Este item já foi reservado.</div>
@@ -368,9 +354,7 @@ input{
     </div>
 
     <div class="card" id="Microondas" data-item="Microondas">
-      <div class="product-img">
-        <img src="Imagens/microondas.jpg" alt="Microondas">
-      </div>
+      <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
       <h3>Microondas</h3>
       <div class="badge" id="badge-Microondas">Disponível</div>
       <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
@@ -378,23 +362,19 @@ input{
       <input type="email" placeholder="Seu e-mail" id="email-Microondas">
       <button class="btn" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
     </div>
-    
-    <div class="card" id="Jogo De Panela" data-item="Jogo De Panela">
-      <div class="product-img">
-        <img src="Imagens/jogodepanela.png" alt="Jogo De Panela">
-      </div>
-      <h3>Jogo De Panela</h3>
-      <div class="badge" id="badge-Jogo De Panela">Disponível</div>
-      <div class="reserved-note" id="note-Jogo De Panela">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Jogo De Panela">
-      <input type="email" placeholder="Seu e-mail" id="email-Jogo De Panela">
-      <button class="btn" id="btn-Jogo De Panela" onclick="Presentear('Jogo De Panela')">Presentear</button>
+
+    <div class="card" id="JogoDePanela" data-item="JogoDePanela">
+      <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
+      <h3>Jogo de Panela</h3>
+      <div class="badge" id="badge-JogoDePanela">Disponível</div>
+      <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
+      <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
+      <button class="btn" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
     </div>
 
     <div class="card" id="Cooktop" data-item="Cooktop">
-      <div class="product-img">
-        <img src="Imagens/cooktop.png" alt="Cooktop">
-      </div>
+      <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
       <h3>Cooktop</h3>
       <div class="badge" id="badge-Cooktop">Disponível</div>
       <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
@@ -442,8 +422,34 @@ function abrirMapa(){
   window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
 }
 
+/* ✅ Música com FADE IN (começa baixa e vai aumentando) */
 const audio = document.getElementById("bgMusic");
-function tocarMusica(){ audio.paused ? audio.play().catch(()=>{}) : audio.pause(); }
+let fadeTimer = null;
+
+function fadeInAudio(targetVol = 0.35, step = 0.02, intervalMs = 140){
+  clearInterval(fadeTimer);
+  audio.volume = Math.max(0, Math.min(1, audio.volume || 0));
+  fadeTimer = setInterval(()=>{
+    const next = Math.min(targetVol, audio.volume + step);
+    audio.volume = next;
+    if(next >= targetVol){
+      clearInterval(fadeTimer);
+      fadeTimer = null;
+    }
+  }, intervalMs);
+}
+
+async function tocarMusica(){
+  if(audio.paused){
+    audio.volume = 0.03;            // começa bem baixinho
+    try{
+      await audio.play();           // play (precisa clique do usuário)
+      fadeInAudio(0.35);            // sobe até 0.35
+    }catch(e){}
+  }else{
+    audio.pause();
+  }
+}
 
 function entrarEvento(){
   document.getElementById("precover").style.display="none";
@@ -493,7 +499,7 @@ const db  = getFirestore(app);
 /* UI realtime */
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   const badge = document.getElementById("badge-"+item);
   const note  = document.getElementById("note-"+item);
   const btn   = document.getElementById("btn-"+item);
@@ -513,7 +519,6 @@ function setReservadoUI(item, data){
     btn.disabled = reservado;
     btn.textContent = reservado ? "Já reservado" : "Presentear";
   }
-  // Mesmo escondendo inputs no CSS quando reservado, mantém por segurança:
   if(inNome) inNome.disabled = reservado;
   if(inEmail) inEmail.disabled = reservado;
 }
@@ -571,7 +576,6 @@ async function doReserve(item){
       tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
-    // Email (se falhar, não cancela a reserva)
     try{
       if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
