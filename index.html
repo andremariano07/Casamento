@@ -157,6 +157,7 @@ h1{
   .container{ grid-template-columns:1fr; }
 }
 
+/* ===== CARDS ===== */
 .card{
   position:relative;
   width:260px;
@@ -169,55 +170,56 @@ h1{
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
-/* ✅ NOVO: filete dourado girando no contorno (não preenchido) */
-.card::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  border-radius:22px;
-  padding:2px;                 /* espessura do contorno */
-  background:
-    conic-gradient(
-      from 0deg,
-      rgba(212,175,55,0) 0deg,
-      rgba(212,175,55,0) 310deg,
-      rgba(248,231,176,.95) 332deg,
-      rgba(212,175,55,.85) 350deg,
-      rgba(212,175,55,0) 360deg
-    );
-  /* deixa só a borda */
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
-  opacity:.85;
-  filter: drop-shadow(0 0 6px rgba(212,175,55,.25));
-  animation: orbitStroke 2.8s linear infinite;
-  pointer-events:none;
-}
-
-/* ✅ opcional: uma borda “base” bem suave atrás do filete */
+/* ✅ faixa dourada fixa (borda base) */
 .card::after{
   content:"";
   position:absolute;
   inset:0;
   border-radius:20px;
-  border:1px solid rgba(212,175,55,.18);
+  border:1px solid rgba(212,175,55,.35);
   pointer-events:none;
 }
 
-@keyframes orbitStroke{
-  to{ transform:rotate(360deg); }
+/* ✅ brilho girando SOMENTE na borda */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;                 /* fica por fora do card */
+  border-radius:22px;
+  padding:2px;                /* espessura do anel animado */
+  background:conic-gradient(
+    from 0deg,
+    rgba(212,175,55,0) 0deg,
+    rgba(212,175,55,0) 320deg,
+    rgba(248,231,176,1) 340deg,
+    rgba(212,175,55,1) 355deg,
+    rgba(212,175,55,0) 360deg
+  );
+
+  /* recorte: só a borda */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+
+  opacity:.95;
+  filter:drop-shadow(0 0 8px rgba(212,175,55,.45));
+  animation:spinBorder 2.6s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes spinBorder{
+  to { transform:rotate(360deg); }
 }
 
 .card:hover{
   transform:translateY(-6px) scale(1.01);
   box-shadow:0 18px 40px rgba(0,0,0,.35);
-  border-color:rgba(212,175,55,.45);
+  border-color:rgba(212,175,55,.55);
 }
 .card:hover::before{
-  opacity:1;
-  filter: drop-shadow(0 0 10px rgba(212,175,55,.45));
+  filter:drop-shadow(0 0 12px rgba(212,175,55,.65));
 }
 
 /* Imagem padronizada */
@@ -312,7 +314,7 @@ input{
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.65;
-  animation:orbitStroke 3.2s linear infinite;
+  animation:spinBorder 3.2s linear infinite;
   pointer-events:none;
 }
 @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
@@ -514,7 +516,7 @@ document.addEventListener("click", (e)=>{
   ripple.addEventListener("animationend", ()=> ripple.remove());
 });
 
-/* ===== MODAL helpers também no escopo global (para fallback) ===== */
+/* ===== MODAL helpers (global) ===== */
 const uiModal = document.getElementById("modal");
 const uiTitle = document.getElementById("modalTitle");
 const uiText = document.getElementById("modalText");
@@ -574,9 +576,13 @@ async function Presentear(item){
   });
 }
 window.Presentear = Presentear;
+
+/* expõe helpers globalmente (usados pelo módulo) */
+window.uiConfirmar = uiConfirmar;
+window.uiAviso = uiAviso;
 </script>
 
-<!-- FIREBASE + MODAL -->
+<!-- FIREBASE + RESERVA -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -650,6 +656,7 @@ async function doReserve(item){
       tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
+    // Email (se falhar, não cancela a reserva)
     try{
       if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
@@ -695,11 +702,6 @@ async function presentearImpl(item){
 }
 
 window.__presentearImpl = presentearImpl;
-</script>
-
-<script>
-window.uiConfirmar = window.uiConfirmar || (async ()=> false);
-window.uiAviso = window.uiAviso || (async ()=> false);
 </script>
 
 </body>
