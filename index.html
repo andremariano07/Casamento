@@ -1,431 +1,303 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chá de Panela - Luiza & André</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chá de Panela - Luiza & André</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- Libs -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){ console.error('Falha ao inicializar EmailJS', e); }
-    });
-  </script>
+<script>
+(function(){
+emailjs.init("3zU5_d_KcUdDLjXQY");
+})();
+</script>
 
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
 
-    :root{
-      --gold:#d4af37;
-      --gold-soft:#f0e3b0;
-      --bg-glass: rgba(255,255,255,0.08);
-      --text:#ffffff;
-      --bg:#1a1a1a;
-    }
+body{
+font-family:'Poppins',sans-serif;
+color:white;
+text-align:center;
+overflow-x:hidden;
+background:url('arte_casamento.jpeg') no-repeat center center/cover;
+}
 
-    body{
-      font-family:'Poppins',sans-serif;
-      color:var(--text);
-      text-align:center;
-      overflow-x:hidden;
-      background:url('arte_casamento.jpeg') no-repeat center center/cover fixed;
-      background-color: var(--bg);
-    }
+.overlay{
+background:rgba(0,0,0,0.65);
+min-height:100vh;
+padding:20px;
+position:relative;
+z-index:2;
+}
 
-    .overlay{
-      background:rgba(0,0,0,0.75);
-      min-height:100vh;
-      width: 100%;
-      position:relative;
-      z-index:2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 48px 20px 60px;
-    }
+#tsparticles{
+position:fixed;
+width:100%;
+height:100%;
+z-index:1;
+}
 
-    #tsparticles { position:fixed; width:100%; height:100%; z-index:1; pointer-events: none; }
+h1{
+font-family:'Great Vibes',cursive;
+font-size:60px;
+margin-top:40px;
+background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
+background-size:300%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:shine 6s infinite linear, fadeIn 2s ease;
+padding:0 20px;
+}
 
-    /* Navegação */
-    #intro-page { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      min-height: 80vh; 
-      animation: fadeIn 0.9s ease; 
-      padding-bottom: 16px;
-    }
-    #lista-presentes { display: none; width: 100%; animation: fadeIn 0.6s ease; }
+@keyframes shine{
+0%{background-position:0%}
+100%{background-position:300%}
+}
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(30px)}
+to{opacity:1;transform:translateY(0)}
+}
 
-    /* Título (não corta “André”) */
-    h1 {
-      font-family:'Great Vibes', cursive;
-      font-size: 72px;
-      line-height: 1.25;
-      margin: 8px 0 12px;
-      padding: 6px 10px;
-      display: inline-block;
-      overflow: visible;
-      text-wrap: balance;
-      background: linear-gradient(45deg,#fff,var(--gold-soft),var(--gold),#fff);
-      background-size: 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shine 7s infinite linear;
-      text-shadow: 0 0 10px rgba(212,175,55,0.18);
-      word-break: normal;
-    }
-    @keyframes shine { 0%{background-position:0%} 100%{background-position:300%} }
+.date{
+margin-top:15px;
+font-size:20px;
+}
 
-    /* Capa */
-    .foto-casal {
-      width: 220px; height: 220px; border-radius: 50%;
-      border: 4px solid var(--gold);
-      object-fit: cover; margin-bottom: 20px;
-      box-shadow: 0 0 22px rgba(212,175,55,0.35);
-      background-color: #111;
-    }
+#countdown{
+font-size:22px;
+margin-top:10px;
+}
 
-    .countdown-box {
-      background: rgba(255,255,255,0.09);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      border-radius: 15px;
-      margin: 20px 0;
-      border: 1px solid rgba(212,175,55,0.32);
-      min-width: 280px;
-    }
+.location{
+margin-top:10px;
+font-size:18px;
+}
 
-    #countdown { font-size: 22px; font-weight: 600; color: var(--gold); }
-    .info-local { font-size: 18px; line-height: 1.6; margin-bottom: 20px; }
+.maps-btn{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:30px;
+background:#d4af37;
+color:black;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
 
-    /* Botões */
-    .btn-gold {
-      padding: 15px 35px;
-      font-size: 16px;
-      border: none;
-      border-radius: 50px;
-      background: var(--gold);
-      color: #111;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
-      text-transform: uppercase;
-      margin: 10px;
-      box-shadow: 0 6px 14px rgba(212,175,55,0.25);
-    }
-    .btn-gold:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.maps-btn:hover{
+background:#fff;
+}
 
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 10px 25px;
-      border-radius: 50px;
-      cursor: pointer;
-      margin: 5px;
-      transition: 0.2s ease;
-    }
-    .btn-outline:hover { background-color: #0f0f0f; color: #fff; }
+.container{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:40px;
+gap:20px;
+position:relative;
+z-index:2;
+}
 
-    /* Lista de presentes */
-    .container { 
-      display: flex; 
-      justify-content: center; 
-      flex-wrap: wrap; 
-      gap: 22px; 
-      margin-top: 30px; 
-    }
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+border-radius:20px;
+padding:15px;
+width:260px;
+transition:0.6s;
+opacity:0;
+transform:translateY(40px);
+animation:cardEntrance 1s forwards;
+}
 
-    .card {
-      position: relative;
-      background: var(--bg-glass);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 16px;
-      width: 270px;
-      border: 1px solid rgba(255,255,255,0.06); /* base discreta */
-      transition: transform 200ms ease, box-shadow 200ms ease;
-      will-change: transform, box-shadow;
-      isolation: isolate;
-    }
+.card:nth-child(2){
+animation-delay:0.3s;
+}
 
-    /* Borda clean com highlight dourado girando */
-    .card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      padding: 1px; /* espessura da borda */
-      background:
-        conic-gradient(
-          from var(--rot, 0deg),
-          rgba(212,175,55,0) 0deg,
-          rgba(212,175,55,0) 342deg,
-          rgba(255,255,255,0.95) 350deg,
-          rgba(212,175,55,0) 360deg
-        ),
-        linear-gradient(var(--gold), var(--gold));
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0.9;
-      animation: ringSpin 3.5s linear infinite;
-    }
-    @keyframes ringSpin { to { --rot: 360deg; } }
+@keyframes cardEntrance{
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
 
-    /* Hover: leve movimento e sombra sutil */
-    .card:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
-    }
+.card:hover{
+transform:translateY(-8px) scale(1.02);
+}
 
-    .card img { 
-      width: 100%; 
-      height: 200px; 
-      object-fit: cover; 
-      border-radius: 15px; 
-    }
-    .card h3 { 
-      margin: 10px 0 8px; 
-      font-weight: 600; 
-      letter-spacing: 0.2px;
-      color: #fff;
-    }
-    input { 
-      width: 90%; 
-      padding: 10px; 
-      margin-bottom: 10px; 
-      border-radius: 10px; 
-      border: none; 
-      text-align: center; 
-      background: rgba(255,255,255,0.95);
-      color: #222;
-      outline: none;
-      transition: box-shadow 0.2s ease;
-    }
-    input:focus { box-shadow: 0 0 0 3px rgba(212,175,55,0.28); }
+.card img{
+width:100%;
+height:170px;
+object-fit:cover;
+border-radius:15px;
+}
 
-    /* Acessibilidade: reduz animações se preferido */
-    @media (prefers-reduced-motion: reduce) {
-      .card::after { animation: none; }
-      .card, .btn-gold, .btn-outline { transition: none; }
-    }
+button{
+margin-top:10px;
+padding:8px 15px;
+border:none;
+border-radius:20px;
+background:#d4af37;
+color:black;
+cursor:pointer;
+font-weight:bold;
+}
 
-    @media(max-width: 600px) {
-      h1 { font-size: 54px; line-height: 1.22; padding-inline: 8px; }
-      .foto-casal { width: 180px; height: 180px; }
-      .card { width: 92vw; max-width: 360px; }
-    }
-  </style>
+button:disabled{
+background:gray;
+cursor:not-allowed;
+}
+
+input{
+margin-top:8px;
+padding:8px;
+width:90%;
+border-radius:15px;
+border:none;
+text-align:center;
+}
+
+/* 📱 AJUSTE CELULAR */
+@media(max-width:600px){
+
+h1{font-size:42px}
+
+.card{
+width:90%;
+padding:12px;
+}
+
+.card img{
+height:140px;
+}
+
+.date, #countdown, .location{
+font-size:16px;
+}
+
+.maps-btn{
+padding:8px 16px;
+font-size:14px;
+}
+}
+</style>
 </head>
 
 <body>
 
-  <div id="tsparticles"></div>
+<div id="tsparticles"></div>
 
-  <div class="overlay">
+<div class="overlay">
 
-    <section id="intro-page">
-      <img src="sua-foto.jpg" alt="Luiza e André" class="foto-casal">
-      <h1>Luiza & André</h1>
-      
-      <div class="info-local">
-        <p><strong>20 de Junho de 2026</strong></p>
-        <p>Rua Vera Lucia, 215 - Sinimbu</p>
-      </div>
+<h1>Luiza & André</h1>
 
-      <div class="countdown-box">
-        <div id="countdown"></div>
-      </div>
+<div class="date">20/06/2026 - 18:00 horas</div>
+<div id="countdown"></div>
 
-      <button class="btn-gold" onclick="abrirPresentes()">Ver Lista de Presentes</button>
-      
-      <div>
-        <button class="btn-outline" onclick="abrirMapa()">📍 Localização</button>
-        <button class="btn-outline" onclick="tocarMusica()" id="music-btn">🎵 Música</button>
-      </div>
+<div class="location">
+Rua Vera Lucia, 215 - Sinimbu
+</div>
 
-      <!-- Áudio via Google Drive (link direto) -->
-      <audio id="bgMusic" preload="auto" playsinline>
-        https://drive.google.com/uc?export=download&id=1FkVfpiIwEJbplQi3PG5uDYRnC0wDdOHo
-        Seu navegador não suporta o elemento de áudio.
-      </audio>
-    </section>
+<button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
 
-    <section id="lista-presentes">
-      <h1 style="font-size: 40px;">Lista de Presentes</h1>
-      <div class="container">
-        <div class="card" id="Geladeira">
-          <img src="Imagens/geladeira.jpg" alt="Geladeira">
-          <h3>Geladeira</h3>
-          <input type="text" placeholder="Seu nome" id="nome-Geladeira">
-          <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
-          <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Geladeira')">Presentear</button>
-        </div>
+<div class="container">
 
-        <div class="card" id="Jogo de Panela">
-          <img src="Imagens/Jogo de Panela.jpg" alt="Jogo de Panela">
-          <h3>Jogo de Panela</h3>
-          <input type="text" placeholder="Seu nome" id="nome-Jogo de Panela">
-          <input type="email" placeholder="Seu e-mail" id="email-Jogo de Panela">
-          <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Jogo de Panela')">Presentear</button>
-        </div>
+<div class="card" id="Geladeira">
+  <img src="Imagens/geladeira.jpg" alt="Geladeira">
+  <h3>Geladeira</h3>
+  <input type="text" placeholder="Seu nome" id="nome-Geladeira">
+  <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
+  <button onclick="reservar('Geladeira')">Reservar</button>
+</div>
 
-        <div class="card" id="Microondas">
-          <img src="Imagens/microondas.jpg" alt="Microondas">
-          <h3>Microondas</h3>
-          <input type="text" placeholder="Seu nome" id="nome-Microondas">
-          <input type="email" placeholder="Seu e-mail" id="email-Microondas">
-          <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Microondas')">Presentear</button>
-        </div>
+<div class="card" id="Cooktop">
+  <img src="Imagens/cooktop.png" alt="Cooktop">
+  <h3>Cooktop</h3>
+  <input type="text" placeholder="Seu nome" id="nome-Cooktop">
+  <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+  <button onclick="reservar('Cooktop')">Reservar</button>
+</div>
 
-        <div class="card" id="Cooktop">
-          <img src="Imagens/cooktop.png" alt="Cooktop">
-          <h3>Cooktop</h3>
-          <input type="text" placeholder="Seu nome" id="nome-Cooktop">
-          <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-          <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Cooktop')">Presentear</button>
-        </div>
-      </div>
-      <button class="btn-outline" style="margin-top: 30px;" onclick="voltarIntro()">← Voltar</button>
-    </section>
-  </div>
+</div>
+</div>
 
-  <script>
-    function abrirPresentes() {
-      document.getElementById('intro-page').style.display = 'none';
-      document.getElementById('lista-presentes').style.display = 'block';
-      window.scrollTo(0,0);
-    }
+<script>
+tsParticles.load("tsparticles", {
+particles:{
+number:{value:40},
+color:{value:"#d4af37"},
+shape:{type:"circle"},
+opacity:{value:0.5},
+size:{value:3},
+move:{enable:true,speed:0.6}
+},
+background:{color:"transparent"}
+});
 
-    function voltarIntro() {
-      document.getElementById('lista-presentes').style.display = 'none';
-      document.getElementById('intro-page').style.display = 'flex';
-    }
+var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
 
-    // Contagem Regressiva
-    var countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
-    setInterval(function() {
-      var now = new Date().getTime();
-      var distance = countDownDate - now;
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-    }, 1000);
+setInterval(function() {
+var now = new Date().getTime();
+var distance = countDownDate - now;
 
-    function abrirMapa(){
-      window.open(`https://www.google.com/maps/search/?api=1&query=Rua+Vera+Lucia+215+Sinimbu`, "_blank");
-    }
+var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Controle do áudio (play/pause) com link do Google Drive
-    const audio = document.getElementById("bgMusic");
-    const musicBtn = document.getElementById("music-btn");
+document.getElementById("countdown").innerHTML =
+days + " dias " + hours + "h " + minutes + "m " + seconds + "s ";
 
-    function updateMusicButton() {
-      if (!musicBtn) return;
-      musicBtn.innerText = audio?.paused ? "🎵 Música" : "🔇 Pausar";
-    }
+}, 1000);
 
-    function tocarMusica() {
-      if (audio.paused) {
-        audio.play()
-          .then(updateMusicButton)
-          .catch(err => {
-            console.error('Falha ao reproduzir:', err);
-            alert("O navegador bloqueou a reprodução ou o link não está acessível.\nTente clicar novamente e verifique se o arquivo está compartilhado como público no Google Drive.");
-          });
-      } else {
-        audio.pause();
-        updateMusicButton();
-      }
-    }
-    window.tocarMusica = tocarMusica;
+function abrirMapa(){
+window.open("https://www.google.com/maps/search/?api=1&query=Rua+Vera+Lucia+215+Sinimbu");
+}
 
-    audio.addEventListener('canplay', updateMusicButton);
-    audio.addEventListener('error', () => {
-      console.error('Erro no áudio:', audio.error);
-      alert("Não consegui carregar o áudio do Google Drive. Verifique se o link está público.");
-    });
-    document.addEventListener('visibilitychange', updateMusicButton);
+function reservar(item){
 
-    // Partículas (se carregado)
-    window.addEventListener('DOMContentLoaded', function(){
-      if (window.tsParticles) {
-        tsParticles.load("tsparticles", {
-          particles:{ number:{value:30}, color:{value:"#d4af37"}, move:{enable:true,speed:0.5}, opacity:{value:0.4}, size:{value:2} }
-        });
-      }
-    });
-  </script>
+let nome = document.getElementById("nome-"+item).value;
+let email = document.getElementById("email-"+item).value;
+let botao = document.querySelector("#"+item+" button");
 
-  <!-- Firebase (lista de presentes com reservas) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+if(nome==="" || email===""){
+alert("Preencha nome e e-mail");
+return;
+}
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
-      authDomain: "casamento-luiza-andre.firebaseapp.com",
-      projectId: "casamento-luiza-andre",
-      storageBucket: "casamento-luiza-andre.firebasestorage.app",
-      messagingSenderId: "79078651574",
-      appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
-    };
+botao.disabled = true;
+botao.innerText = "Enviando...";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const ITENS = ["Geladeira", "Cooktop", "Jogo de Panela", "Microondas"];
+emailjs.send("service_7b5jpat","template_kl4avko",{
+nome:nome,
+email:email,
+mensagem:"Obrigado por participar deste momento, estamos muito felizes por tudo."
+}).then(function(){
 
-    ITENS.forEach(item => {
-      onSnapshot(doc(db, "reservas", item), (snap) => {
-        const card = document.getElementById(item);
-        if (!card) return;
-        const btn = card.querySelector("button");
-        if (snap.exists() && snap.data().reservado) {
-          if (btn) { btn.disabled = true; btn.innerText = "Reservado"; }
-          card.querySelectorAll("input").forEach(i => i.style.display = "none");
-          card.style.opacity = 0.95;
-        } else {
-          if (btn) { btn.disabled = false; btn.innerText = "Presentear"; }
-          card.querySelectorAll("input").forEach(i => i.style.display = "");
-          card.style.opacity = 1;
-        }
-      });
-    });
+botao.innerText = "Indisponível";
 
-    window.Presentear = async function(item){
-      const nomeEl = document.getElementById("nome-"+item);
-      const emailEl = document.getElementById("email-"+item);
-      const nome = nomeEl?.value?.trim();
-      const email = emailEl?.value?.trim();
-      if(!nome || !email) return alert("Preencha os campos!");
+let card = document.getElementById(item);
+card.querySelectorAll("input").forEach(input=>{
+input.style.display="none";
+});
 
-      try {
-        await runTransaction(db, async (t) => {
-          const ref = doc(db, "reservas", item);
-          const s = await t.get(ref);
-          if(s.exists() && s.data().reservado) throw "Item já reservado";
-          t.set(ref, {reservado:true, nome, email, ts: serverTimestamp()});
-        });
-        alert("Sucesso! Obrigado pelo carinho ❤️");
-      } catch(e) { alert(e); }
-    }
-  </script>
+alert("Reserva realizada com sucesso!");
+
+}, function(error){
+alert("Erro ao enviar. Tente novamente.");
+botao.disabled = false;
+botao.innerText = "Reservar";
+});
+
+}
+</script>
+
 </body>
 </html>
