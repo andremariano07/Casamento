@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- Libs -->
+  <!-- Libs (opcionais já usados no seu projeto) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
@@ -22,139 +22,220 @@
     *{margin:0;padding:0;box-sizing:border-box}
 
     :root{
-      --gold-1:#d4af37;
-      --gold-2:#f8e7b0;
-      --gold-3:#fff8cf;
-      --glass: rgba(255,255,255,0.08);
+      --gold:#d4af37;
+      --gold-soft:#f0e3b0;
+      --bg-glass: rgba(255,255,255,0.08);
+      --text:#ffffff;
+      --bg:#1a1a1a;
     }
 
     body{
       font-family:'Poppins',sans-serif;
-      color:white;
+      color:var(--text);
       text-align:center;
       overflow-x:hidden;
       background:url('arte_casamento.jpeg') no-repeat center center/cover fixed;
-      background-color:#1a1a1a;
+      background-color: var(--bg);
     }
 
     .overlay{
       background:rgba(0,0,0,0.75);
       min-height:100vh;
-      width:100%;
+      width: 100%;
       position:relative;
       z-index:2;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:48px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 60px;
     }
 
-    #tsparticles{position:fixed;width:100%;height:100%;z-index:1;pointer-events:none}
+    #tsparticles { position:fixed; width:100%; height:100%; z-index:1; pointer-events: none; }
 
-    /* Navegação */
-    #intro-page{
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      min-height:80vh;animation:fadeIn 1.1s ease;padding-bottom:16px
+    /* --- Navegação --- */
+    #intro-page { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 80vh; 
+      animation: fadeIn 0.9s ease; 
+      padding-bottom: 16px;
     }
-    #lista-presentes{display:none;width:100%;animation:fadeIn .9s ease}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    #lista-presentes { display: none; width: 100%; animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Título (não corta acentos/letras) */
-    h1{
-      font-family:'Great Vibes',cursive;
-      font-size:72px;
-      line-height:1.25;
-      margin:8px 0 12px;
-      padding:6px 10px;
-      display:inline-block;
-      overflow:visible;
-      text-wrap:balance;
-      background:linear-gradient(45deg,#fff,var(--gold-2),var(--gold-1),#fff);
-      background-size:300%;
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      animation:shine 6s infinite linear;
-      text-shadow:0 0 12px rgba(212,175,55,.22);
+    /* --- Título (não corta “André”) --- */
+    h1 {
+      font-family:'Great Vibes', cursive;
+      font-size: 72px;
+      line-height: 1.25;
+      margin: 8px 0 12px;
+      padding: 6px 10px;
+      display: inline-block;
+      overflow: visible;
+      text-wrap: balance;
+      background: linear-gradient(45deg,#fff,var(--gold-soft),var(--gold),#fff);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 7s infinite linear;
+      text-shadow: 0 0 10px rgba(212,175,55,0.18);
     }
-    @keyframes shine{0%{background-position:0%}100%{background-position:300%}}
+    @keyframes shine { 0%{background-position:0%} 100%{background-position:300%} }
 
-    /* Capa */
-    .foto-casal{
-      width:220px;height:220px;border-radius:50%;
-      border:4px solid var(--gold-1);object-fit:cover;margin-bottom:20px;
-      box-shadow:0 0 25px rgba(212,175,55,.4);background-color:#111;
-    }
-    .countdown-box{
-      background:rgba(255,255,255,.1);backdrop-filter:blur(6px);
-      padding:20px;border-radius:15px;margin:20px 0;min-width:280px;
-      border:1px solid rgba(212,175,55,.35);
-    }
-    #countdown{font-size:22px;font-weight:600;color:var(--gold-1)}
-    .info-local{font-size:18px;line-height:1.6;margin-bottom:20px}
-
-    /* Botões */
-    .btn-gold{
-      padding:15px 35px;font-size:16px;border:none;border-radius:50px;
-      background:var(--gold-1);color:#111;font-weight:bold;cursor:pointer;
-      transition:.25s ease;text-transform:uppercase;margin:10px;
-      box-shadow:0 6px 16px rgba(212,175,55,.28);
-    }
-    .btn-gold:hover{background:#fff}
-    .btn-outline{
-      background:transparent;border:1px solid var(--gold-1);color:var(--gold-1);
-      padding:10px 25px;border-radius:50px;cursor:pointer;margin:5px;transition:.2s ease
-    }
-    .btn-outline:hover{background:#111;color:#fff;border-color:#fff}
-
-    /* Lista de presentes */
-    .container{
-      display:flex;justify-content:center;flex-wrap:wrap;gap:22px;margin-top:30px;
-    }
-    .card{
-      position:relative;background:var(--glass);backdrop-filter:blur(12px);
-      border-radius:20px;padding:16px;width:270px;border:1px solid rgba(255,255,255,.06);
-      isolation:isolate;
+    /* --- Capa --- */
+    .foto-casal {
+      width: 220px; height: 220px; border-radius: 50%;
+      border: 4px solid var(--gold);
+      object-fit: cover; margin-bottom: 20px;
+      box-shadow: 0 0 22px rgba(212,175,55,0.35);
+      background-color: #111;
     }
 
-    /* ===== Borda dourada clean “carregando” =====
-       - Apenas um anel sutil girando ao redor do card
-       - Sem glow exagerado, sem tilt, bem minimalista
+    .countdown-box {
+      background: rgba(255,255,255,0.09);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      border: 1px solid rgba(212,175,55,0.32);
+      min-width: 280px;
+    }
+
+    #countdown { font-size: 22px; font-weight: 600; color: var(--gold); }
+    .info-local { font-size: 18px; line-height: 1.6; margin-bottom: 20px; }
+
+    /* --- Botões --- */
+    .btn-gold {
+      padding: 15px 35px;
+      font-size: 16px;
+      border: none;
+      border-radius: 50px;
+      background: var(--gold);
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      text-transform: uppercase;
+      margin: 10px;
+      box-shadow: 0 6px 14px rgba(212,175,55,0.25);
+    }
+    .btn-gold:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      margin: 5px;
+      transition: 0.2s ease;
+    }
+    .btn-outline:hover { background-color: #0f0f0f; color: #fff; }
+
+    /* --- Lista de presentes --- */
+    .container { 
+      display: flex; 
+      justify-content: center; 
+      flex-wrap: wrap; 
+      gap: 22px; 
+      margin-top: 30px; 
+    }
+
+    .card {
+      position: relative;
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 16px;
+      width: 270px;
+      border: 1px solid rgba(255,255,255,0.06); /* base bem discreta */
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      will-change: transform, box-shadow;
+      isolation: isolate; /* para pseudo-elemento */
+    }
+
+    /* ===== Borda “clean” com highlight girando ao redor =====
+       - Linha fina dourada + uma luz discretíssima que percorre o perímetro.
+       - Visual minimalista (sem glow espalhado).
     */
-    .card::before{
-      content:"";position:absolute;inset:-2px;border-radius:22px;padding:2px;
-      /* Anel com conic-gradient (efeito loading) */
-      background:conic-gradient(
-        from 0deg,
-        rgba(212,175,55,0) 0deg,
-        rgba(212,175,55,.85) 60deg,
-        rgba(212,175,55,0) 120deg
-      );
-      /* Mostrar só a borda (máscara) */
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;                   /* cobre o card */
+      border-radius: 20px;
+      padding: 1px;               /* espessura da borda */
+      /* Cor base da borda (linha contínua) com overlay do highlight que gira */
+      background:
+        /* highlight (segmento pequeno) */
+        conic-gradient(
+          from var(--rot, 0deg),
+          rgba(212,175,55,0) 0deg,
+          rgba(212,175,55,0) 340deg,
+          rgba(255,255,255,0.95) 352deg,
+          rgba(212,175,55,0.0) 360deg
+        ),
+        /* linha contínua discreta abaixo */
+        linear-gradient(var(--gold), var(--gold));
+      /* máscara para mostrar só a borda (vazando o centro) */
       -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
-      animation:spin 2.4s linear infinite;
-      z-index:-1;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    .card img{
-      width:100%;height:200px;object-fit:cover;border-radius:15px;
-    }
-    .card h3{
-      margin:10px 0 8px;font-weight:600;letter-spacing:.2px;color:#fff;
-    }
-    input{
-      width:90%;padding:10px;margin-bottom:10px;border-radius:10px;border:none;text-align:center;
-      background:rgba(255,255,255,.92);color:#222;outline:none;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.9;
+      animation: ringSpin 3.5s linear infinite;
     }
 
-    @media(max-width:600px){
-      h1{font-size:54px;line-height:1.22;padding-inline:8px}
-      .foto-casal{width:180px;height:180px}
-      .card{width:92vw;max-width:360px}
+    @keyframes ringSpin {
+      to { --rot: 360deg; }
+    }
+
+    /* Hover: leve movimento e sombra sutil */
+    .card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+    }
+
+    .card img { 
+      width: 100%; 
+      height: 200px; 
+      object-fit: cover; 
+      border-radius: 15px; 
+    }
+    .card h3 { 
+      margin: 10px 0 8px; 
+      font-weight: 600; 
+      letter-spacing: 0.2px;
+      color: #fff;
+    }
+    input { 
+      width: 90%; 
+      padding: 10px; 
+      margin-bottom: 10px; 
+      border-radius: 10px; 
+      border: none; 
+      text-align: center; 
+      background: rgba(255,255,255,0.95);
+      color: #222;
+      outline: none;
+      transition: box-shadow 0.2s ease;
+    }
+    input:focus { box-shadow: 0 0 0 3px rgba(212,175,55,0.28); }
+
+    /* Acessibilidade: reduz animações se preferido */
+    @media (prefers-reduced-motion: reduce) {
+      .card::after { animation: none; }
+      .card, .btn-gold, .btn-outline { transition: none; }
+    }
+
+    @media(max-width: 600px) {
+      h1 { font-size: 54px; line-height: 1.22; padding-inline: 8px; }
+      .foto-casal { width: 180px; height: 180px; }
+      .card { width: 92vw; max-width: 360px; }
     }
   </style>
 </head>
@@ -168,7 +249,7 @@
     <section id="intro-page">
       <img src="sua-foto.jpg" alt="Luiza e André" class="foto-casal">
       <h1>Luiza & André</h1>
-
+      
       <div class="info-local">
         <p><strong>20 de Junho de 2026</strong></p>
         <p>Rua Vera Lucia, 215 - Sinimbu</p>
@@ -179,14 +260,15 @@
       </div>
 
       <button class="btn-gold" onclick="abrirPresentes()">Ver Lista de Presentes</button>
-
+      
       <div>
         <button class="btn-outline" onclick="abrirMapa()">📍 Localização</button>
         <button class="btn-outline" onclick="tocarMusica()" id="music-btn">🎵 Música</button>
       </div>
 
       <audio id="bgMusic" loop>
-        <source src="https://voca.ro/1c3ZGc93IyZe" type="audio/mpeg">
+        <source src="musica.mp3" type="audio/mpeg">
+        <!-- Dica: use um .mp3 direto (link do Vocaroo nem sempre serve streaming de áudio) -->
       </audio>
     </section>
 
@@ -263,7 +345,7 @@
       else { audio.pause(); document.getElementById("music-btn").innerText = "🎵 Música"; }
     }
 
-    // Partículas
+    // Partículas (se carregado)
     window.addEventListener('DOMContentLoaded', function(){
       if (window.tsParticles) {
         tsParticles.load("tsparticles", {
@@ -327,4 +409,3 @@
   </script>
 </body>
 </html>
-``
