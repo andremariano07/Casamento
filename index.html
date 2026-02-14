@@ -28,28 +28,29 @@ body{
   text-align:center;
   overflow-x:hidden;
   min-height:100vh;
-  background:url('arte_casamento.jpeg') center center/cover no-repeat fixed;
+  background-image:url('arte_casamento.jpeg');
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
 }
 
-/* FUNDO BOLINHAS DOURADAS */
-#particles-js{
-  position:fixed;
-  width:100%;
-  height:100%;
-  top:0;
-  left:0;
-  z-index:0;
-}
-
-/* Ajuste mobile */
+/* Correção mobile */
 @media(max-width:768px){
   body{
-    background-attachment:scroll;
+    background-size:cover;
     background-position:top center;
+    background-attachment:scroll;
   }
 }
 
-/* PRÉ CAPA */
+#tsparticles{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
 .precover{
   position:fixed;
   top:0;left:0;
@@ -60,8 +61,7 @@ body{
   justify-content:center;
   align-items:center;
   z-index:10;
-  padding:30px 20px;
-  text-align:center;
+  padding:20px;
 }
 
 .circle-photo{
@@ -69,9 +69,9 @@ body{
   height:180px;
   border-radius:50%;
   overflow:hidden;
-  border:4px solid #d4af37;
+  border:5px solid #d4af37;
   margin-bottom:20px;
-  box-shadow:0 0 20px rgba(212,175,55,0.6);
+  box-shadow:0 0 15px rgba(212,175,55,0.6);
 }
 
 .circle-photo img{
@@ -82,11 +82,8 @@ body{
 
 h1{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(38px, 8vw, 65px);
-  line-height:1.2;
-  margin:15px 0;
-  word-break:break-word;
-  padding:0 10px;
+  font-size:60px;
+  margin-top:20px;
   background:linear-gradient(45deg,#fff,#f8e7b0,#d4af37,#fff);
   background-size:300%;
   -webkit-background-clip:text;
@@ -100,32 +97,27 @@ h1{
 }
 
 .date, #countdown, .location{
-  margin:6px 0;
-  font-size:18px;
+  margin:8px 0;
+  font-size:20px;
 }
 
 .maps-btn, .back-btn{
-  margin-top:12px;
-  padding:10px 22px;
+  margin-top:15px;
+  padding:10px 20px;
   border:none;
   border-radius:30px;
   background:#d4af37;
   color:black;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
-}
-
-.maps-btn:hover, .back-btn:hover{
-  background:#fff;
 }
 
 .overlay{
   background:rgba(0,0,0,0.65);
   min-height:100vh;
-  padding:40px 20px;
+  padding:20px;
   position:relative;
-  z-index:5;
+  z-index:2;
   display:none;
 }
 
@@ -178,12 +170,12 @@ input{
 
 <body>
 
-<div id="particles-js"></div>
+<div id="tsparticles"></div>
 
 <!-- PRÉ CAPA -->
 <div class="precover" id="precover">
   <div class="circle-photo">
-    <img src="nos.jpeg" alt="Foto">
+    <img src="nos.png" alt="Foto">
   </div>
   <h1>Luiza & André</h1>
   <div class="date">20/06/2026 - 18:00 horas</div>
@@ -230,17 +222,6 @@ input{
 </div>
 
 <script>
-// Partículas douradas pequenas
-tsParticles.load("particles-js", {
-  particles: {
-    number: { value: 60 },
-    size: { value: 3 },
-    color: { value: "#d4af37" },
-    move: { enable: true, speed: 1 },
-    opacity: { value: 0.6 },
-  }
-});
-
 // Contagem regressiva
 const countDownDate = new Date("Jun 20, 2026 18:00:00").getTime();
 setInterval(() => {
@@ -282,10 +263,10 @@ function voltarPreCapa(){
 }
 </script>
 
-<!-- FIREBASE (mantido intacto) -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
