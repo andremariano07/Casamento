@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chá de Panela - Luiza & André</title>
 
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
+  <!-- Libs -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
@@ -22,8 +24,7 @@
     :root{
       --gold-1:#d4af37;
       --gold-2:#f8e7b0;
-      --gold-3:#fff3c4;
-      --dark: #0e0e0e;
+      --gold-3:#fff8cf;
       --glass: rgba(255,255,255,0.08);
     }
 
@@ -33,237 +34,127 @@
       text-align:center;
       overflow-x:hidden;
       background:url('arte_casamento.jpeg') no-repeat center center/cover fixed;
-      background-color: #1a1a1a;
+      background-color:#1a1a1a;
     }
 
     .overlay{
       background:rgba(0,0,0,0.75);
       min-height:100vh;
-      width: 100%;
+      width:100%;
       position:relative;
       z-index:2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 48px 20px 60px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:48px 20px 60px;
     }
 
-    #tsparticles { position:fixed; width:100%; height:100%; z-index:1; pointer-events: none; }
+    #tsparticles{position:fixed;width:100%;height:100%;z-index:1;pointer-events:none}
 
-    /* --- NAVEGAÇÃO --- */
-    #intro-page { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      min-height: 80vh; 
-      animation: fadeIn 1.2s ease; 
-      padding-bottom: 16px; /* espaço extra para não dar impressão de corte */
+    /* Navegação */
+    #intro-page{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:80vh;animation:fadeIn 1.1s ease;padding-bottom:16px
     }
-    #lista-presentes { display: none; width: 100%; animation: fadeIn 0.9s ease; }
+    #lista-presentes{display:none;width:100%;animation:fadeIn .9s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-    @keyframes fadeIn { 
-      from { opacity: 0; transform: translateY(16px); } 
-      to { opacity: 1; transform: translateY(0); } 
+    /* Título (não corta acentos/letras) */
+    h1{
+      font-family:'Great Vibes',cursive;
+      font-size:72px;
+      line-height:1.25;
+      margin:8px 0 12px;
+      padding:6px 10px;
+      display:inline-block;
+      overflow:visible;
+      text-wrap:balance;
+      background:linear-gradient(45deg,#fff,var(--gold-2),var(--gold-1),#fff);
+      background-size:300%;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      animation:shine 6s infinite linear;
+      text-shadow:0 0 12px rgba(212,175,55,.22);
     }
+    @keyframes shine{0%{background-position:0%}100%{background-position:300%}}
 
-    /* --- TÍTULO (NOME) – corrigido para não cortar --- */
-    h1 {
-      font-family:'Great Vibes', cursive;
-      font-size: 72px;
-      line-height: 1.25;           /* altura segura para acentos */
-      margin: 8px 0 12px;
-      padding: 6px 10px;           /* espaço interno evita clipping do gradient clip */
-      display: inline-block;       /* evita colapsos estranhos */
-      overflow: visible;           /* garante que nada seja cortado */
-      text-wrap: balance;          /* melhor quebra (quando suportado) */
-      word-break: normal;
-      background: linear-gradient(45deg,#fff,var(--gold-2),var(--gold-1),#fff);
-      background-size: 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shine 6s infinite linear;
-      text-shadow: 0 0 12px rgba(212,175,55,0.25); /* dá acabamento e evita serrilhado */
+    /* Capa */
+    .foto-casal{
+      width:220px;height:220px;border-radius:50%;
+      border:4px solid var(--gold-1);object-fit:cover;margin-bottom:20px;
+      box-shadow:0 0 25px rgba(212,175,55,.4);background-color:#111;
     }
-
-    @keyframes shine { 
-      0%{background-position:0%} 
-      100%{background-position:300%} 
+    .countdown-box{
+      background:rgba(255,255,255,.1);backdrop-filter:blur(6px);
+      padding:20px;border-radius:15px;margin:20px 0;min-width:280px;
+      border:1px solid rgba(212,175,55,.35);
     }
+    #countdown{font-size:22px;font-weight:600;color:var(--gold-1)}
+    .info-local{font-size:18px;line-height:1.6;margin-bottom:20px}
 
-    /* --- CAPA --- */
-    .foto-casal {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      border: 4px solid var(--gold-1);
-      object-fit: cover;
-      margin-bottom: 20px;
-      box-shadow: 0 0 25px rgba(212,175,55,0.4);
-      background-color: #111;
+    /* Botões */
+    .btn-gold{
+      padding:15px 35px;font-size:16px;border:none;border-radius:50px;
+      background:var(--gold-1);color:#111;font-weight:bold;cursor:pointer;
+      transition:.25s ease;text-transform:uppercase;margin:10px;
+      box-shadow:0 6px 16px rgba(212,175,55,.28);
     }
-
-    .countdown-box {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      border-radius: 15px;
-      margin: 20px 0;
-      border: 1px solid rgba(212,175,55,0.35);
-      min-width: 280px;
-      box-shadow: inset 0 0 12px rgba(212,175,55,0.12);
+    .btn-gold:hover{background:#fff}
+    .btn-outline{
+      background:transparent;border:1px solid var(--gold-1);color:var(--gold-1);
+      padding:10px 25px;border-radius:50px;cursor:pointer;margin:5px;transition:.2s ease
     }
+    .btn-outline:hover{background:#111;color:#fff;border-color:#fff}
 
-    #countdown { font-size: 22px; font-weight: 600; color: var(--gold-1); }
-    .info-local { font-size: 18px; line-height: 1.6; margin-bottom: 20px; }
-
-    /* --- BOTÕES --- */
-    .btn-gold {
-      padding: 15px 35px;
-      font-size: 16px;
-      border: none;
-      border-radius: 50px;
-      background: var(--gold-1);
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.25s ease;
-      text-transform: uppercase;
-      margin: 10px;
-      box-shadow: 0 6px 16px rgba(212,175,55,0.35), inset 0 0 0 rgba(0,0,0,0);
+    /* Lista de presentes */
+    .container{
+      display:flex;justify-content:center;flex-wrap:wrap;gap:22px;margin-top:30px;
     }
-    .btn-gold:hover { 
-      background: #fff; 
-      transform: translateY(-2px) scale(1.03); 
-      box-shadow: 0 10px 22px rgba(212,175,55,0.45); 
+    .card{
+      position:relative;background:var(--glass);backdrop-filter:blur(12px);
+      border-radius:20px;padding:16px;width:270px;border:1px solid rgba(255,255,255,.06);
+      isolation:isolate;
     }
 
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--gold-1);
-      color: var(--gold-1);
-      padding: 10px 25px;
-      border-radius: 50px;
-      cursor: pointer;
-      margin: 5px;
-      transition: 0.25s ease;
-    }
-    .btn-outline:hover { 
-      color: #111; 
-      background: linear-gradient(135deg, var(--gold-1), var(--gold-2)); 
-      transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(212,175,55,0.32);
-    }
-
-    /* --- LISTA DE PRESENTES --- */
-    .container { 
-      display: flex; 
-      justify-content: center; 
-      flex-wrap: wrap; 
-      gap: 22px; 
-      margin-top: 30px; 
-      perspective: 1000px; /* ajuda no tilt 3D */
-    }
-
-    .card {
-      position: relative;
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 16px;
-      width: 270px;
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: transform 220ms ease, box-shadow 220ms ease;
-      transform-style: preserve-3d;
-      will-change: transform, box-shadow;
-      isolation: isolate; /* para pseudo-elements */
-    }
-
-    /* Borda dourada animada com glow */
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -2px;       /* cria borda externa */
-      border-radius: 22px;
-      background: conic-gradient(
+    /* ===== Borda dourada clean “carregando” =====
+       - Apenas um anel sutil girando ao redor do card
+       - Sem glow exagerado, sem tilt, bem minimalista
+    */
+    .card::before{
+      content:"";position:absolute;inset:-2px;border-radius:22px;padding:2px;
+      /* Anel com conic-gradient (efeito loading) */
+      background:conic-gradient(
         from 0deg,
-        #fff0,
-        var(--gold-3),
-        var(--gold-2),
-        var(--gold-1),
-        var(--gold-2),
-        #fff0
+        rgba(212,175,55,0) 0deg,
+        rgba(212,175,55,.85) 60deg,
+        rgba(212,175,55,0) 120deg
       );
-      z-index: -1;
-      filter: blur(0.6px);
-      animation: spinGold 6s linear infinite;
-      opacity: 0.85;
+      /* Mostrar só a borda (máscara) */
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation:spin 2.4s linear infinite;
+      z-index:-1;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .card img{
+      width:100%;height:200px;object-fit:cover;border-radius:15px;
+    }
+    .card h3{
+      margin:10px 0 8px;font-weight:600;letter-spacing:.2px;color:#fff;
+    }
+    input{
+      width:90%;padding:10px;margin-bottom:10px;border-radius:10px;border:none;text-align:center;
+      background:rgba(255,255,255,.92);color:#222;outline:none;
     }
 
-    .card::after {
-      content: "";
-      position: absolute;
-      inset: -14px;
-      border-radius: 28px;
-      background: radial-gradient(closest-side, rgba(212,175,55,0.22), transparent 70%);
-      z-index: -2;
-      filter: blur(14px);
-      opacity: 0.65;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    @keyframes spinGold {
-      to { transform: rotate(360deg); }
-    }
-
-    .card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 18px 38px rgba(212,175,55,0.25), 0 8px 22px rgba(0,0,0,0.35);
-    }
-    .card:hover::after { opacity: 0.9; }
-
-    .card h3 { 
-      margin: 10px 0 8px; 
-      font-weight: 600; 
-      letter-spacing: 0.2px;
-      color: #fff;
-      text-shadow: 0 0 8px rgba(212,175,55,0.18);
-    }
-
-    .card img { 
-      width: 100%; 
-      height: 200px; 
-      object-fit: cover; 
-      border-radius: 15px; 
-      box-shadow: 0 10px 18px rgba(0,0,0,0.35), 0 0 0 1px rgba(212,175,55,0.25) inset;
-    }
-
-    input { 
-      width: 90%; 
-      padding: 10px; 
-      margin-bottom: 10px; 
-      border-radius: 10px; 
-      border: none; 
-      text-align: center; 
-      background: rgba(255,255,255,0.92);
-      color: #222;
-      outline: none;
-      transition: box-shadow 0.2s ease;
-    }
-    input:focus{
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.35);
-    }
-
-    /* Tilt baseado no mouse (desktop) */
-    @media (hover: hover) and (pointer: fine) {
-      .card[data-tilt="1"] { transition: transform 80ms ease; }
-    }
-
-    @media(max-width: 600px) {
-      h1 { font-size: 54px; line-height: 1.22; padding-inline: 8px; }
-      .foto-casal { width: 180px; height: 180px; }
-      .card { width: 92vw; max-width: 360px; }
+    @media(max-width:600px){
+      h1{font-size:54px;line-height:1.22;padding-inline:8px}
+      .foto-casal{width:180px;height:180px}
+      .card{width:92vw;max-width:360px}
     }
   </style>
 </head>
@@ -277,7 +168,7 @@
     <section id="intro-page">
       <img src="sua-foto.jpg" alt="Luiza e André" class="foto-casal">
       <h1>Luiza & André</h1>
-      
+
       <div class="info-local">
         <p><strong>20 de Junho de 2026</strong></p>
         <p>Rua Vera Lucia, 215 - Sinimbu</p>
@@ -288,14 +179,13 @@
       </div>
 
       <button class="btn-gold" onclick="abrirPresentes()">Ver Lista de Presentes</button>
-      
+
       <div>
         <button class="btn-outline" onclick="abrirMapa()">📍 Localização</button>
         <button class="btn-outline" onclick="tocarMusica()" id="music-btn">🎵 Música</button>
       </div>
 
       <audio id="bgMusic" loop>
-        <!-- Observação: o link do Vocaroo pode não servir áudio direto; ideal usar um .mp3 direto no servidor -->
         <source src="https://voca.ro/1c3ZGc93IyZe" type="audio/mpeg">
       </audio>
     </section>
@@ -303,7 +193,7 @@
     <section id="lista-presentes">
       <h1 style="font-size: 40px;">Lista de Presentes</h1>
       <div class="container">
-        <div class="card" id="Geladeira" data-tilt="1">
+        <div class="card" id="Geladeira">
           <img src="Imagens/geladeira.jpg" alt="Geladeira">
           <h3>Geladeira</h3>
           <input type="text" placeholder="Seu nome" id="nome-Geladeira">
@@ -311,7 +201,7 @@
           <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Geladeira')">Presentear</button>
         </div>
 
-        <div class="card" id="Jogo de Panela" data-tilt="1">
+        <div class="card" id="Jogo de Panela">
           <img src="Imagens/Jogo de Panela.jpg" alt="Jogo de Panela">
           <h3>Jogo de Panela</h3>
           <input type="text" placeholder="Seu nome" id="nome-Jogo de Panela">
@@ -319,7 +209,7 @@
           <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Jogo de Panela')">Presentear</button>
         </div>
 
-        <div class="card" id="Microondas" data-tilt="1">
+        <div class="card" id="Microondas">
           <img src="Imagens/microondas.jpg" alt="Microondas">
           <h3>Microondas</h3>
           <input type="text" placeholder="Seu nome" id="nome-Microondas">
@@ -327,7 +217,7 @@
           <button class="btn-gold" style="width:90%; padding:10px;" onclick="Presentear('Microondas')">Presentear</button>
         </div>
 
-        <div class="card" id="Cooktop" data-tilt="1">
+        <div class="card" id="Cooktop">
           <img src="Imagens/cooktop.png" alt="Cooktop">
           <h3>Cooktop</h3>
           <input type="text" placeholder="Seu nome" id="nome-Cooktop">
@@ -377,46 +267,10 @@
     window.addEventListener('DOMContentLoaded', function(){
       if (window.tsParticles) {
         tsParticles.load("tsparticles", {
-          particles:{
-            number:{value:30},
-            color:{value:"#d4af37"},
-            move:{enable:true,speed:0.5},
-            opacity:{value:0.4},
-            size:{value:2}
-          }
+          particles:{ number:{value:30}, color:{value:"#d4af37"}, move:{enable:true,speed:0.5}, opacity:{value:0.4}, size:{value:2} }
         });
       }
     });
-
-    // Tilt sutil baseado no mouse (desktop) para os cards
-    (function enableTilt(){
-      const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if(!supportsHover) return;
-
-      const maxTilt = 8; // graus
-      const cards = document.querySelectorAll('.card[data-tilt="1"]');
-
-      function handleMove(e){
-        const card = e.currentTarget;
-        const rect = card.getBoundingClientRect();
-        const cx = rect.left + rect.width/2;
-        const cy = rect.top + rect.height/2;
-        const dx = (e.clientX - cx) / (rect.width/2);
-        const dy = (e.clientY - cy) / (rect.height/2);
-        const tiltX = (+dy * maxTilt).toFixed(2);
-        const tiltY = (-dx * maxTilt).toFixed(2);
-        card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-4px) scale(1.02)`;
-      }
-      function resetTilt(e){
-        const card = e.currentTarget;
-        card.style.transform = '';
-      }
-
-      cards.forEach(c=>{
-        c.addEventListener('mousemove', handleMove);
-        c.addEventListener('mouseleave', resetTilt);
-      });
-    })();
   </script>
 
   <script type="module">
@@ -443,3 +297,34 @@
         const btn = card.querySelector("button");
         if (snap.exists() && snap.data().reservado) {
           if (btn) { btn.disabled = true; btn.innerText = "Reservado"; }
+          card.querySelectorAll("input").forEach(i => i.style.display = "none");
+          card.style.opacity = 0.95;
+        } else {
+          if (btn) { btn.disabled = false; btn.innerText = "Presentear"; }
+          card.querySelectorAll("input").forEach(i => i.style.display = "");
+          card.style.opacity = 1;
+        }
+      });
+    });
+
+    window.Presentear = async function(item){
+      const nomeEl = document.getElementById("nome-"+item);
+      const emailEl = document.getElementById("email-"+item);
+      const nome = nomeEl?.value?.trim();
+      const email = emailEl?.value?.trim();
+      if(!nome || !email) return alert("Preencha os campos!");
+
+      try {
+        await runTransaction(db, async (t) => {
+          const ref = doc(db, "reservas", item);
+          const s = await t.get(ref);
+          if(s.exists() && s.data().reservado) throw "Item já reservado";
+          t.set(ref, {reservado:true, nome, email, ts: serverTimestamp()});
+        });
+        alert("Sucesso! Obrigado pelo carinho ❤️");
+      } catch(e) { alert(e); }
+    }
+  </script>
+</body>
+</html>
+``
