@@ -228,6 +228,12 @@ Rua Vera Lucia, 215 - Sinimbu
 </div>
 </div>
 
+<!-- Música -->
+<audio id="bgMusic" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+  Seu navegador não suporta áudio.
+</audio>
+
 <script>
 tsParticles.load("tsparticles", {
 particles:{
@@ -297,6 +303,34 @@ botao.innerText = "Reservar";
 });
 
 }
+
+// Música automática com fade in
+const audio = document.getElementById("bgMusic");
+audio.volume = 0;
+const VOLUME_MAX = 0.3;
+const FADE_DURATION = 4000;
+let musicaTocando = false;
+
+function fadeIn() {
+audio.play().then(() => {
+  const start = Date.now();
+  const fade = setInterval(() => {
+    const elapsed = Date.now() - start;
+    audio.volume = Math.min(VOLUME_MAX, (elapsed / FADE_DURATION) * VOLUME_MAX);
+    if (elapsed >= FADE_DURATION) clearInterval(fade);
+  }, 50);
+}).catch(err => console.error("Erro ao tocar música:", err));
+}
+
+// Inicia música na primeira interação com qualquer botão
+document.querySelectorAll("button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!musicaTocando) {
+      fadeIn();
+      musicaTocando = true;
+    }
+  }, { once: true });
+});
 </script>
 
 </body>
