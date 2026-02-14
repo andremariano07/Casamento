@@ -162,64 +162,69 @@ h1{
   position:relative;
   width:260px;
   padding:15px;
-  border-radius:20px;
+  border-radius:22px;
   background:rgba(255,255,255,.08);
   backdrop-filter:blur(12px);
-  border:1px solid rgba(212,175,55,.18);
   overflow:hidden;
-  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  transition:transform .25s ease, box-shadow .25s ease;
 }
 
-/* ✅ faixa dourada fixa (borda base) */
+/* ✅ Faixa dourada fixa (o contorno) */
 .card::after{
   content:"";
   position:absolute;
   inset:0;
-  border-radius:20px;
+  border-radius:22px;
   border:1px solid rgba(212,175,55,.35);
   pointer-events:none;
 }
 
-/* ✅ brilho girando SOMENTE na borda */
+/* ✅ Filete dourado “correndo” só na beirada (sem entrar no card) */
 .card::before{
   content:"";
   position:absolute;
-  inset:-2px;                 /* fica por fora do card */
+  inset:0;
   border-radius:22px;
-  padding:2px;                /* espessura do anel animado */
+
+  /* espessura do filete/canal da borda */
+  padding:2px;
+
+  /* só um pedacinho brilhante + o resto transparente */
   background:conic-gradient(
     from 0deg,
     rgba(212,175,55,0) 0deg,
-    rgba(212,175,55,0) 320deg,
-    rgba(248,231,176,1) 340deg,
+    rgba(212,175,55,0) 330deg,
+    rgba(248,231,176,1) 342deg,
     rgba(212,175,55,1) 355deg,
     rgba(212,175,55,0) 360deg
   );
 
-  /* recorte: só a borda */
+  /* recorta pra ficar SOMENTE no anel da borda */
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
 
-  opacity:.95;
-  filter:drop-shadow(0 0 8px rgba(212,175,55,.45));
-  animation:spinBorder 2.6s linear infinite;
+  /* brilho do filete */
+  filter:drop-shadow(0 0 8px rgba(212,175,55,.55));
+  opacity:1;
   pointer-events:none;
+
+  /* direção das setas (sentido horário) */
+  animation:spinBorder 2.2s linear infinite;
 }
 
 @keyframes spinBorder{
-  to { transform:rotate(360deg); }
+  to{ transform:rotate(360deg); }
 }
 
 .card:hover{
   transform:translateY(-6px) scale(1.01);
   box-shadow:0 18px 40px rgba(0,0,0,.35);
-  border-color:rgba(212,175,55,.55);
 }
 .card:hover::before{
-  filter:drop-shadow(0 0 12px rgba(212,175,55,.65));
+  filter:drop-shadow(0 0 12px rgba(212,175,55,.75));
 }
 
 /* Imagem padronizada */
@@ -275,7 +280,7 @@ input{
   opacity:.9;
 }
 
-/* MODAL (reutilizável para todas notificações) */
+/* MODAL */
 .modal{
   position:fixed; inset:0;
   display:none;
@@ -363,7 +368,8 @@ input{
 
   <div class="container">
 
-    <div class="card" id="Geladeira" data-item="Geladeira">
+    <!-- Dica: data-item é o nome no Firestore | data-key é o id seguro no HTML -->
+    <div class="card" data-item="Geladeira" data-key="Geladeira">
       <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
       <h3>Geladeira</h3>
       <div class="badge" id="badge-Geladeira">Disponível</div>
@@ -373,7 +379,7 @@ input{
       <button class="btn" id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
     </div>
 
-    <div class="card" id="Microondas" data-item="Microondas">
+    <div class="card" data-item="Microondas" data-key="Microondas">
       <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
       <h3>Microondas</h3>
       <div class="badge" id="badge-Microondas">Disponível</div>
@@ -383,7 +389,7 @@ input{
       <button class="btn" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
     </div>
 
-    <div class="card" id="JogoDePanela" data-item="JogoDePanela">
+    <div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
       <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
       <h3>Jogo de Panela</h3>
       <div class="badge" id="badge-JogoDePanela">Disponível</div>
@@ -393,17 +399,17 @@ input{
       <button class="btn" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
     </div>
 
-    <div class="card" id="Jogo De Talher" data-item="Jogo De Talher">
+    <div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
       <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
       <h3>Jogo De Talher</h3>
-      <div class="badge" id="badge-Jogo De Talher">Disponível</div>
-      <div class="reserved-note" id="note-Jogo De Talher">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Jogo De Talher">
-      <input type="email" placeholder="Seu e-mail" id="email-Jogo De Talher">
-      <button class="btn" id="btn-Jogo De Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
+      <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
+      <button class="btn" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
     </div>
 
-    <div class="card" id="Jarra" data-item="Jarra">
+    <div class="card" data-item="Jarra" data-key="Jarra">
       <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
       <h3>Jarra</h3>
       <div class="badge" id="badge-Jarra">Disponível</div>
@@ -413,7 +419,7 @@ input{
       <button class="btn" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
     </div>
 
-    <div class="card" id="Cooktop" data-item="Cooktop">
+    <div class="card" data-item="Cooktop" data-key="Cooktop">
       <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
       <h3>Cooktop</h3>
       <div class="badge" id="badge-Cooktop">Disponível</div>
@@ -500,7 +506,7 @@ function voltarPreCapa(){
   window.scrollTo({top:0, behavior:"instant"});
 }
 
-/* Ripple dourado em todos os botões */
+/* Ripple dourado */
 document.addEventListener("click", (e)=>{
   const btn = e.target.closest("button");
   if(!btn || btn.disabled) return;
@@ -577,7 +583,7 @@ async function Presentear(item){
 }
 window.Presentear = Presentear;
 
-/* expõe helpers globalmente (usados pelo módulo) */
+/* expõe helpers globalmente (usados pelo module) */
 window.uiConfirmar = uiConfirmar;
 window.uiAviso = uiAviso;
 </script>
@@ -599,14 +605,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
+function keyOfItem(item){
+  // mesmo padrão do data-key/ids no HTML
+  return String(item).replace(/\s+/g, "_");
+}
+function getKeyFromCard(item){
+  const card = document.querySelector(`.card[data-item="${item}"]`);
+  return card?.getAttribute("data-key") || keyOfItem(item);
+}
+
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
   const card = document.querySelector(`.card[data-item="${item}"]`);
-  const badge = document.getElementById("badge-"+item);
-  const note  = document.getElementById("note-"+item);
-  const btn   = document.getElementById("btn-"+item);
-  const inNome  = document.getElementById("nome-"+item);
-  const inEmail = document.getElementById("email-"+item);
+  const key = getKeyFromCard(item);
+
+  const badge = document.getElementById("badge-"+key);
+  const note  = document.getElementById("note-"+key);
+  const btn   = document.getElementById("btn-"+key);
+  const inNome  = document.getElementById("nome-"+key);
+  const inEmail = document.getElementById("email-"+key);
 
   if(card) card.classList.toggle("is-reservado", reservado);
 
@@ -633,8 +650,9 @@ document.querySelectorAll(".card[data-item]").forEach((card)=>{
 });
 
 async function doReserve(item){
-  const nome = document.getElementById("nome-"+item)?.value.trim();
-  const email = document.getElementById("email-"+item)?.value.trim();
+  const key = getKeyFromCard(item);
+  const nome = document.getElementById("nome-"+key)?.value.trim();
+  const email = document.getElementById("email-"+key)?.value.trim();
 
   if(!nome || !email){
     await window.uiAviso({
@@ -646,7 +664,7 @@ async function doReserve(item){
   }
 
   const ref = doc(db,"reservas",item);
-  const btn = document.getElementById("btn-"+item);
+  const btn = document.getElementById("btn-"+key);
   if(btn){ btn.disabled = true; btn.textContent = "Reservando..."; }
 
   try{
@@ -656,7 +674,6 @@ async function doReserve(item){
       tx.set(ref, { reservado:true, nome, email, ts:serverTimestamp() });
     });
 
-    // Email (se falhar, não cancela a reserva)
     try{
       if(window.emailjs?.send){
         await emailjs.send("service_7b5jpat","template_kl4avko",{
