@@ -35,7 +35,7 @@ body{
 .precover{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.65); /* mantém fundo original visível */
+  background:rgba(0,0,0,0.65);
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -113,7 +113,7 @@ body{
   padding:20px;
   position:relative;
   z-index:2;
-  display:none; /* Inicialmente escondido */
+  display:none;
 }
 
 h1{
@@ -160,11 +160,24 @@ button{margin-top:10px;padding:8px 15px;border:none;border-radius:20px;backgroun
 button:disabled{background:gray;cursor:not-allowed;}
 input{margin-top:8px;padding:8px;width:90%;border-radius:15px;border:none;text-align:center;}
 
+.back-btn{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:30px;
+  background:#d4af37;
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+.back-btn:hover{background:#fff;}
+
 @media(max-width:600px){
 h1{font-size:42px}
 .card{width:90%;padding:12px;}
 .date,#countdown,.location{font-size:16px;}
-.maps-btn{padding:8px 16px;font-size:14px;}
+.maps-btn, .back-btn{padding:8px 16px;font-size:14px;}
 }
 </style>
 </head>
@@ -183,7 +196,8 @@ h1{font-size:42px}
   <div id="countdown"></div>
   <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
   <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
-  <button class="maps-btn" onclick="entrarEvento()" id="music-btn">🎵 Tocar Música</button>
+  <button class="maps-btn" id="music-btn-pre" onclick="tocarMusica()">🎵 Tocar Música</button>
+  <button class="maps-btn" onclick="entrarEvento()">Entrar no Evento</button>
 </div>
 
 <!-- MÚSICA -->
@@ -200,6 +214,7 @@ h1{font-size:42px}
 <div id="countdown"></div>
 <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
 <button class="maps-btn" onclick="abrirMapa()">Ver no Maps</button>
+<button class="back-btn" onclick="voltarPreCapa()">🔙 Voltar à Pré-Capa</button>
 
 <div class="container">
   <div class="card" id="Geladeira">
@@ -245,10 +260,19 @@ function abrirMapa(){
   window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank","noopener");
 }
 
-// Pré-capa: entra no evento
+// Pré-capa e música
 const audio = document.getElementById("bgMusic");
 const precover = document.getElementById("precover");
 const mainContent = document.getElementById("mainContent");
+
+function tocarMusica(){
+  if(audio.paused){
+    audio.play().catch(console.error);
+  } else {
+    audio.pause();
+  }
+}
+
 function entrarEvento(){
   precover.style.display="none";
   mainContent.style.display="block";
@@ -261,6 +285,11 @@ function entrarEvento(){
       if (elapsed>=4000) clearInterval(fade);
     },50);
   }).catch(console.error);
+}
+
+function voltarPreCapa(){
+  mainContent.style.display="none";
+  precover.style.display="flex";
 }
 </script>
 
