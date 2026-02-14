@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- Libs (opcionais já usados no seu projeto) -->
+  <!-- Libs -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
@@ -52,7 +52,7 @@
 
     #tsparticles { position:fixed; width:100%; height:100%; z-index:1; pointer-events: none; }
 
-    /* --- Navegação --- */
+    /* Navegação */
     #intro-page { 
       display: flex; 
       flex-direction: column; 
@@ -63,9 +63,10 @@
       padding-bottom: 16px;
     }
     #lista-presentes { display: none; width: 100%; animation: fadeIn 0.6s ease; }
+
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- Título (não corta “André”) --- */
+    /* Título (não corta “André”) */
     h1 {
       font-family:'Great Vibes', cursive;
       font-size: 72px;
@@ -81,10 +82,11 @@
       -webkit-text-fill-color: transparent;
       animation: shine 7s infinite linear;
       text-shadow: 0 0 10px rgba(212,175,55,0.18);
+      word-break: normal;
     }
     @keyframes shine { 0%{background-position:0%} 100%{background-position:300%} }
 
-    /* --- Capa --- */
+    /* Capa */
     .foto-casal {
       width: 220px; height: 220px; border-radius: 50%;
       border: 4px solid var(--gold);
@@ -106,7 +108,7 @@
     #countdown { font-size: 22px; font-weight: 600; color: var(--gold); }
     .info-local { font-size: 18px; line-height: 1.6; margin-bottom: 20px; }
 
-    /* --- Botões --- */
+    /* Botões */
     .btn-gold {
       padding: 15px 35px;
       font-size: 16px;
@@ -122,6 +124,7 @@
       box-shadow: 0 6px 14px rgba(212,175,55,0.25);
     }
     .btn-gold:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
     .btn-outline {
       background: transparent;
       border: 1px solid var(--gold);
@@ -134,7 +137,7 @@
     }
     .btn-outline:hover { background-color: #0f0f0f; color: #fff; }
 
-    /* --- Lista de presentes --- */
+    /* Lista de presentes */
     .container { 
       display: flex; 
       justify-content: center; 
@@ -150,35 +153,28 @@
       border-radius: 20px;
       padding: 16px;
       width: 270px;
-      border: 1px solid rgba(255,255,255,0.06); /* base bem discreta */
+      border: 1px solid rgba(255,255,255,0.06); /* base discreta */
       transition: transform 200ms ease, box-shadow 200ms ease;
       will-change: transform, box-shadow;
-      isolation: isolate; /* para pseudo-elemento */
+      isolation: isolate;
     }
 
-    /* ===== Borda “clean” com highlight girando ao redor =====
-       - Linha fina dourada + uma luz discretíssima que percorre o perímetro.
-       - Visual minimalista (sem glow espalhado).
-    */
+    /* Borda clean com highlight dourado girando */
     .card::after {
       content: "";
       position: absolute;
-      inset: 0;                   /* cobre o card */
+      inset: 0;
       border-radius: 20px;
-      padding: 1px;               /* espessura da borda */
-      /* Cor base da borda (linha contínua) com overlay do highlight que gira */
+      padding: 1px; /* espessura da borda */
       background:
-        /* highlight (segmento pequeno) */
         conic-gradient(
           from var(--rot, 0deg),
           rgba(212,175,55,0) 0deg,
-          rgba(212,175,55,0) 340deg,
-          rgba(255,255,255,0.95) 352deg,
-          rgba(212,175,55,0.0) 360deg
+          rgba(212,175,55,0) 342deg,
+          rgba(255,255,255,0.95) 350deg,
+          rgba(212,175,55,0) 360deg
         ),
-        /* linha contínua discreta abaixo */
         linear-gradient(var(--gold), var(--gold));
-      /* máscara para mostrar só a borda (vazando o centro) */
       -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
@@ -189,10 +185,7 @@
       opacity: 0.9;
       animation: ringSpin 3.5s linear infinite;
     }
-
-    @keyframes ringSpin {
-      to { --rot: 360deg; }
-    }
+    @keyframes ringSpin { to { --rot: 360deg; } }
 
     /* Hover: leve movimento e sombra sutil */
     .card:hover {
@@ -266,9 +259,10 @@
         <button class="btn-outline" onclick="tocarMusica()" id="music-btn">🎵 Música</button>
       </div>
 
-      <audio id="bgMusic" loop>
-        <source src="musica.mp3" type="audio/mpeg">
-        <!-- Dica: use um .mp3 direto (link do Vocaroo nem sempre serve streaming de áudio) -->
+      <!-- Áudio via Google Drive (link direto) -->
+      <audio id="bgMusic" preload="auto" playsinline>
+        https://drive.google.com/uc?export=download&id=1FkVfpiIwEJbplQi3PG5uDYRnC0wDdOHo
+        Seu navegador não suporta o elemento de áudio.
       </audio>
     </section>
 
@@ -339,11 +333,36 @@
       window.open(`https://www.google.com/maps/search/?api=1&query=Rua+Vera+Lucia+215+Sinimbu`, "_blank");
     }
 
+    // Controle do áudio (play/pause) com link do Google Drive
     const audio = document.getElementById("bgMusic");
-    function tocarMusica() {
-      if (audio.paused) { audio.play(); document.getElementById("music-btn").innerText = "🔇 Pausar"; }
-      else { audio.pause(); document.getElementById("music-btn").innerText = "🎵 Música"; }
+    const musicBtn = document.getElementById("music-btn");
+
+    function updateMusicButton() {
+      if (!musicBtn) return;
+      musicBtn.innerText = audio?.paused ? "🎵 Música" : "🔇 Pausar";
     }
+
+    function tocarMusica() {
+      if (audio.paused) {
+        audio.play()
+          .then(updateMusicButton)
+          .catch(err => {
+            console.error('Falha ao reproduzir:', err);
+            alert("O navegador bloqueou a reprodução ou o link não está acessível.\nTente clicar novamente e verifique se o arquivo está compartilhado como público no Google Drive.");
+          });
+      } else {
+        audio.pause();
+        updateMusicButton();
+      }
+    }
+    window.tocarMusica = tocarMusica;
+
+    audio.addEventListener('canplay', updateMusicButton);
+    audio.addEventListener('error', () => {
+      console.error('Erro no áudio:', audio.error);
+      alert("Não consegui carregar o áudio do Google Drive. Verifique se o link está público.");
+    });
+    document.addEventListener('visibilitychange', updateMusicButton);
 
     // Partículas (se carregado)
     window.addEventListener('DOMContentLoaded', function(){
@@ -355,6 +374,7 @@
     });
   </script>
 
+  <!-- Firebase (lista de presentes com reservas) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
