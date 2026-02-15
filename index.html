@@ -69,6 +69,16 @@ body{
   animation:fadeUp 1.2s ease forwards;
 }
 
+/* ===== BOTÕES ANIMADOS (PRÉ CAPA) ===== */
+@keyframes btnFloat {
+  0%,100% { transform:translateY(0) scale(1); }
+  50%     { transform:translateY(-3px) scale(1.01); }
+}
+@keyframes btnGlow {
+  0%,100% { box-shadow:0 10px 26px rgba(212,175,55,.22), 0 0 0 rgba(248,231,176,0); }
+  50%     { box-shadow:0 14px 36px rgba(212,175,55,.34), 0 0 18px rgba(248,231,176,.20); }
+}
+
 /* PRÉ CAPA */
 .precover{
   position:fixed; inset:0;
@@ -86,19 +96,31 @@ body{
 }
 .circle-photo img{width:100%;height:100%;object-fit:cover}
 
-/* Título superior “Chá de Panela” (mesmo estilo do h1) */
+/* Título superior “Chá de Panela” (GARANTE APARECER) */
 .pre-title{
+  position:relative;
+  z-index:2;
+  display:block;                 /* <- importante */
   font-family:'Great Vibes',cursive;
   font-size:clamp(30px,6vw,52px);
   line-height:1.1;
   max-width:95vw;
   padding:0 8px;
-  margin-bottom:6px;
-  background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
-  background-size:300%;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shine 6s infinite linear;
+  margin:0 0 6px;
+  color:var(--gold2);            /* fallback caso gradient/text-clip falhe */
+  text-shadow:0 2px 18px rgba(0,0,0,.35);
+}
+
+/* aplica o “texto dourado brilhante” só quando suportado */
+@supports (-webkit-background-clip:text) {
+  .pre-title{
+    background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
+    background-size:300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:none;
+    animation:shine 6s infinite linear;
+  }
 }
 
 h1{
@@ -141,6 +163,14 @@ h1{
   cursor:not-allowed;
   filter:none;
   transform:none;
+}
+
+/* ANIMAÇÃO EXTRA SÓ NOS BOTÕES DA PRÉ-CAPA */
+.precover .btn{
+  animation: btnFloat 2.6s ease-in-out infinite, btnGlow 2.6s ease-in-out infinite;
+}
+.precover .btn:active{
+  transform:translateY(0) scale(.98);
 }
 
 /* Ripple dourado */
@@ -357,7 +387,7 @@ input{
     <img src="nos.jpeg" alt="Foto do casal">
   </div>
 
-  <!-- Novo título acima de Luiza & André -->
+  <!-- Chá de Panela (agora aparece mesmo em navegadores chatos) -->
   <div class="pre-title fade-up" style="animation-delay:.6s;">
     Chá de Panela
   </div>
@@ -800,13 +830,13 @@ function keyOfItem(item){
   return String(item).replace(/\s+/g, "_");
 }
 function getKeyFromCard(item){
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   return card?.getAttribute("data-key") || keyOfItem(item);
 }
 
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   const key = getKeyFromCard(item);
 
   const badge = document.getElementById("badge-"+key);
@@ -899,7 +929,7 @@ async function doReserve(item){
 async function presentearImpl(item){
   const ok = await window.uiConfirmar({
     title:"Confirmar presente",
-    text:`Você escolheu: ${item}. Deseja confirmar?`,
+    text:\`Você escolheu: \${item}. Deseja confirmar?\`,
     note:"Após confirmar, este item ficará reservado.",
     confirmText:"Confirmar",
     cancelText:"Cancelar"
