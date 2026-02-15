@@ -455,6 +455,15 @@
     </div>
   </dialog>
 
+  <script>
+    /* ========= CONTROLE DE LIBERAÇÃO =========
+       false = rifa fechada (ninguém seleciona / reserva)
+       true  = rifa aberta (normal)
+       -> Para liberar, mude para true e recarregue a página.
+    */
+    window.RIFA_ABERTA = false; // <-- MUDE AQUI QUANDO QUISER
+  </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import {
@@ -551,6 +560,12 @@
     }
 
     function openReserveModal(){
+      // ✅ trava/libera por chave simples (true/false)
+      if(!window.RIFA_ABERTA){
+        alert("A rifa ainda não foi liberada. Volte mais tarde 😊");
+        return;
+      }
+
       err.style.display = "none"; err.textContent = "";
       ok.style.display = "none"; ok.textContent = "";
 
@@ -579,6 +594,9 @@
       b.dataset.num = String(n);
 
       b.addEventListener("click", () => {
+        // ✅ trava/libera por chave simples (true/false)
+        if(!window.RIFA_ABERTA) return;
+
         if (takenCache.has(n)) return;
         if (selected.has(n)){
           selected.delete(n);
@@ -636,14 +654,19 @@
       });
 
       refreshReserveBar();
-      statusEl.textContent = "Online • Atualiza ao vivo";
+
+      // ✅ status muda conforme a chave
+      statusEl.textContent = window.RIFA_ABERTA ? "Online • Atualiza ao vivo" : "Rifa fechada • Online";
     }, (e) => {
       console.error(e);
       statusEl.textContent = "Erro ao conectar no Firebase (veja o console).";
     });
 
     // Botões
-    clearBtn.addEventListener("click", clearSelection);
+    clearBtn.addEventListener("click", () => {
+      if(!window.RIFA_ABERTA) return;
+      clearSelection();
+    });
     reserveBtn.addEventListener("click", openReserveModal);
     floatingReserve.addEventListener("click", openReserveModal);
     cancelBtn.addEventListener("click", () => dlg.close());
@@ -669,6 +692,13 @@
 
     // Confirmar
     confirmBtn.addEventListener("click", async () => {
+      // ✅ trava/libera por chave simples (true/false)
+      if(!window.RIFA_ABERTA){
+        err.textContent = "A rifa ainda não foi liberada. Volte mais tarde 😊";
+        err.style.display = "block";
+        return;
+      }
+
       err.style.display = "none"; err.textContent = "";
       ok.style.display = "none"; ok.textContent = "";
 
@@ -739,6 +769,9 @@ Pix: ${PIX}`;
     });
 
     refreshReserveBar();
+
+    // ✅ ajusta status inicial conforme a chave
+    statusEl.textContent = window.RIFA_ABERTA ? "Conectando ao Firebase…" : "Rifa fechada • Conectando…";
   </script>
 </body>
 </html>
