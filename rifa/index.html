@@ -244,8 +244,33 @@
       padding:10px 12px;
       border-radius:14px;
       font-weight:900;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
     }
     .hint{font-size:13px;color:var(--muted)}
+
+    /* ===== NOVO: ícone para copiar Pix ===== */
+    .copyPixBtn{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid rgba(0,0,0,0.12);
+      background:#fff;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      line-height:1;
+      user-select:none;
+    }
+    .copyPixBtn:hover{filter:brightness(.98)}
+    .copyToast{
+      font-size:12px;
+      color: var(--green2);
+      font-weight:800;
+      display:none;
+    }
 
     dialog{
       border:none;
@@ -273,6 +298,56 @@
     button:disabled{opacity:.6;cursor:not-allowed}
     .error{color:#a61b1b;font-size:13px;margin-top:8px;display:none;}
     .success{color:#1f6a39;font-size:13px;margin-top:8px;display:none;}
+
+    /* ===== NOVO: botão flutuante ===== */
+    .floatingReserve{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(63,107,87,0.96);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      backdrop-filter: blur(8px);
+    }
+    .floatingReserve:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+    .floatingBadge{
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .floatingHint{
+      font-size:12px;
+      font-weight:800;
+      opacity:.92;
+      display:none;
+    }
+    @media (max-width:520px){
+      .floatingReserve{
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        justify-content: space-between;
+      }
+      .floatingHint{display:block;}
+    }
+
+    /* Para não tapar conteúdo no mobile por causa do botão fixo */
+    body{ padding-bottom: 84px; }
   </style>
 </head>
 
@@ -321,12 +396,26 @@
 
       <div class="footer">
         <div>
-          <div class="pixBox">Pix: <span id="pixText">31994243195</span></div>
+          <div class="pixBox">
+            Pix: <span id="pixText">31994243195</span>
+
+            <!-- NOVO: folhinha para copiar -->
+            <button class="copyPixBtn" id="copyPixBtn" type="button" title="Copiar Pix">🍃</button>
+            <span class="copyToast" id="copyToast">Copiado!</span>
+          </div>
+
           <div class="hint">Ao reservar, o WhatsApp abre automaticamente para confirmar os números.</div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- NOVO: botão flutuante -->
+  <button class="floatingReserve" id="floatingReserve" type="button" disabled>
+    <span>Reservar</span>
+    <span class="floatingHint">toque para reservar</span>
+    <span class="floatingBadge" id="floatingBadge">0</span>
+  </button>
 
   <dialog id="reserveDialog">
     <div class="modal">
@@ -366,7 +455,6 @@
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-    // ✅ SUA CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyCnDJtjk7O19VV0cgJZryGEPx7j5yJZOqg",
       authDomain: "rifacasamento-6210d.firebaseapp.com",
@@ -379,9 +467,8 @@
     // ===== CONFIG DA RIFA =====
     const START = 1;
     const END = 200;
-
-    const WPP = "5531994243195";              // número que RECEBE a msg
-    const PIX = "31994243195";    // pix exibido e enviado na msg
+    const WPP = "5531994243195";
+    const PIX = "31994243195";
     // ===========================
 
     const app = initializeApp(firebaseConfig);
@@ -395,7 +482,14 @@
     const reserveBtn = document.getElementById("reserveBtn");
     const clearBtn = document.getElementById("clearBtn");
 
+    // NOVO: botão flutuante
+    const floatingReserve = document.getElementById("floatingReserve");
+    const floatingBadge = document.getElementById("floatingBadge");
+
+    // Pix + copiar
     const pixText = document.getElementById("pixText");
+    const copyPixBtn = document.getElementById("copyPixBtn");
+    const copyToast = document.getElementById("copyToast");
     pixText.textContent = PIX;
 
     const dlg = document.getElementById("reserveDialog");
@@ -409,9 +503,9 @@
     const confirmBtn = document.getElementById("confirmBtn");
 
     // estado
-    const buttons = new Map();     // num -> element
-    const selected = new Set();    // selecionados
-    const takenCache = new Set();  // reservados (do snapshot)
+    const buttons = new Map();
+    const selected = new Set();
+    const takenCache = new Set();
 
     function formatNums(nums){
       return [...nums].sort((a,b)=>a-b).join(", ");
@@ -419,6 +513,8 @@
 
     function refreshReserveBar(){
       const count = selected.size;
+
+      // barra normal
       if (count === 0){
         pickedInfo.textContent = "Nenhum número selecionado.";
         reserveBtn.disabled = true;
@@ -428,6 +524,10 @@
         reserveBtn.disabled = false;
         clearBtn.disabled = false;
       }
+
+      // NOVO: flutuante
+      floatingBadge.textContent = String(count);
+      floatingReserve.disabled = (count === 0);
     }
 
     function clearSelection(){
@@ -443,7 +543,28 @@
       return `https://wa.me/${WPP}?text=${encodeURIComponent(text)}`;
     }
 
-    // Render dos números
+    function openReserveModal(){
+      err.style.display = "none"; err.textContent = "";
+      ok.style.display = "none"; ok.textContent = "";
+
+      const nums = [...selected].sort((a,b)=>a-b);
+      if (!nums.length){
+        alert("Selecione pelo menos um número.");
+        return;
+      }
+
+      modalTitle.textContent = `Reservar ${nums.length} número(s)`;
+      selectedPreview.textContent = `Números: ${nums.join(", ")}`;
+
+      buyerName.value = "";
+      buyerContact.value = "";
+      confirmBtn.disabled = false;
+
+      dlg.showModal();
+      buyerName.focus();
+    }
+
+    // Render
     for (let n = START; n <= END; n++) {
       const b = document.createElement("div");
       b.className = "num";
@@ -466,7 +587,7 @@
       buttons.set(n, b);
     }
 
-    // Snapshot em tempo real
+    // Snapshot
     const colRef = collection(db, "rifaNumbers");
 
     onSnapshot(colRef, (snap) => {
@@ -502,28 +623,37 @@
       statusEl.textContent = "Erro ao conectar no Firebase (veja o console).";
     });
 
-    // Barra
+    // Botões
     clearBtn.addEventListener("click", clearSelection);
 
-    reserveBtn.addEventListener("click", () => {
-      err.style.display = "none"; err.textContent = "";
-      ok.style.display = "none"; ok.textContent = "";
+    reserveBtn.addEventListener("click", openReserveModal);
 
-      const nums = [...selected].sort((a,b)=>a-b);
-      modalTitle.textContent = `Reservar ${nums.length} número(s)`;
-      selectedPreview.textContent = `Números: ${nums.join(", ")}`;
-
-      buyerName.value = "";
-      buyerContact.value = "";
-      confirmBtn.disabled = false;
-
-      dlg.showModal();
-      buyerName.focus();
-    });
+    // NOVO: botão flutuante abre o mesmo modal
+    floatingReserve.addEventListener("click", openReserveModal);
 
     cancelBtn.addEventListener("click", () => dlg.close());
 
-    // Confirmar (usando a lógica do 1º código: abre aba antes; mensagem com texto “Olá! Reserva da rifa Luiza & André …”)
+    // NOVO: copiar pix
+    async function copyPix(){
+      const value = PIX;
+      try{
+        await navigator.clipboard.writeText(value);
+      }catch{
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = value;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      copyToast.style.display = "inline";
+      clearTimeout(copyPix._t);
+      copyPix._t = setTimeout(() => (copyToast.style.display = "none"), 1400);
+    }
+    copyPixBtn.addEventListener("click", copyPix);
+
+    // Confirmar
     confirmBtn.addEventListener("click", async () => {
       err.style.display = "none"; err.textContent = "";
       ok.style.display = "none"; ok.textContent = "";
@@ -545,13 +675,11 @@
 
       confirmBtn.disabled = true;
 
-      // tenta abrir uma aba antes (ajuda a não bloquear pop-up)
       let waWin = null;
       try { waWin = window.open("", "_blank"); } catch {}
 
       try{
         await runTransaction(db, async (tx) => {
-          // garante que nenhum já foi reservado
           for (const n of nums){
             const ref = doc(db, "rifaNumbers", String(n));
             const snap = await tx.get(ref);
@@ -559,7 +687,6 @@
               throw new Error(`O número ${n} já foi reservado por outra pessoa.`);
             }
           }
-          // grava todos
           for (const n of nums){
             tx.set(doc(db, "rifaNumbers", String(n)), {
               status: "taken",
@@ -596,6 +723,9 @@ Pix: ${PIX}`;
         confirmBtn.disabled = false;
       }
     });
+
+    // inicial
+    refreshReserveBar();
   </script>
 </body>
 </html>
