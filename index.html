@@ -10,6 +10,15 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
 <script>
+/* ========= CONTROLE DE LIBERAÇÃO =========
+   false = lista fechada (ninguém reserva)
+   true  = lista aberta (pode reservar)
+   -> Para liberar, só mude para true e recarregue a página.
+*/
+window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI QUANDO QUISER
+</script>
+
+<script>
 window.addEventListener('DOMContentLoaded', function () {
   try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
 
@@ -30,6 +39,13 @@ window.addEventListener('DOMContentLoaded', function () {
         },
         detectRetina:true
       });
+    }
+  }catch(e){}
+
+  // Aplica o estado (aberta/fechada) assim que a página carregar
+  try{
+    if(typeof window.aplicarEstadoLista === "function"){
+      window.aplicarEstadoLista();
     }
   }catch(e){}
 });
@@ -310,10 +326,21 @@ input{
   background:rgba(255,255,255,.12);
   border-color:rgba(255,255,255,.22);
 }
+/* ✅ Badge quando a lista está fechada */
+.badge.closed{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.16);
+}
 
 .card.is-reservado{opacity:.92}
 .card.is-reservado input{display:none}
 .card.is-reservado .reserved-note{display:block}
+
+/* ✅ Quando lista está fechada (não mexe no HTML, só no estado via JS) */
+.card.is-closed{opacity:.95}
+.card.is-closed input{display:none}
+.card.is-closed .reserved-note{display:block}
+
 .reserved-note{
   display:none;
   margin-top:10px;
@@ -380,7 +407,7 @@ input{
 <body>
 <div id="tsparticles"></div>
 
-<!-- MODAL (já existe) -->
+<!-- MODAL -->
 <div class="modal" id="modal" aria-hidden="true">
   <div class="modal-backdrop" id="modalBackdrop"></div>
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
@@ -713,6 +740,8 @@ function entrarEvento(){
   document.getElementById("precover").style.display="none";
   document.getElementById("mainContent").style.display="block";
   window.scrollTo({top:0, behavior:"instant"});
+  // reaplica estado ao entrar
+  try{ window.aplicarEstadoLista?.(); }catch(e){}
 }
 function voltarPreCapa(){
   document.getElementById("mainContent").style.display="none";
@@ -784,9 +813,68 @@ function uiAviso({title, text, note, buttonText="Fechar"}){
   return new Promise((resolve)=>{ uiResolve = resolve; });
 }
 
+/* ========= CONTROLE DE UI (aberta/fechada) ========= */
+function aplicarEstadoLista(){
+  const aberta = !!window.LISTA_PRESENTES_ABERTA;
+
+  document.querySelectorAll(".card[data-item]").forEach((card)=>{
+    const key = card.getAttribute("data-key") || "";
+    const badge = document.getElementById("badge-"+key);
+    const note  = document.getElementById("note-"+key);
+    const btn   = document.getElementById("btn-"+key);
+    const inNome  = document.getElementById("nome-"+key);
+    const inEmail = document.getElementById("email-"+key);
+
+    const reservado = card.classList.contains("is-reservado");
+
+    // estado fechado só afeta itens que NÃO estão reservados
+    const fechadoParaEste = (!aberta && !reservado);
+
+    card.classList.toggle("is-closed", fechadoParaEste);
+
+    if(fechadoParaEste){
+      if(badge){
+        badge.textContent = "Em breve";
+        badge.classList.add("closed");
+        badge.classList.remove("reservado");
+      }
+      if(note){
+        note.textContent = "Lista de presentes ainda não liberada.";
+        note.style.display = "block";
+      }
+      if(btn){
+        btn.disabled = true;
+        btn.textContent = "Em breve";
+      }
+      if(inNome){ inNome.disabled = true; }
+      if(inEmail){ inEmail.disabled = true; }
+    }else{
+      // quando aberto, quem decide é o Firebase (ou reservado)
+      if(!reservado){
+        if(badge){
+          // não força texto aqui; Firebase atualiza (se ainda não atualizou, mantém "Disponível")
+          badge.classList.remove("closed");
+        }
+        if(note){
+          // volta texto padrão (o Firebase pode esconder/mostrar)
+          note.textContent = "Este item já foi reservado.";
+        }
+        if(btn){
+          // não força habilitar aqui porque o Firebase pode setar
+          if(window.LISTA_PRESENTES_ABERTA){
+            btn.textContent = "Presentear";
+          }
+        }
+        if(inNome){ inNome.disabled = false; }
+        if(inEmail){ inEmail.disabled = false; }
+      }
+    }
+  });
+}
+window.aplicarEstadoLista = aplicarEstadoLista;
+
 /* ========= ✅ CORREÇÃO AQUI (sem mudar o visual) =========
-   Faz o botão aguardar o Firebase (script module) ficar pronto,
-   em vez de cair no "aguarde 1 minuto" imediatamente.
+   Faz o botão aguardar o Firebase (script module) ficar pronto
 */
 window.__presentearReady = new Promise((resolve, reject)=>{
   window.__presentearReadyResolve = resolve;
@@ -795,6 +883,17 @@ window.__presentearReady = new Promise((resolve, reject)=>{
 
 /* ✅ FUNÇÃO GLOBAL: sempre existe */
 async function Presentear(item){
+
+  // ✅ trava/libera por chave simples (true/false)
+  if(!window.LISTA_PRESENTES_ABERTA){
+    await uiAviso({
+      title:"Lista ainda não liberada",
+      text:"A lista de presentes ainda está fechada. Volte mais tarde 😊",
+      note:""
+    });
+    return;
+  }
+
   // Se já está pronto, vai direto
   if(typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
@@ -813,7 +912,7 @@ async function Presentear(item){
     return window.__presentearImpl(item);
   }
 
-  // Se realmente não carregou, mostra aviso (mesmo texto)
+  // Se realmente não carregou, mostra aviso
   await uiAviso({
     title:"Carregando...",
     text:"Aguarde 1 segundo e tente novamente.",
@@ -848,13 +947,13 @@ function keyOfItem(item){
   return String(item).replace(/\s+/g, "_");
 }
 function getKeyFromCard(item){
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   return card?.getAttribute("data-key") || keyOfItem(item);
 }
 
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   const key = getKeyFromCard(item);
 
   const badge = document.getElementById("badge-"+key);
@@ -865,11 +964,39 @@ function setReservadoUI(item, data){
 
   if(card) card.classList.toggle("is-reservado", reservado);
 
+  // Se estiver fechado e não for reservado, o estado "Em breve" vai prevalecer
+  const aberta = !!window.LISTA_PRESENTES_ABERTA;
+  const fechadoParaEste = (!aberta && !reservado);
+
+  if(card) card.classList.toggle("is-closed", fechadoParaEste);
+
+  if(fechadoParaEste){
+    if(badge){
+      badge.textContent = "Em breve";
+      badge.classList.add("closed");
+      badge.classList.remove("reservado");
+    }
+    if(note){
+      note.textContent = "Lista de presentes ainda não liberada.";
+      note.style.display = "block";
+    }
+    if(btn){
+      btn.disabled = true;
+      btn.textContent = "Em breve";
+    }
+    if(inNome) inNome.disabled = true;
+    if(inEmail) inEmail.disabled = true;
+    return;
+  }
+
+  // Fluxo normal (aberta): reservado vs disponível
   if(badge){
     badge.textContent = reservado ? "Reservado" : "Disponível";
     badge.classList.toggle("reservado", reservado);
+    badge.classList.remove("closed");
   }
   if(note){
+    note.textContent = "Este item já foi reservado.";
     note.style.display = reservado ? "block" : "none";
   }
   if(btn){
@@ -878,6 +1005,9 @@ function setReservadoUI(item, data){
   }
   if(inNome) inNome.disabled = reservado;
   if(inEmail) inEmail.disabled = reservado;
+
+  // Se estiver aberto, aplica o estado geral também (por garantia)
+  try{ window.aplicarEstadoLista?.(); }catch(e){}
 }
 
 document.querySelectorAll(".card[data-item]").forEach((card)=>{
@@ -945,9 +1075,20 @@ async function doReserve(item){
 }
 
 async function presentearImpl(item){
+
+  // ✅ segurança: se estiver fechado, não reserva nem pelo console
+  if(!window.LISTA_PRESENTES_ABERTA){
+    await window.uiAviso({
+      title:"Lista ainda não liberada",
+      text:"A lista de presentes ainda está fechada. Volte mais tarde 😊",
+      note:""
+    });
+    return;
+  }
+
   const ok = await window.uiConfirmar({
     title:"Confirmar presente",
-    text:`Você escolheu: ${item}. Deseja confirmar?`,
+    text:\`Você escolheu: \${item}. Deseja confirmar?\`,
     note:"Após confirmar, este item ficará reservado.",
     confirmText:"Confirmar",
     cancelText:"Cancelar"
