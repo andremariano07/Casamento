@@ -380,7 +380,7 @@ input{
 <body>
 <div id="tsparticles"></div>
 
-<!-- ✅ MODAL (ADICIONADO - era o que estava faltando) -->
+<!-- MODAL (já existe) -->
 <div class="modal" id="modal" aria-hidden="true">
   <div class="modal-backdrop" id="modalBackdrop"></div>
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
@@ -429,6 +429,7 @@ input{
   <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
   <div class="container">
+    <!-- Cards (mantidos) -->
     <div class="card" data-item="Geladeira" data-key="Geladeira">
       <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
       <h3>Geladeira</h3>
@@ -579,7 +580,6 @@ input{
       <button class="btn" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
     </div>
 
-    <!-- ✅ CORRIGIDOS (sem espaço no data-key/ids) -->
     <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
       <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
       <h3>Porta Tempero</h3>
@@ -784,11 +784,36 @@ function uiAviso({title, text, note, buttonText="Fechar"}){
   return new Promise((resolve)=>{ uiResolve = resolve; });
 }
 
-/* ✅ FUNÇÃO GLOBAL */
+/* ========= ✅ CORREÇÃO AQUI (sem mudar o visual) =========
+   Faz o botão aguardar o Firebase (script module) ficar pronto,
+   em vez de cair no "aguarde 1 minuto" imediatamente.
+*/
+window.__presentearReady = new Promise((resolve, reject)=>{
+  window.__presentearReadyResolve = resolve;
+  window.__presentearReadyReject  = reject;
+});
+
+/* ✅ FUNÇÃO GLOBAL: sempre existe */
 async function Presentear(item){
+  // Se já está pronto, vai direto
   if(typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
   }
+
+  // Aguarda o módulo ficar pronto (até 6s)
+  let ready = false;
+  try{
+    await Promise.race([
+      window.__presentearReady.then(()=>{ ready = true; }),
+      new Promise((_, rej)=>setTimeout(()=>rej(new Error("timeout")), 6000))
+    ]);
+  }catch(e){}
+
+  if(ready && typeof window.__presentearImpl === "function"){
+    return window.__presentearImpl(item);
+  }
+
+  // Se realmente não carregou, mostra aviso (mesmo texto)
   await uiAviso({
     title:"Carregando...",
     text:"Aguarde 1 segundo e tente novamente.",
@@ -819,24 +844,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-function sanitizeKey(str){
-  return String(str)
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // remove acentos
-    .replace(/\s+/g, "_")
-    .replace(/[^\w]/g, "_")
-    .replace(/_+/g, "_");
-}
 function keyOfItem(item){
-  return sanitizeKey(item);
+  return String(item).replace(/\s+/g, "_");
 }
 function getKeyFromCard(item){
-  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
+  const card = document.querySelector(`.card[data-item="${item}"]`);
   return card?.getAttribute("data-key") || keyOfItem(item);
 }
 
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
+  const card = document.querySelector(`.card[data-item="${item}"]`);
   const key = getKeyFromCard(item);
 
   const badge = document.getElementById("badge-"+key);
@@ -929,7 +947,7 @@ async function doReserve(item){
 async function presentearImpl(item){
   const ok = await window.uiConfirmar({
     title:"Confirmar presente",
-    text:\`Você escolheu: \${item}. Deseja confirmar?\`,
+    text:`Você escolheu: ${item}. Deseja confirmar?`,
     note:"Após confirmar, este item ficará reservado.",
     confirmText:"Confirmar",
     cancelText:"Cancelar"
@@ -939,6 +957,9 @@ async function presentearImpl(item){
 }
 
 window.__presentearImpl = presentearImpl;
+
+/* ✅ avisa o script normal que o módulo carregou */
+try{ window.__presentearReadyResolve?.(true); }catch(e){}
 </script>
 
 </body>
