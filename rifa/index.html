@@ -25,6 +25,7 @@
         radial-gradient(700px 400px at 90% 5%, rgba(63,107,87,0.16), transparent 55%),
         linear-gradient(180deg, #d7e3dc 0%, #eef1ee 40%, #e7ebe7 100%);
       min-height:100vh;
+      padding-bottom: 84px; /* Para não tapar conteúdo no mobile por causa do botão fixo */
     }
 
     .wrap{max-width:980px;margin:0 auto;padding:18px}
@@ -237,6 +238,7 @@
       gap:12px;
       flex-wrap:wrap;
     }
+
     .pixBox{
       background: rgba(63,107,87,0.12);
       border:1px solid rgba(63,107,87,0.20);
@@ -249,22 +251,30 @@
       gap:10px;
       flex-wrap:wrap;
     }
+
     .hint{font-size:13px;color:var(--muted)}
 
-    /* ===== NOVO: ícone para copiar Pix ===== */
+    /* ===== Botão "Copiar Pix" estilo "Copiar código" ===== */
     .copyPixBtn{
-      width:34px;height:34px;border-radius:12px;
-      border:1px solid rgba(0,0,0,0.12);
-      background:#fff;
-      cursor:pointer;
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      font-size:18px;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.20);
+      background: rgba(0,0,0,0.88);
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
       line-height:1;
       user-select:none;
+      box-shadow:0 10px 24px rgba(0,0,0,0.18);
     }
-    .copyPixBtn:hover{filter:brightness(.98)}
+    .copyPixBtn:hover{background: rgba(0,0,0,0.94);}
+    .copyPixBtn:active{transform: translateY(1px);}
+    .copyPixBtn svg{width:16px;height:16px;display:block;fill:#fff}
+
     .copyToast{
       font-size:12px;
       color: var(--green2);
@@ -299,7 +309,7 @@
     .error{color:#a61b1b;font-size:13px;margin-top:8px;display:none;}
     .success{color:#1f6a39;font-size:13px;margin-top:8px;display:none;}
 
-    /* ===== NOVO: botão flutuante ===== */
+    /* ===== Botão flutuante ===== */
     .floatingReserve{
       position: fixed;
       right: 18px;
@@ -345,9 +355,6 @@
       }
       .floatingHint{display:block;}
     }
-
-    /* Para não tapar conteúdo no mobile por causa do botão fixo */
-    body{ padding-bottom: 84px; }
   </style>
 </head>
 
@@ -399,8 +406,14 @@
           <div class="pixBox">
             Pix: <span id="pixText">31994243195</span>
 
-            <!-- NOVO: folhinha para copiar -->
-            <button class="copyPixBtn" id="copyPixBtn" type="button" title="Copiar Pix">🍃</button>
+            <!-- Botão estilo "Copiar código" -->
+            <button class="copyPixBtn" id="copyPixBtn" type="button" title="Copiar Pix">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 1H6c-1.1 0-2 .9-2 2v12h2V3h10V1zm3 4H10c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H10V7h9v14z"/>
+              </svg>
+              Copiar Pix
+            </button>
+
             <span class="copyToast" id="copyToast">Copiado!</span>
           </div>
 
@@ -410,7 +423,7 @@
     </div>
   </div>
 
-  <!-- NOVO: botão flutuante -->
+  <!-- Botão flutuante -->
   <button class="floatingReserve" id="floatingReserve" type="button" disabled>
     <span>Reservar</span>
     <span class="floatingHint">toque para reservar</span>
@@ -482,11 +495,9 @@
     const reserveBtn = document.getElementById("reserveBtn");
     const clearBtn = document.getElementById("clearBtn");
 
-    // NOVO: botão flutuante
     const floatingReserve = document.getElementById("floatingReserve");
     const floatingBadge = document.getElementById("floatingBadge");
 
-    // Pix + copiar
     const pixText = document.getElementById("pixText");
     const copyPixBtn = document.getElementById("copyPixBtn");
     const copyToast = document.getElementById("copyToast");
@@ -514,7 +525,6 @@
     function refreshReserveBar(){
       const count = selected.size;
 
-      // barra normal
       if (count === 0){
         pickedInfo.textContent = "Nenhum número selecionado.";
         reserveBtn.disabled = true;
@@ -525,7 +535,6 @@
         clearBtn.disabled = false;
       }
 
-      // NOVO: flutuante
       floatingBadge.textContent = String(count);
       floatingReserve.disabled = (count === 0);
     }
@@ -625,21 +634,16 @@
 
     // Botões
     clearBtn.addEventListener("click", clearSelection);
-
     reserveBtn.addEventListener("click", openReserveModal);
-
-    // NOVO: botão flutuante abre o mesmo modal
     floatingReserve.addEventListener("click", openReserveModal);
-
     cancelBtn.addEventListener("click", () => dlg.close());
 
-    // NOVO: copiar pix
+    // Copiar Pix
     async function copyPix(){
       const value = PIX;
       try{
         await navigator.clipboard.writeText(value);
       }catch{
-        // fallback
         const ta = document.createElement("textarea");
         ta.value = value;
         document.body.appendChild(ta);
@@ -724,7 +728,6 @@ Pix: ${PIX}`;
       }
     });
 
-    // inicial
     refreshReserveBar();
   </script>
 </body>
