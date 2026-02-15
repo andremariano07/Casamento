@@ -380,13 +380,26 @@ input{
 <body>
 <div id="tsparticles"></div>
 
+<!-- ✅ MODAL (ADICIONADO - era o que estava faltando) -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+    <div class="modal-title" id="modalTitle">Aviso</div>
+    <div class="modal-text" id="modalText"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modalCancel" type="button">Fechar</button>
+      <button class="btn btn-primary" id="modalConfirm" type="button">Confirmar</button>
+    </div>
+    <div class="small-note" id="modalNote"></div>
+  </div>
+</div>
+
 <!-- PRÉ CAPA -->
 <div class="precover" id="precover">
   <div class="circle-photo fade-up" style="animation-delay:.2s;">
     <img src="nos.jpeg" alt="Foto do casal">
   </div>
 
-  <!-- Chá de Panela -->
   <div class="pre-title fade-up" style="animation-delay:.6s;">
     Chá de Panela
   </div>
@@ -416,8 +429,6 @@ input{
   <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
   <div class="container">
-    <!-- Cards (mantidos) -->
-    <!-- Cards (mantidos) -->
     <div class="card" data-item="Geladeira" data-key="Geladeira">
       <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
       <h3>Geladeira</h3>
@@ -568,34 +579,35 @@ input{
       <button class="btn" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Porta Tempero" data-key="Porta Tempero">
+    <!-- ✅ CORRIGIDOS (sem espaço no data-key/ids) -->
+    <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
       <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
       <h3>Porta Tempero</h3>
-      <div class="badge" id="badge-Porta Tempero">Disponível</div>
-      <div class="reserved-note" id="note-Porta Tempero">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Porta Tempero">
-      <input type="email" placeholder="Seu e-mail" id="email-Porta Tempero">
-      <button class="btn" id="btn-Porta Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
+      <div class="badge" id="badge-Porta_Tempero">Disponível</div>
+      <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
+      <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
+      <button class="btn" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Jogo de Copos" data-key="Jogo de Copos">
+    <div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
       <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
       <h3>Jogo de Copos</h3>
-      <div class="badge" id="badge-Jogo de Copos">Disponível</div>
-      <div class="reserved-note" id="note-Jogo de Copos">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Jogo de Copos">
-      <input type="email" placeholder="Seu e-mail" id="email-Jogo de Copos">
-      <button class="btn" id="btn-Jogo de Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
+      <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
+      <button class="btn" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Escorredor De Louças" data-key="Escorredor De Louças">
+    <div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
       <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
       <h3>Escorredor De Louças</h3>
-      <div class="badge" id="badge-Escorredor De Louças">Disponível</div>
-      <div class="reserved-note" id="note-Escorredor De Louças">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Escorredor De Louças">
-      <input type="email" placeholder="Seu e-mail" id="email-Escorredor De Louças">
-      <button class="btn" id="btn-Escorredor De Louças" onclick="Presentear('Escorredor De Louças')">Presentear</button>
+      <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
+      <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
+      <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
+      <button class="btn" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
     </div>
 
     <div class="card" data-item="Microondas" data-key="Microondas">
@@ -647,7 +659,6 @@ input{
       <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
       <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
     </div>
-
   </div>
 </div>
 
@@ -773,7 +784,7 @@ function uiAviso({title, text, note, buttonText="Fechar"}){
   return new Promise((resolve)=>{ uiResolve = resolve; });
 }
 
-/* ✅ FUNÇÃO GLOBAL: sempre existe */
+/* ✅ FUNÇÃO GLOBAL */
 async function Presentear(item){
   if(typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
@@ -808,17 +819,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
+function sanitizeKey(str){
+  return String(str)
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // remove acentos
+    .replace(/\s+/g, "_")
+    .replace(/[^\w]/g, "_")
+    .replace(/_+/g, "_");
+}
 function keyOfItem(item){
-  return String(item).replace(/\s+/g, "_");
+  return sanitizeKey(item);
 }
 function getKeyFromCard(item){
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   return card?.getAttribute("data-key") || keyOfItem(item);
 }
 
 function setReservadoUI(item, data){
   const reservado = !!(data && data.reservado);
-  const card = document.querySelector(`.card[data-item="${item}"]`);
+  const card = document.querySelector(\`.card[data-item="\${item}"]\`);
   const key = getKeyFromCard(item);
 
   const badge = document.getElementById("badge-"+key);
@@ -911,7 +929,7 @@ async function doReserve(item){
 async function presentearImpl(item){
   const ok = await window.uiConfirmar({
     title:"Confirmar presente",
-    text:`Você escolheu: ${item}. Deseja confirmar?`,
+    text:\`Você escolheu: \${item}. Deseja confirmar?\`,
     note:"Após confirmar, este item ficará reservado.",
     confirmText:"Confirmar",
     cancelText:"Cancelar"
