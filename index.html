@@ -59,7 +59,7 @@ body{
   pointer-events:none; z-index:1;
 }
 
-/* ===== ANIMAÇÃO SUAVE (adicionada) ===== */
+/* ===== ANIMAÇÃO SUAVE ===== */
 @keyframes fadeUp {
   from { opacity:0; transform:translateY(25px); }
   to   { opacity:1; transform:translateY(0); }
@@ -86,10 +86,13 @@ body{
 }
 .circle-photo img{width:100%;height:100%;object-fit:cover}
 
-/* ===== Título com brilho (adicionado) ===== */
+/* Título superior “Chá de Panela” (mesmo estilo do h1) */
 .pre-title{
   font-family:'Great Vibes',cursive;
   font-size:clamp(30px,6vw,52px);
+  line-height:1.1;
+  max-width:95vw;
+  padding:0 8px;
   margin-bottom:6px;
   background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
   background-size:300%;
@@ -351,10 +354,10 @@ input{
 <!-- PRÉ CAPA -->
 <div class="precover" id="precover">
   <div class="circle-photo fade-up" style="animation-delay:.2s;">
-    <img src="nos.jpeg" alt="Foto">
+    <img src="nos.jpeg" alt="Foto do casal">
   </div>
 
-  <!-- Título “Chá de Panela” com brilho (adicionado) -->
+  <!-- Novo título acima de Luiza & André -->
   <div class="pre-title fade-up" style="animation-delay:.6s;">
     Chá de Panela
   </div>
@@ -384,7 +387,8 @@ input{
   <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
   <div class="container">
-    <!-- Seus cards (inalterados) -->
+
+    <!-- Cards (mantidos) -->
     <div class="card" data-item="Geladeira" data-key="Geladeira">
       <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
       <h3>Geladeira</h3>
@@ -614,6 +618,7 @@ input{
       <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
       <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
     </div>
+
   </div>
 </div>
 
@@ -908,4 +913,3 @@ window.__presentearImpl = presentearImpl;
 
 </body>
 </html>
-``
