@@ -11,6 +11,53 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
 <script>
+
+  <script>
+window.addEventListener('DOMContentLoaded', function () {
+
+  // ✅ ORDENA OS CARDS AUTOMATICAMENTE (A-Z) pelo data-item
+  (function ordenarCards(){
+    const container = document.querySelector(".container");
+    if(!container) return;
+
+    const cards = Array.from(container.querySelectorAll(".card[data-item]"));
+    cards.sort((a, b) => {
+      const nameA = (a.getAttribute("data-item") || "").trim();
+      const nameB = (b.getAttribute("data-item") || "").trim();
+      return nameA.localeCompare(nameB, "pt-BR", { sensitivity: "base" });
+    });
+
+    cards.forEach(card => container.appendChild(card));
+  })();
+
+  try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
+
+  try{
+    if(window.tsParticles){
+      tsParticles.load("tsparticles",{
+        fpsLimit:60,
+        fullScreen:{ enable:false },
+        background:{ color:"transparent" },
+        particles:{
+          number:{ value:28, density:{ enable:true, area:900 } },
+          color:{ value:["#d4af37","#f8e7b0","#fff"] },
+          opacity:{ value:0.15, random:{ enable:true, minimumValue:0.06 } },
+          size:{ value:{ min:1, max:4 }, random:true },
+          move:{ enable:true, speed:.7, direction:"top", outModes:{ default:"out" } },
+          shape:{ type:"circle" }
+        },
+        detectRetina:true
+      });
+    }
+  }catch(e){}
+
+  // ✅ ativa efeito no celular ao tocar em um card
+  setupMobileCardEffect();
+  try{ aplicarEstadoLista(); }catch(e){}
+});
+</script>
+
+  
 /* ========= CONTROLE DE LIBERAÇÃO ========= */
 window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
 </script>
