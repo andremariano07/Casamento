@@ -15,7 +15,7 @@
    true  = lista aberta (pode reservar)
    -> Para liberar, só mude para true e recarregue a página.
 */
-window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI QUANDO QUISER
+window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI QUANDO QUISER
 </script>
 
 <script>
@@ -229,19 +229,8 @@ h1{
   justify-items:center;
   gap:20px;
 }
-
-/* ✅ no celular: NÃO sobrepõe e NÃO fica “um por cima do outro” */
-@media(max-width:780px){
-  .container{
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:14px;
-  }
-  .card{ width:100%; }
-}
 @media(max-width:420px){
-  .container{
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-  }
+  .container{ grid-template-columns:1fr; }
 }
 
 /* ===== CARDS ===== */
@@ -266,21 +255,9 @@ h1{
   padding:15px;
   border-radius:22px;
   background:rgba(255,255,255,.08);
-  -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   overflow:hidden;
-  transition:transform .18s ease, box-shadow .18s ease;
-  isolation:isolate;
-  transform:translateZ(0);
-}
-
-/* ✅ evita bug de sobreposição do backdrop-filter em iOS */
-@media(max-width:780px){
-  .card{
-    -webkit-backdrop-filter:none;
-    backdrop-filter:none;
-    background:rgba(255,255,255,.10);
-  }
+  transition:none; /* sem animações de hover/transform */
 }
 
 .card::after{
@@ -292,23 +269,24 @@ h1{
   pointer-events:none;
 }
 
-/* ✅ barra/halo dourado mais grosso */
+/* ✅ Apenas uma luz dourada pulsando ao redor */
 .card::before{
   content:"";
   position:absolute;
-  inset:-10px;
-  border-radius:30px;
+  inset:-6px;                 /* “fora” do card */
+  border-radius:28px;         /* acompanha a borda */
   pointer-events:none;
   box-shadow:
-    0 0 28px rgba(212,175,55,.26),
-    0 0 56px rgba(248,231,176,.14);
+    0 0 22px rgba(212,175,55,.22),
+    0 0 46px rgba(248,231,176,.10);
   filter:blur(.2px);
   opacity:1;
   animation:cardPulseGlow 2.8s ease-in-out infinite;
 }
 
 .card:hover{
-  transform:scale(1.05);
+  transform:none;
+  box-shadow:none;
 }
 .card:hover::before{
   filter:blur(.2px);
@@ -354,6 +332,7 @@ input{
   background:rgba(255,255,255,.12);
   border-color:rgba(255,255,255,.22);
 }
+/* ✅ Badge quando a lista está fechada */
 .badge.closed{
   background:rgba(255,255,255,.10);
   border-color:rgba(255,255,255,.16);
@@ -363,6 +342,7 @@ input{
 .card.is-reservado input{display:none}
 .card.is-reservado .reserved-note{display:block}
 
+/* ✅ Quando lista está fechada (não mexe no HTML, só no estado via JS) */
 .card.is-closed{opacity:.95}
 .card.is-closed input{display:none}
 .card.is-closed .reserved-note{display:block}
@@ -387,7 +367,6 @@ input{
 .modal-backdrop{
   position:absolute; inset:0;
   background:rgba(0,0,0,.65);
-  -webkit-backdrop-filter:blur(4px);
   backdrop-filter:blur(4px);
 }
 .modal-box{
@@ -514,7 +493,7 @@ input{
   <input type="email" placeholder="Seu e-mail" id="email-Forma de Pudim">
   <button class="btn" id="btn-Forma de Pudim" onclick="Presentear('Forma de Pudim')">Presentear</button>
 </div>
-
+     
      <div class="card" data-item="Escorredor de Macarrao" data-key="Escorredor de Macarrao">
   <div class="product-img"><img src="Imagens/escorredordemacarrao.png" alt="Escorredor de Macarrao"></div>
   <h3>Escorredor de Macarrao</h3>
@@ -524,7 +503,7 @@ input{
   <input type="email" placeholder="Seu e-mail" id="email-Escorredor de Macarrao">
   <button class="btn" id="btn-Escorredor de Macarrao" onclick="Presentear('Escorredor de Macarrao')">Presentear</button>
 </div>
-
+     
      <div class="card" data-item="Kit de Pegadores" data-key="Kit de Pegadores">
   <div class="product-img"><img src="Imagens/pegadores.png" alt="Pegadores"></div>
   <h3>Kit de Pegadores</h3>
@@ -684,227 +663,226 @@ input{
   <input type="email" placeholder="Seu e-mail" id="email-Garrafa de Agua">
   <button class="btn" id="btn-Garrafa de Agua" onclick="Presentear('Garrafa de Agua')">Presentear</button>
 </div>
-
+     
 <div class="card" data-item="Assadeiras" data-key="Assadeiras">
-  <div class="product-img"><img src="Imagens/assadeiras.png" alt="Assadeiras"></div>
-  <h3>Assadeiras</h3>
-  <div class="badge" id="badge-Assadeiras">Disponível</div>
-  <div class="reserved-note" id="note-Assadeiras">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Assadeiras">
-  <input type="email" placeholder="Seu e-mail" id="email-Assadeiras">
-  <button class="btn" id="btn-Assadeiras" onclick="Presentear('Assadeiras')">Presentear</button>
-</div>
+      <div class="product-img"><img src="Imagens/assadeiras.png" alt="Assadeiras"></div>
+      <h3>Assadeiras</h3>
+      <div class="badge" id="badge-Assadeiras">Disponível</div>
+      <div class="reserved-note" id="note-Assadeiras">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Assadeiras">
+      <input type="email" placeholder="Seu e-mail" id="email-Assadeiras">
+      <button class="btn" id="btn-Assadeiras" onclick="Presentear('Assadeiras')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Cafeteira" data-key="Cafeteira">
-  <div class="product-img"><img src="Imagens/cafeteira.png" alt="Cafeteira"></div>
-  <h3>Cafeteira</h3>
-  <div class="badge" id="badge-Cafeteira">Disponível</div>
-  <div class="reserved-note" id="note-Cafeteira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Cafeteira">
-  <input type="email" placeholder="Seu e-mail" id="email-Cafeteira">
-  <button class="btn" id="btn-Cafeteira" onclick="Presentear('Cafeteira')">Presentear</button>
-</div>
+    <div class="card" data-item="Cafeteira" data-key="Cafeteira">
+      <div class="product-img"><img src="Imagens/cafeteira.png" alt="Cafeteira"></div>
+      <h3>Cafeteira</h3>
+      <div class="badge" id="badge-Cafeteira">Disponível</div>
+      <div class="reserved-note" id="note-Cafeteira">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Cafeteira">
+      <input type="email" placeholder="Seu e-mail" id="email-Cafeteira">
+      <button class="btn" id="btn-Cafeteira" onclick="Presentear('Cafeteira')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Purificador de agua" data-key="Purificador_de_agua">
-  <div class="product-img"><img src="Imagens/purificadoragua.png" alt="Purificador de agua"></div>
-  <h3>Purificador de agua</h3>
-  <div class="badge" id="badge-Purificador_de_agua">Disponível</div>
-  <div class="reserved-note" id="note-Purificador_de_agua">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Purificador_de_agua">
-  <input type="email" placeholder="Seu e-mail" id="email-Purificador_de_agua">
-  <button class="btn" id="btn-Purificador_de_agua" onclick="Presentear('Purificador de agua')">Presentear</button>
-</div>
+    <div class="card" data-item="Purificador de agua" data-key="Purificador_de_agua">
+      <div class="product-img"><img src="Imagens/purificadoragua.png" alt="Purificador de agua"></div>
+      <h3>Purificador de agua</h3>
+      <div class="badge" id="badge-Purificador_de_agua">Disponível</div>
+      <div class="reserved-note" id="note-Purificador_de_agua">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Purificador_de_agua">
+      <input type="email" placeholder="Seu e-mail" id="email-Purificador_de_agua">
+      <button class="btn" id="btn-Purificador_de_agua" onclick="Presentear('Purificador de agua')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Triturador de alho" data-key="Triturador_de_alho">
-  <div class="product-img"><img src="Imagens/trituraralho.png" alt="Triturador de alho"></div>
-  <h3>Triturador de alho</h3>
-  <div class="badge" id="badge-Triturador_de_alho">Disponível</div>
-  <div class="reserved-note" id="note-Triturador_de_alho">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Triturador_de_alho">
-  <input type="email" placeholder="Seu e-mail" id="email-Triturador_de_alho">
-  <button class="btn" id="btn-Triturador_de_alho" onclick="Presentear('Triturador de alho')">Presentear</button>
-</div>
+    <div class="card" data-item="Triturador de alho" data-key="Triturador_de_alho">
+      <div class="product-img"><img src="Imagens/trituraralho.png" alt="Triturador de alho"></div>
+      <h3>Triturador de alho</h3>
+      <div class="badge" id="badge-Triturador_de_alho">Disponível</div>
+      <div class="reserved-note" id="note-Triturador_de_alho">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Triturador_de_alho">
+      <input type="email" placeholder="Seu e-mail" id="email-Triturador_de_alho">
+      <button class="btn" id="btn-Triturador_de_alho" onclick="Presentear('Triturador de alho')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Multiprocessador + liquidificador" data-key="Multiprocessador_liquidificador">
-  <div class="product-img"><img src="Imagens/multiprocessadorliquidificador.png" alt="Multiprocessador + liquidificador"></div>
-  <h3>Multiprocessador + liquidificador</h3>
-  <div class="badge" id="badge-Multiprocessador_liquidificador">Disponível</div>
-  <div class="reserved-note" id="note-Multiprocessador_liquidificador">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Multiprocessador_liquidificador">
-  <input type="email" placeholder="Seu e-mail" id="email-Multiprocessador_liquidificador">
-  <button class="btn" id="btn-Multiprocessador_liquidificador" onclick="Presentear('Multiprocessador + liquidificador')">Presentear</button>
-</div>
+    <div class="card" data-item="Multiprocessador + liquidificador" data-key="Multiprocessador_liquidificador">
+      <div class="product-img"><img src="Imagens/multiprocessadorliquidificador.png" alt="Multiprocessador + liquidificador"></div>
+      <h3>Multiprocessador + liquidificador</h3>
+      <div class="badge" id="badge-Multiprocessador_liquidificador">Disponível</div>
+      <div class="reserved-note" id="note-Multiprocessador_liquidificador">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Multiprocessador_liquidificador">
+      <input type="email" placeholder="Seu e-mail" id="email-Multiprocessador_liquidificador">
+      <button class="btn" id="btn-Multiprocessador_liquidificador" onclick="Presentear('Multiprocessador + liquidificador')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Garrafa termica" data-key="Garrafa_termica">
-  <div class="product-img"><img src="Imagens/garrafatermica.png" alt="Garrafa termica"></div>
-  <h3>Garrafa termica</h3>
-  <div class="badge" id="badge-Garrafa_termica">Disponível</div>
-  <div class="reserved-note" id="note-Garrafa_termica">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Garrafa_termica">
-  <input type="email" placeholder="Seu e-mail" id="email-Garrafa_termica">
-  <button class="btn" id="btn-Garrafa_termica" onclick="Presentear('Garrafa termica')">Presentear</button>
-</div>
+    <div class="card" data-item="Garrafa termica" data-key="Garrafa_termica">
+      <div class="product-img"><img src="Imagens/garrafatermica.png" alt="Garrafa termica"></div>
+      <h3>Garrafa termica</h3>
+      <div class="badge" id="badge-Garrafa_termica">Disponível</div>
+      <div class="reserved-note" id="note-Garrafa_termica">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Garrafa_termica">
+      <input type="email" placeholder="Seu e-mail" id="email-Garrafa_termica">
+      <button class="btn" id="btn-Garrafa_termica" onclick="Presentear('Garrafa termica')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Rolo de abrir massas" data-key="Rolo_de_abrir_massas">
-  <div class="product-img"><img src="Imagens/rolomassa.png" alt="Rolo de abrir massas"></div>
-  <h3>Rolo de abrir massas</h3>
-  <div class="badge" id="badge-Rolo_de_abrir_massas">Disponível</div>
-  <div class="reserved-note" id="note-Rolo_de_abrir_massas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Rolo_de_abrir_massas">
-  <input type="email" placeholder="Seu e-mail" id="email-Rolo_de_abrir_massas">
-  <button class="btn" id="btn-Rolo_de_abrir_massas" onclick="Presentear('Rolo de abrir massas')">Presentear</button>
-</div>
+    <div class="card" data-item="Rolo de abrir massas" data-key="Rolo_de_abrir_massas">
+      <div class="product-img"><img src="Imagens/rolomassa.png" alt="Rolo de abrir massas"></div>
+      <h3>Rolo de abrir massas</h3>
+      <div class="badge" id="badge-Rolo_de_abrir_massas">Disponível</div>
+      <div class="reserved-note" id="note-Rolo_de_abrir_massas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Rolo_de_abrir_massas">
+      <input type="email" placeholder="Seu e-mail" id="email-Rolo_de_abrir_massas">
+      <button class="btn" id="btn-Rolo_de_abrir_massas" onclick="Presentear('Rolo de abrir massas')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Misteira" data-key="Misteira">
-  <div class="product-img"><img src="Imagens/misteira.png" alt="Misteira"></div>
-  <h3>Misteira</h3>
-  <div class="badge" id="badge-Misteira">Disponível</div>
-  <div class="reserved-note" id="note-Misteira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Misteira">
-  <input type="email" placeholder="Seu e-mail" id="email-Misteira">
-  <button class="btn" id="btn-Misteira" onclick="Presentear('Misteira')">Presentear</button>
-</div>
+    <div class="card" data-item="Misteira" data-key="Misteira">
+      <div class="product-img"><img src="Imagens/misteira.png" alt="Misteira"></div>
+      <h3>Misteira</h3>
+      <div class="badge" id="badge-Misteira">Disponível</div>
+      <div class="reserved-note" id="note-Misteira">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Misteira">
+      <input type="email" placeholder="Seu e-mail" id="email-Misteira">
+      <button class="btn" id="btn-Misteira" onclick="Presentear('Misteira')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Tigelas" data-key="Tigelas">
-  <div class="product-img"><img src="Imagens/tigelas.png" alt="Tigelas"></div>
-  <h3>Tigelas</h3>
-  <div class="badge" id="badge-Tigelas">Disponível</div>
-  <div class="reserved-note" id="note-Tigelas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Tigelas">
-  <input type="email" placeholder="Seu e-mail" id="email-Tigelas">
-  <button class="btn" id="btn-Tigelas" onclick="Presentear('Tigelas')">Presentear</button>
-</div>
+    <div class="card" data-item="Tigelas" data-key="Tigelas">
+      <div class="product-img"><img src="Imagens/tigelas.png" alt="Tigelas"></div>
+      <h3>Tigelas</h3>
+      <div class="badge" id="badge-Tigelas">Disponível</div>
+      <div class="reserved-note" id="note-Tigelas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Tigelas">
+      <input type="email" placeholder="Seu e-mail" id="email-Tigelas">
+      <button class="btn" id="btn-Tigelas" onclick="Presentear('Tigelas')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Bowls" data-key="Bowls">
-  <div class="product-img"><img src="Imagens/bowls.png" alt="Bowls"></div>
-  <h3>Bowls</h3>
-  <div class="badge" id="badge-Bowls">Disponível</div>
-  <div class="reserved-note" id="note-Bowls">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Bowls">
-  <input type="email" placeholder="Seu e-mail" id="email-Bowls">
-  <button class="btn" id="btn-Bowls" onclick="Presentear('Bowls')">Presentear</button>
-</div>
+    <div class="card" data-item="Bowls" data-key="Bowls">
+      <div class="product-img"><img src="Imagens/bowls.png" alt="Bowls"></div>
+      <h3>Bowls</h3>
+      <div class="badge" id="badge-Bowls">Disponível</div>
+      <div class="reserved-note" id="note-Bowls">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Bowls">
+      <input type="email" placeholder="Seu e-mail" id="email-Bowls">
+      <button class="btn" id="btn-Bowls" onclick="Presentear('Bowls')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Travessas de vidro" data-key="Travessas_de_vidro">
-  <div class="product-img"><img src="Imagens/travessa.png" alt="Travessas de vidro"></div>
-  <h3>Travessas de vidro</h3>
-  <div class="badge" id="badge-Travessas_de_vidro">Disponível</div>
-  <div class="reserved-note" id="note-Travessas_de_vidro">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Travessas_de_vidro">
-  <input type="email" placeholder="Seu e-mail" id="email-Travessas_de_vidro">
-  <button class="btn" id="btn-Travessas_de_vidro" onclick="Presentear('Travessas de vidro')">Presentear</button>
-</div>
+    <div class="card" data-item="Travessas de vidro" data-key="Travessas_de_vidro">
+      <div class="product-img"><img src="Imagens/travessa.png" alt="Travessas de vidro"></div>
+      <h3>Travessas de vidro</h3>
+      <div class="badge" id="badge-Travessas_de_vidro">Disponível</div>
+      <div class="reserved-note" id="note-Travessas_de_vidro">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Travessas_de_vidro">
+      <input type="email" placeholder="Seu e-mail" id="email-Travessas_de_vidro">
+      <button class="btn" id="btn-Travessas_de_vidro" onclick="Presentear('Travessas de vidro')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Tabuleiros" data-key="Tabuleiros">
-  <div class="product-img"><img src="Imagens/tabuleiro.png" alt="Tabuleiros"></div>
-  <h3>Tabuleiros</h3>
-  <div class="badge" id="badge-Tabuleiros">Disponível</div>
-  <div class="reserved-note" id="note-Tabuleiros">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Tabuleiros">
-  <input type="email" placeholder="Seu e-mail" id="email-Tabuleiros">
-  <button class="btn" id="btn-Tabuleiros" onclick="Presentear('Tabuleiros')">Presentear</button>
-</div>
+    <div class="card" data-item="Tabuleiros" data-key="Tabuleiros">
+      <div class="product-img"><img src="Imagens/tabuleiro.png" alt="Tabuleiros"></div>
+      <h3>Tabuleiros</h3>
+      <div class="badge" id="badge-Tabuleiros">Disponível</div>
+      <div class="reserved-note" id="note-Tabuleiros">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Tabuleiros">
+      <input type="email" placeholder="Seu e-mail" id="email-Tabuleiros">
+      <button class="btn" id="btn-Tabuleiros" onclick="Presentear('Tabuleiros')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Xícara com pires" data-key="Xicara_com_pires">
-  <div class="product-img"><img src="Imagens/xicara.png" alt="Xícara com pires"></div>
-  <h3>Xícara com pires</h3>
-  <div class="badge" id="badge-Xicara_com_pires">Disponível</div>
-  <div class="reserved-note" id="note-Xicara_com_pires">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Xicara_com_pires">
-  <input type="email" placeholder="Seu e-mail" id="email-Xicara_com_pires">
-  <button class="btn" id="btn-Xicara_com_pires" onclick="Presentear('Xícara com pires')">Presentear</button>
-</div>
+    <div class="card" data-item="Xícara com pires" data-key="Xicara_com_pires">
+      <div class="product-img"><img src="Imagens/xicara.png" alt="Xícara com pires"></div>
+      <h3>Xícara com pires</h3>
+      <div class="badge" id="badge-Xicara_com_pires">Disponível</div>
+      <div class="reserved-note" id="note-Xicara_com_pires">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Xicara_com_pires">
+      <input type="email" placeholder="Seu e-mail" id="email-Xicara_com_pires">
+      <button class="btn" id="btn-Xicara_com_pires" onclick="Presentear('Xícara com pires')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Airfryer" data-key="Airfryer">
-  <div class="product-img"><img src="Imagens/airfryer.png" alt="Airfryer"></div>
-  <h3>Airfryer</h3>
-  <div class="badge" id="badge-Airfryer">Disponível</div>
-  <div class="reserved-note" id="note-Airfryer">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Airfryer">
-  <input type="email" placeholder="Seu e-mail" id="email-Airfryer">
-  <button class="btn" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
-</div>
+    <div class="card" data-item="Airfryer" data-key="Airfryer">
+      <div class="product-img"><img src="Imagens/airfryer.png" alt="Airfryer"></div>
+      <h3>Airfryer</h3>
+      <div class="badge" id="badge-Airfryer">Disponível</div>
+      <div class="reserved-note" id="note-Airfryer">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Airfryer">
+      <input type="email" placeholder="Seu e-mail" id="email-Airfryer">
+      <button class="btn" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
-  <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
-  <h3>Porta Tempero</h3>
-  <div class="badge" id="badge-Porta_Tempero">Disponível</div>
-  <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
-  <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
-  <button class="btn" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
-</div>
+    <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
+      <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
+      <h3>Porta Tempero</h3>
+      <div class="badge" id="badge-Porta_Tempero">Disponível</div>
+      <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
+      <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
+      <button class="btn" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
-  <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
-  <h3>Jogo de Copos</h3>
-  <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
-  <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
-  <button class="btn" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
-</div>
+    <div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
+      <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
+      <h3>Jogo de Copos</h3>
+      <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
+      <button class="btn" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
-  <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
-  <h3>Escorredor De Louças</h3>
-  <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
-  <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
-  <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
-  <button class="btn" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
-</div>
+    <div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
+      <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
+      <h3>Escorredor De Louças</h3>
+      <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
+      <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
+      <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
+      <button class="btn" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Microondas" data-key="Microondas">
-  <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
-  <h3>Microondas</h3>
-  <div class="badge" id="badge-Microondas">Disponível</div>
-  <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Microondas">
-  <input type="email" placeholder="Seu e-mail" id="email-Microondas">
-  <button class="btn" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
-</div>
+    <div class="card" data-item="Microondas" data-key="Microondas">
+      <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
+      <h3>Microondas</h3>
+      <div class="badge" id="badge-Microondas">Disponível</div>
+      <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Microondas">
+      <input type="email" placeholder="Seu e-mail" id="email-Microondas">
+      <button class="btn" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
+    </div>
 
-<div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
-  <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
-  <h3>Jogo de Panela</h3>
-  <div class="badge" id="badge-JogoDePanela">Disponível</div>
-  <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
-  <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
-  <button class="btn" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
-</div>
+    <div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
+      <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
+      <h3>Jogo de Panela</h3>
+      <div class="badge" id="badge-JogoDePanela">Disponível</div>
+      <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
+      <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
+      <button class="btn" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
-  <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
-  <h3>Jogo De Talher</h3>
-  <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
-  <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
-  <button class="btn" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
-</div>
+    <div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
+      <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
+      <h3>Jogo De Talher</h3>
+      <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
+      <button class="btn" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Jarra" data-key="Jarra">
-  <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
-  <h3>Jarra</h3>
-  <div class="badge" id="badge-Jarra">Disponível</div>
-  <div class="reserved-note" id="note-Jarra">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jarra">
-  <input type="email" placeholder="Seu e-mail" id="email-Jarra">
-  <button class="btn" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
-</div>
+    <div class="card" data-item="Jarra" data-key="Jarra">
+      <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
+      <h3>Jarra</h3>
+      <div class="badge" id="badge-Jarra">Disponível</div>
+      <div class="reserved-note" id="note-Jarra">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jarra">
+      <input type="email" placeholder="Seu e-mail" id="email-Jarra">
+      <button class="btn" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
+    </div>
 
-<div class="card" data-item="Cooktop" data-key="Cooktop">
-  <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
-  <h3>Cooktop</h3>
-  <div class="badge" id="badge-Cooktop">Disponível</div>
-  <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Cooktop">
-  <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-  <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
-</div>
-
+    <div class="card" data-item="Cooktop" data-key="Cooktop">
+      <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
+      <h3>Cooktop</h3>
+      <div class="badge" id="badge-Cooktop">Disponível</div>
+      <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Cooktop">
+      <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+      <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+    </div>
   </div>
 </div>
 
@@ -959,6 +937,7 @@ function entrarEvento(){
   document.getElementById("precover").style.display="none";
   document.getElementById("mainContent").style.display="block";
   window.scrollTo({top:0, behavior:"instant"});
+  // reaplica estado ao entrar
   try{ window.aplicarEstadoLista?.(); }catch(e){}
 }
 function voltarPreCapa(){
@@ -1044,6 +1023,8 @@ function aplicarEstadoLista(){
     const inEmail = document.getElementById("email-"+key);
 
     const reservado = card.classList.contains("is-reservado");
+
+    // estado fechado só afeta itens que NÃO estão reservados
     const fechadoParaEste = (!aberta && !reservado);
 
     card.classList.toggle("is-closed", fechadoParaEste);
@@ -1065,10 +1046,18 @@ function aplicarEstadoLista(){
       if(inNome){ inNome.disabled = true; }
       if(inEmail){ inEmail.disabled = true; }
     }else{
+      // quando aberto, quem decide é o Firebase (ou reservado)
       if(!reservado){
-        if(badge){ badge.classList.remove("closed"); }
-        if(note){ note.textContent = "Este item já foi reservado."; }
+        if(badge){
+          // não força texto aqui; Firebase atualiza (se ainda não atualizou, mantém "Disponível")
+          badge.classList.remove("closed");
+        }
+        if(note){
+          // volta texto padrão (o Firebase pode esconder/mostrar)
+          note.textContent = "Este item já foi reservado.";
+        }
         if(btn){
+          // não força habilitar aqui porque o Firebase pode setar
           if(window.LISTA_PRESENTES_ABERTA){
             btn.textContent = "Presentear";
           }
@@ -1081,24 +1070,18 @@ function aplicarEstadoLista(){
 }
 window.aplicarEstadoLista = aplicarEstadoLista;
 
-/* ========= ✅ CORREÇÃO: NÃO mostrar “aguarde 1 segundo” ao clicar =========
-   Em vez disso, o clique aguarda o module carregar (silencioso),
-   e só mostra aviso se realmente falhar.
+/* ========= ✅ CORREÇÃO AQUI (sem mudar o visual) =========
+   Faz o botão aguardar o Firebase (script module) ficar pronto
 */
 window.__presentearReady = new Promise((resolve, reject)=>{
   window.__presentearReadyResolve = resolve;
   window.__presentearReadyReject  = reject;
 });
 
-/* helper para achar o botão do item sem depender do module */
-function __getBtnFromItem(item){
-  const card = document.querySelector(`.card[data-item="${item}"]`);
-  const key = card?.getAttribute("data-key") || item;
-  return document.getElementById("btn-"+key);
-}
-
+/* ✅ FUNÇÃO GLOBAL: sempre existe */
 async function Presentear(item){
 
+  // ✅ trava/libera por chave simples (true/false)
   if(!window.LISTA_PRESENTES_ABERTA){
     await uiAviso({
       title:"Lista ainda não liberada",
@@ -1108,44 +1091,34 @@ async function Presentear(item){
     return;
   }
 
+  // Se já está pronto, vai direto
   if(typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
   }
 
-  // mostra feedback só no botão (sem modal de “aguarde”)
-  const btn = __getBtnFromItem(item);
-  const oldText = btn ? btn.textContent : "";
-  if(btn){
-    btn.disabled = true;
-    btn.textContent = "Carregando...";
-  }
-
-  let ok = false;
+  // Aguarda o módulo ficar pronto (até 6s)
+  let ready = false;
   try{
     await Promise.race([
-      window.__presentearReady.then(()=>{ ok = true; }),
-      new Promise((_, rej)=>setTimeout(()=>rej(new Error("timeout")), 20000))
+      window.__presentearReady.then(()=>{ ready = true; }),
+      new Promise((_, rej)=>setTimeout(()=>rej(new Error("timeout")), 6000))
     ]);
   }catch(e){}
 
-  if(btn){
-    // volta o texto, e o Firebase vai controlar disabled/reservado logo em seguida
-    btn.textContent = oldText || "Presentear";
-    btn.disabled = false;
-  }
-
-  if(ok && typeof window.__presentearImpl === "function"){
+  if(ready && typeof window.__presentearImpl === "function"){
     return window.__presentearImpl(item);
   }
 
+  // Se realmente não carregou, mostra aviso
   await uiAviso({
-    title:"Erro ao carregar",
-    text:"Não consegui carregar o sistema de reservas agora. Recarregue a página e tente novamente.",
-    note:"Dica: no iPhone, evite abrir pelo preview do WhatsApp (abra no navegador)."
+    title:"Carregando...",
+    text:"Aguarde 1 segundo e tente novamente.",
+    note:"Se continuar, abra o site pelo link normal (não pelo preview do WhatsApp)."
   });
 }
 window.Presentear = Presentear;
 
+/* expõe helpers globalmente (usados pelo module) */
 window.uiConfirmar = uiConfirmar;
 window.uiAviso = uiAviso;
 </script>
@@ -1188,6 +1161,7 @@ function setReservadoUI(item, data){
 
   if(card) card.classList.toggle("is-reservado", reservado);
 
+  // Se estiver fechado e não for reservado, o estado "Em breve" vai prevalecer
   const aberta = !!window.LISTA_PRESENTES_ABERTA;
   const fechadoParaEste = (!aberta && !reservado);
 
@@ -1212,6 +1186,7 @@ function setReservadoUI(item, data){
     return;
   }
 
+  // Fluxo normal (aberta): reservado vs disponível
   if(badge){
     badge.textContent = reservado ? "Reservado" : "Disponível";
     badge.classList.toggle("reservado", reservado);
@@ -1228,6 +1203,7 @@ function setReservadoUI(item, data){
   if(inNome) inNome.disabled = reservado;
   if(inEmail) inEmail.disabled = reservado;
 
+  // Se estiver aberto, aplica o estado geral também (por garantia)
   try{ window.aplicarEstadoLista?.(); }catch(e){}
 }
 
@@ -1297,6 +1273,7 @@ async function doReserve(item){
 
 async function presentearImpl(item){
 
+  // ✅ segurança: se estiver fechado, não reserva nem pelo console
   if(!window.LISTA_PRESENTES_ABERTA){
     await window.uiAviso({
       title:"Lista ainda não liberada",
