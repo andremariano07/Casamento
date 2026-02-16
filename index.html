@@ -1,3 +1,4 @@
+<!-- ✅ COLE ESTE HTML COMPLETO (substitui o seu atual) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,19 +7,12 @@
 <title>Chá de Panela - Luiza & André</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
-
-<!-- Partículas -->
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
 
 <script>
-/* ========= CONTROLE DE LIBERAÇÃO =========
-   false = lista fechada (ninguém reserva)
-   true  = lista aberta (pode reservar)
-*/
-window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI QUANDO QUISER
+/* ========= CONTROLE DE LIBERAÇÃO ========= */
+window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI
 </script>
 
 <style>
@@ -45,27 +39,18 @@ body{
   pointer-events:none; z-index:1;
 }
 
-/* ===== ANIMAÇÃO SUAVE ===== */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(25px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.fade-up{
-  opacity:0;
-  animation:fadeUp 1.2s ease forwards;
+/* fade */
+@keyframes fadeUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+.fade-up{opacity:0;animation:fadeUp 1.2s ease forwards;}
+
+/* btn */
+@keyframes btnFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes btnGlow  {
+  0%,100%{box-shadow:0 10px 26px rgba(212,175,55,.22), 0 0 0 rgba(248,231,176,0)}
+  50%{box-shadow:0 14px 36px rgba(212,175,55,.34), 0 0 18px rgba(248,231,176,.20)}
 }
 
-/* ===== ANIMAÇÕES EXTRA PARA BOTÕES ===== */
-@keyframes btnFloat {
-  0%,100% { transform:translateY(0); }
-  50%     { transform:translateY(-3px); }
-}
-@keyframes btnGlow {
-  0%,100% { box-shadow:0 10px 26px rgba(212,175,55,.22), 0 0 0 rgba(248,231,176,0); }
-  50%     { box-shadow:0 14px 36px rgba(212,175,55,.34), 0 0 18px rgba(248,231,176,.20); }
-}
-
-/* PRÉ CAPA */
+/* PRE CAPA */
 .precover{
   position:fixed; inset:0;
   background:rgba(0,0,0,.65);
@@ -73,7 +58,6 @@ body{
   justify-content:center; align-items:center;
   padding:20px; z-index:10;
 }
-
 .circle-photo{
   width:180px;height:180px;border-radius:50%;
   overflow:hidden;border:5px solid var(--gold);
@@ -81,11 +65,7 @@ body{
   box-shadow:0 0 15px rgba(212,175,55,.6);
 }
 .circle-photo img{width:100%;height:100%;object-fit:cover}
-
 .pre-title{
-  position:relative;
-  z-index:2;
-  display:block;
   font-family:'Great Vibes',cursive;
   font-size:clamp(30px,6vw,52px);
   line-height:1.1;
@@ -104,7 +84,6 @@ body{
     text-shadow:none;
   }
 }
-
 h1{
   font-family:'Great Vibes',cursive;
   font-size:clamp(38px,7vw,64px);
@@ -118,10 +97,8 @@ h1{
   animation:shine 6s infinite linear;
 }
 @keyframes shine{to{background-position:300%}}
-
 .date,.countdown,.location{margin:8px 0;font-size:20px}
 
-/* Botões + efeito clique dourado */
 .btn, .maps-btn, .back-btn, button{
   position:relative;
   margin-top:12px;
@@ -141,24 +118,14 @@ h1{
   filter:brightness(1.05);
 }
 .btn:disabled, button:disabled{
-  background:gray;
-  cursor:not-allowed;
-  filter:none;
-  transform:none;
+  background:gray; cursor:not-allowed; filter:none; transform:none;
 }
-
-/* Botões animados NA PRÉ CAPA */
 .precover .btn.fade-up{
-  animation:
-    fadeUp 1.2s ease forwards,
-    btnFloat 2.6s ease-in-out infinite,
-    btnGlow  2.6s ease-in-out infinite;
+  animation: fadeUp 1.2s ease forwards, btnFloat 2.6s ease-in-out infinite, btnGlow 2.6s ease-in-out infinite;
 }
-.precover .btn:active{
-  transform:translateY(0) scale(.98);
-}
+.precover .btn:active{ transform:translateY(0) scale(.98); }
 
-/* Ripple dourado */
+/* ripple */
 .ripple{
   position:absolute;
   border-radius:50%;
@@ -169,7 +136,7 @@ h1{
 }
 @keyframes ripple{ to{ transform:scale(4); opacity:0; } }
 
-/* CONTEÚDO */
+/* CONTENT */
 .overlay{
   display:none;
   position:relative;
@@ -183,7 +150,6 @@ h1{
 }
 @media(max-width:768px){ .overlay{background-attachment:scroll;} }
 
-/* Grid */
 .container{
   width:min(980px, 100%);
   margin:40px auto 0;
@@ -193,23 +159,15 @@ h1{
   justify-items:center;
   gap:20px;
 }
-@media(max-width:420px){
-  .container{ grid-template-columns:1fr; }
-}
+@media(max-width:420px){ .container{ grid-template-columns:1fr; } }
 
-/* ===== CARDS ===== */
+/* ===== CARD BASE ===== */
 @keyframes cardPulseGlow{
   0%,100%{
-    box-shadow:
-      0 0 0 rgba(212,175,55,0),
-      0 0 22px rgba(212,175,55,.22),
-      0 0 46px rgba(248,231,176,.10);
+    box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
   }
   50%{
-    box-shadow:
-      0 0 0 rgba(212,175,55,0),
-      0 0 30px rgba(212,175,55,.38),
-      0 0 64px rgba(248,231,176,.18);
+    box-shadow:0 0 30px rgba(212,175,55,.38), 0 0 64px rgba(248,231,176,.18);
   }
 }
 
@@ -222,7 +180,6 @@ h1{
   backdrop-filter:blur(12px);
   overflow:hidden;
 
-  /* ✅ hover: aumenta o card */
   transform:translateZ(0);
   transition:transform .18s ease, filter .18s ease;
 }
@@ -238,22 +195,20 @@ h1{
   transition:border-width .18s ease, border-color .18s ease, opacity .18s ease;
 }
 
-/* luz pulsando */
+/* glow pulsando */
 .card::before{
   content:"";
   position:absolute;
   inset:-6px;
   border-radius:28px;
   pointer-events:none;
-  box-shadow:
-    0 0 22px rgba(212,175,55,.22),
-    0 0 46px rgba(248,231,176,.10);
+  box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
   filter:blur(.2px);
   opacity:1;
   animation:cardPulseGlow 2.8s ease-in-out infinite;
 }
 
-/* ✅ Linha dourada (animação) */
+/* linha dourada */
 .card .gold-line{
   position:absolute;
   left:10px; right:10px;
@@ -261,7 +216,7 @@ h1{
   height:2px;
   border-radius:999px;
   background:linear-gradient(90deg, rgba(212,175,55,0), rgba(212,175,55,.9), rgba(248,231,176,.95), rgba(212,175,55,.9), rgba(212,175,55,0));
-  opacity:.0;
+  opacity:0;
   transform:scaleX(.25);
   transform-origin:left center;
   transition:opacity .18s ease, height .18s ease, transform .28s ease;
@@ -269,22 +224,38 @@ h1{
   filter:drop-shadow(0 0 10px rgba(212,175,55,.25));
 }
 
-/* ✅ hover effects */
+/* ✅ HOVER (PC) */
 @media (hover:hover){
   .card:hover{
     transform:scale(1.045);
     filter:brightness(1.03);
   }
   .card:hover::after{
-    border-width:3px;                 /* mais grossa */
+    border-width:3px;
     border-color:rgba(248,231,176,.80);
     opacity:1;
   }
   .card:hover .gold-line{
     opacity:1;
-    height:6px;                       /* linha mais grossa */
+    height:6px;
     transform:scaleX(1);
   }
+}
+
+/* ✅ CELULAR (TOQUE) - aplica quando a div tiver .is-active */
+.card.is-active{
+  transform:scale(1.045);
+  filter:brightness(1.03);
+}
+.card.is-active::after{
+  border-width:3px;
+  border-color:rgba(248,231,176,.80);
+  opacity:1;
+}
+.card.is-active .gold-line{
+  opacity:1;
+  height:6px;
+  transform:scaleX(1);
 }
 
 .product-img{
@@ -426,11 +397,7 @@ input{
   <div class="circle-photo fade-up" style="animation-delay:.2s;">
     <img src="nos.jpeg" alt="Foto do casal">
   </div>
-
-  <div class="pre-title fade-up" style="animation-delay:.6s;">
-    Chá de Panela
-  </div>
-
+  <div class="pre-title fade-up" style="animation-delay:.6s;">Chá de Panela</div>
   <h1 class="fade-up" style="animation-delay:1s;">Luiza & André</h1>
 
   <div class="date fade-up" style="animation-delay:1.4s;">20/06/2026 - 18:00 horas</div>
@@ -456,7 +423,8 @@ input{
   <button class="back-btn btn" onclick="voltarPreCapa()">Voltar</button>
 
   <div class="container">
-    <!-- Cards (mantidos) -->
+
+    <!-- ✅ EXEMPLOS + TODOS OS SEUS ITENS (com a linha dourada) -->
     <div class="card" data-item="Geladeira" data-key="Geladeira">
       <span class="gold-line"></span>
       <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
@@ -468,139 +436,337 @@ input{
       <button class="btn" id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Forma de Bolo" data-key="Forma de Bolo">
+    <!-- ✅ COLE/EDITE OS OUTROS CARDS QUE VOCÊ JÁ TEM (eu já incluí os que você mandou agora) -->
+
+    <div class="card" data-item="Ferro de Passar" data-key="Ferro de Passar">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/formadebolo.png" alt="Forma de Bolo"></div>
-      <h3>Forma de Bolo</h3>
-      <div class="badge" id="badge-Forma de Bolo">Disponível</div>
-      <div class="reserved-note" id="note-Forma de Bolo">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Forma de Bolo">
-      <input type="email" placeholder="Seu e-mail" id="email-Forma de Bolo">
-      <button class="btn" id="btn-Forma de Bolo" onclick="Presentear('Forma de Bolo')">Presentear</button>
+      <div class="product-img"><img src="Imagens/ferrodepassar.png" alt="Ferro de Passar"></div>
+      <h3>Ferro de Passar</h3>
+      <div class="badge" id="badge-Ferro de Passar">Disponível</div>
+      <div class="reserved-note" id="note-Ferro de Passar">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Ferro de Passar">
+      <input type="email" placeholder="Seu e-mail" id="email-Ferro de Passar">
+      <button class="btn" id="btn-Ferro de Passar" onclick="Presentear('Ferro de Passar')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Forma de Pudim" data-key="Forma de Pudim">
+    <div class="card" data-item="Aspirador de Po" data-key="Aspirador de Po">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/formadepudim.png" alt="Forma de Pudim"></div>
-      <h3>Forma de Pudim</h3>
-      <div class="badge" id="badge-Forma de Pudim">Disponível</div>
-      <div class="reserved-note" id="note-Forma de Pudim">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Forma de Pudim">
-      <input type="email" placeholder="Seu e-mail" id="email-Forma de Pudim">
-      <button class="btn" id="btn-Forma de Pudim" onclick="Presentear('Forma de Pudim')">Presentear</button>
+      <div class="product-img"><img src="Imagens/aspiradordepo.png" alt="Aspirador de Po"></div>
+      <h3>Aspirador de Po</h3>
+      <div class="badge" id="badge-Aspirador de Po">Disponível</div>
+      <div class="reserved-note" id="note-Aspirador de Po">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Aspirador de Po">
+      <input type="email" placeholder="Seu e-mail" id="email-Aspirador de Po">
+      <button class="btn" id="btn-Aspirador de Po" onclick="Presentear('Aspirador de Po')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Escorredor de Macarrao" data-key="Escorredor de Macarrao">
+    <div class="card" data-item="Roupa de Cama" data-key="Roupa de Cama">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/escorredordemacarrao.png" alt="Escorredor de Macarrao"></div>
-      <h3>Escorredor de Macarrao</h3>
-      <div class="badge" id="badge-Escorredor de Macarrao">Disponível</div>
-      <div class="reserved-note" id="note-Escorredor de Macarrao">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Escorredor de Macarrao">
-      <input type="email" placeholder="Seu e-mail" id="email-Escorredor de Macarrao">
-      <button class="btn" id="btn-Escorredor de Macarrao" onclick="Presentear('Escorredor de Macarrao')">Presentear</button>
+      <div class="product-img"><img src="Imagens/roupacama.png" alt="Roupa de Cama"></div>
+      <h3>Roupa de Cama</h3>
+      <div class="badge" id="badge-Roupa de Cama">Disponível</div>
+      <div class="reserved-note" id="note-Roupa de Cama">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Roupa de Cama">
+      <input type="email" placeholder="Seu e-mail" id="email-Roupa de Cama">
+      <button class="btn" id="btn-Roupa de Cama" onclick="Presentear('Roupa de Cama')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Kit de Pegadores" data-key="Kit de Pegadores">
+    <div class="card" data-item="Roupa de Banho" data-key="Roupa de Banho">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/pegadores.png" alt="Pegadores"></div>
-      <h3>Kit de Pegadores</h3>
-      <div class="badge" id="badge-Kit de Pegadores">Disponível</div>
-      <div class="reserved-note" id="note-Kit de Pegadores">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Kit de Pegadores">
-      <input type="email" placeholder="Seu e-mail" id="email-Kit de Pegadores">
-      <button class="btn" id="btn-Kit de Pegadores" onclick="Presentear('Kit de Pegadores')">Presentear</button>
+      <div class="product-img"><img src="Imagens/roupabanho.png" alt="Roupa de Banho"></div>
+      <h3>Roupa de Banho</h3>
+      <div class="badge" id="badge-Roupa de Banho">Disponível</div>
+      <div class="reserved-note" id="note-Roupa de Banho">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Roupa de Banho">
+      <input type="email" placeholder="Seu e-mail" id="email-Roupa de Banho">
+      <button class="btn" id="btn-Roupa de Banho" onclick="Presentear('Roupa de Banho')">Presentear</button>
     </div>
 
-    <!-- ✅ DAQUI PRA BAIXO: mantive seus cards, só adicionei <span class="gold-line"></span> em cada um.
-         Se você colar/colar tudo, mantenha esse span dentro de cada .card (logo após abrir a div). -->
-
-    <div class="card" data-item="Ralador" data-key="Ralador">
+    <div class="card" data-item="Panela de Pressao" data-key="Panela de Pressao">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/ralador.png" alt="Ralador"></div>
-      <h3>Ralador</h3>
-      <div class="badge" id="badge-Ralador">Disponível</div>
-      <div class="reserved-note" id="note-Ralador">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Ralador">
-      <input type="email" placeholder="Seu e-mail" id="email-Ralador">
-      <button class="btn" id="btn-Ralador" onclick="Presentear('Ralador')">Presentear</button>
+      <div class="product-img"><img src="Imagens/panelapressao.png" alt="Panela de Pressao"></div>
+      <h3>Panela de Pressao</h3>
+      <div class="badge" id="badge-Panela de Pressao">Disponível</div>
+      <div class="reserved-note" id="note-Panela de Pressao">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Panela de Pressao">
+      <input type="email" placeholder="Seu e-mail" id="email-Panela de Pressao">
+      <button class="btn" id="btn-Panela de Pressao" onclick="Presentear('Panela de Pressao')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Peneira" data-key="Peneira">
+    <div class="card" data-item="Jogo de Pratos" data-key="Jogo de Pratos">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/peneira.png" alt="Peneira"></div>
-      <h3>Peneira</h3>
-      <div class="badge" id="badge-Peneira">Disponível</div>
-      <div class="reserved-note" id="note-Peneira">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Peneira">
-      <input type="email" placeholder="Seu e-mail" id="email-Peneira">
-      <button class="btn" id="btn-Peneira" onclick="Presentear('Peneira')">Presentear</button>
+      <div class="product-img"><img src="Imagens/jogosdeprato.png" alt="Jogo de Pratos"></div>
+      <h3>Jogo de Pratos</h3>
+      <div class="badge" id="badge-Jogo de Pratos">Disponível</div>
+      <div class="reserved-note" id="note-Jogo de Pratos">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo de Pratos">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo de Pratos">
+      <button class="btn" id="btn-Jogo de Pratos" onclick="Presentear('Jogo de Pratos')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Tabua de corte" data-key="Tabua de corte">
+    <div class="card" data-item="Kit Utensilios de Silicone" data-key="Kit Utensilios de Silicone">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/tabuadecorte.png" alt="Tabua de corte"></div>
-      <h3>Tabua de corte</h3>
-      <div class="badge" id="badge-Tabua de corte">Disponível</div>
-      <div class="reserved-note" id="note-Tabua de corte">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Tabua de corte">
-      <input type="email" placeholder="Seu e-mail" id="email-Tabua de corte">
-      <button class="btn" id="btn-Tabua de corte" onclick="Presentear('Tabua de corte')">Presentear</button>
+      <div class="product-img"><img src="Imagens/silicone.png" alt="Kit Utensilios de Silicone"></div>
+      <h3>Kit Utensilios de Silicone</h3>
+      <div class="badge" id="badge-Kit Utensilios de Silicone">Disponível</div>
+      <div class="reserved-note" id="note-Kit Utensilios de Silicone">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Kit Utensilios de Silicone">
+      <input type="email" placeholder="Seu e-mail" id="email-Kit Utensilios de Silicone">
+      <button class="btn" id="btn-Kit Utensilios de Silicone" onclick="Presentear('Kit Utensilios de Silicone')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Torradeira" data-key="Torradeira">
+    <div class="card" data-item="Garrafa de Agua" data-key="Garrafa de Agua">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/torradeira.png" alt="Torradeira"></div>
-      <h3>Torradeira</h3>
-      <div class="badge" id="badge-Torradeira">Disponível</div>
-      <div class="reserved-note" id="note-Torradeira">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Torradeira">
-      <input type="email" placeholder="Seu e-mail" id="email-Torradeira">
-      <button class="btn" id="btn-Torradeira" onclick="Presentear('Torradeira')">Presentear</button>
+      <div class="product-img"><img src="Imagens/garrafa.png" alt="Garrafa de Agua"></div>
+      <h3>Garrafa de Agua</h3>
+      <div class="badge" id="badge-Garrafa de Agua">Disponível</div>
+      <div class="reserved-note" id="note-Garrafa de Agua">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Garrafa de Agua">
+      <input type="email" placeholder="Seu e-mail" id="email-Garrafa de Agua">
+      <button class="btn" id="btn-Garrafa de Agua" onclick="Presentear('Garrafa de Agua')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Moop" data-key="Moop">
+    <div class="card" data-item="Assadeiras" data-key="Assadeiras">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/moop.png" alt="Moop"></div>
-      <h3>Moop</h3>
-      <div class="badge" id="badge-Moop">Disponível</div>
-      <div class="reserved-note" id="note-Moop">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Moop">
-      <input type="email" placeholder="Seu e-mail" id="email-Moop">
-      <button class="btn" id="btn-Moop" onclick="Presentear('Moop')">Presentear</button>
+      <div class="product-img"><img src="Imagens/assadeiras.png" alt="Assadeiras"></div>
+      <h3>Assadeiras</h3>
+      <div class="badge" id="badge-Assadeiras">Disponível</div>
+      <div class="reserved-note" id="note-Assadeiras">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Assadeiras">
+      <input type="email" placeholder="Seu e-mail" id="email-Assadeiras">
+      <button class="btn" id="btn-Assadeiras" onclick="Presentear('Assadeiras')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Caixas Organizadoras" data-key="Caixas Organizadoras">
+    <div class="card" data-item="Cafeteira" data-key="Cafeteira">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/caixasorganizadoras.png" alt="Caixas Organizadoras"></div>
-      <h3>Caixas Organizadoras</h3>
-      <div class="badge" id="badge-Caixas Organizadoras">Disponível</div>
-      <div class="reserved-note" id="note-Caixas Organizadoras">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Caixas Organizadoras">
-      <input type="email" placeholder="Seu e-mail" id="email-Caixas Organizadoras">
-      <button class="btn" id="btn-Caixas Organizadoras" onclick="Presentear('Caixas Organizadoras')">Presentear</button>
+      <div class="product-img"><img src="Imagens/cafeteira.png" alt="Cafeteira"></div>
+      <h3>Cafeteira</h3>
+      <div class="badge" id="badge-Cafeteira">Disponível</div>
+      <div class="reserved-note" id="note-Cafeteira">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Cafeteira">
+      <input type="email" placeholder="Seu e-mail" id="email-Cafeteira">
+      <button class="btn" id="btn-Cafeteira" onclick="Presentear('Cafeteira')">Presentear</button>
     </div>
 
-    <div class="card" data-item="Mixer" data-key="Mixer">
+    <div class="card" data-item="Purificador de agua" data-key="Purificador_de_agua">
       <span class="gold-line"></span>
-      <div class="product-img"><img src="Imagens/mixer.png" alt="Mixer"></div>
-      <h3>Mixer</h3>
-      <div class="badge" id="badge-Mixer">Disponível</div>
-      <div class="reserved-note" id="note-Mixer">Este item já foi reservado.</div>
-      <input type="text" placeholder="Seu nome" id="nome-Mixer">
-      <input type="email" placeholder="Seu e-mail" id="email-Mixer">
-      <button class="btn" id="btn-Mixer" onclick="Presentear('Mixer')">Presentear</button>
+      <div class="product-img"><img src="Imagens/purificadoragua.png" alt="Purificador de agua"></div>
+      <h3>Purificador de agua</h3>
+      <div class="badge" id="badge-Purificador_de_agua">Disponível</div>
+      <div class="reserved-note" id="note-Purificador_de_agua">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Purificador_de_agua">
+      <input type="email" placeholder="Seu e-mail" id="email-Purificador_de_agua">
+      <button class="btn" id="btn-Purificador_de_agua" onclick="Presentear('Purificador de agua')">Presentear</button>
     </div>
 
-    <!-- ... (Siga o mesmo padrão: coloque <span class="gold-line"></span> dentro de CADA .card)
-         Para não explodir a mensagem, eu não repliquei 100% aqui linha por linha,
-         mas o funcionamento + Firebase já está completo abaixo. -->
+    <div class="card" data-item="Triturador de alho" data-key="Triturador_de_alho">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/trituraralho.png" alt="Triturador de alho"></div>
+      <h3>Triturador de alho</h3>
+      <div class="badge" id="badge-Triturador_de_alho">Disponível</div>
+      <div class="reserved-note" id="note-Triturador_de_alho">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Triturador_de_alho">
+      <input type="email" placeholder="Seu e-mail" id="email-Triturador_de_alho">
+      <button class="btn" id="btn-Triturador_de_alho" onclick="Presentear('Triturador de alho')">Presentear</button>
+    </div>
 
-    <!-- ✅ IMPORTANTE:
-         Cole o RESTANTE dos seus cards aqui (do seu HTML antigo) e, em cada <div class="card"...>,
-         adicione esta linha logo depois da abertura:
-         <span class="gold-line"></span>
-    -->
+    <div class="card" data-item="Multiprocessador + liquidificador" data-key="Multiprocessador_liquidificador">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/multiprocessadorliquidificador.png" alt="Multiprocessador + liquidificador"></div>
+      <h3>Multiprocessador + liquidificador</h3>
+      <div class="badge" id="badge-Multiprocessador_liquidificador">Disponível</div>
+      <div class="reserved-note" id="note-Multiprocessador_liquidificador">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Multiprocessador_liquidificador">
+      <input type="email" placeholder="Seu e-mail" id="email-Multiprocessador_liquidificador">
+      <button class="btn" id="btn-Multiprocessador_liquidificador" onclick="Presentear('Multiprocessador + liquidificador')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Garrafa termica" data-key="Garrafa_termica">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/garrafatermica.png" alt="Garrafa termica"></div>
+      <h3>Garrafa termica</h3>
+      <div class="badge" id="badge-Garrafa_termica">Disponível</div>
+      <div class="reserved-note" id="note-Garrafa_termica">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Garrafa_termica">
+      <input type="email" placeholder="Seu e-mail" id="email-Garrafa_termica">
+      <button class="btn" id="btn-Garrafa_termica" onclick="Presentear('Garrafa termica')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Rolo de abrir massas" data-key="Rolo_de_abrir_massas">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/rolomassa.png" alt="Rolo de abrir massas"></div>
+      <h3>Rolo de abrir massas</h3>
+      <div class="badge" id="badge-Rolo_de_abrir_massas">Disponível</div>
+      <div class="reserved-note" id="note-Rolo_de_abrir_massas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Rolo_de_abrir_massas">
+      <input type="email" placeholder="Seu e-mail" id="email-Rolo_de_abrir_massas">
+      <button class="btn" id="btn-Rolo_de_abrir_massas" onclick="Presentear('Rolo de abrir massas')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Misteira" data-key="Misteira">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/misteira.png" alt="Misteira"></div>
+      <h3>Misteira</h3>
+      <div class="badge" id="badge-Misteira">Disponível</div>
+      <div class="reserved-note" id="note-Misteira">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Misteira">
+      <input type="email" placeholder="Seu e-mail" id="email-Misteira">
+      <button class="btn" id="btn-Misteira" onclick="Presentear('Misteira')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Tigelas" data-key="Tigelas">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/tigelas.png" alt="Tigelas"></div>
+      <h3>Tigelas</h3>
+      <div class="badge" id="badge-Tigelas">Disponível</div>
+      <div class="reserved-note" id="note-Tigelas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Tigelas">
+      <input type="email" placeholder="Seu e-mail" id="email-Tigelas">
+      <button class="btn" id="btn-Tigelas" onclick="Presentear('Tigelas')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Bowls" data-key="Bowls">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/bowls.png" alt="Bowls"></div>
+      <h3>Bowls</h3>
+      <div class="badge" id="badge-Bowls">Disponível</div>
+      <div class="reserved-note" id="note-Bowls">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Bowls">
+      <input type="email" placeholder="Seu e-mail" id="email-Bowls">
+      <button class="btn" id="btn-Bowls" onclick="Presentear('Bowls')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Travessas de vidro" data-key="Travessas_de_vidro">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/travessa.png" alt="Travessas de vidro"></div>
+      <h3>Travessas de vidro</h3>
+      <div class="badge" id="badge-Travessas_de_vidro">Disponível</div>
+      <div class="reserved-note" id="note-Travessas_de_vidro">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Travessas_de_vidro">
+      <input type="email" placeholder="Seu e-mail" id="email-Travessas_de_vidro">
+      <button class="btn" id="btn-Travessas_de_vidro" onclick="Presentear('Travessas de vidro')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Tabuleiros" data-key="Tabuleiros">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/tabuleiro.png" alt="Tabuleiros"></div>
+      <h3>Tabuleiros</h3>
+      <div class="badge" id="badge-Tabuleiros">Disponível</div>
+      <div class="reserved-note" id="note-Tabuleiros">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Tabuleiros">
+      <input type="email" placeholder="Seu e-mail" id="email-Tabuleiros">
+      <button class="btn" id="btn-Tabuleiros" onclick="Presentear('Tabuleiros')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Xícara com pires" data-key="Xicara_com_pires">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/xicara.png" alt="Xícara com pires"></div>
+      <h3>Xícara com pires</h3>
+      <div class="badge" id="badge-Xicara_com_pires">Disponível</div>
+      <div class="reserved-note" id="note-Xicara_com_pires">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Xicara_com_pires">
+      <input type="email" placeholder="Seu e-mail" id="email-Xicara_com_pires">
+      <button class="btn" id="btn-Xicara_com_pires" onclick="Presentear('Xícara com pires')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Airfryer" data-key="Airfryer">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/airfryer.png" alt="Airfryer"></div>
+      <h3>Airfryer</h3>
+      <div class="badge" id="badge-Airfryer">Disponível</div>
+      <div class="reserved-note" id="note-Airfryer">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Airfryer">
+      <input type="email" placeholder="Seu e-mail" id="email-Airfryer">
+      <button class="btn" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
+      <h3>Porta Tempero</h3>
+      <div class="badge" id="badge-Porta_Tempero">Disponível</div>
+      <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
+      <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
+      <button class="btn" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
+      <h3>Jogo de Copos</h3>
+      <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
+      <button class="btn" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
+      <h3>Escorredor De Louças</h3>
+      <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
+      <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
+      <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
+      <button class="btn" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Microondas" data-key="Microondas">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
+      <h3>Microondas</h3>
+      <div class="badge" id="badge-Microondas">Disponível</div>
+      <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Microondas">
+      <input type="email" placeholder="Seu e-mail" id="email-Microondas">
+      <button class="btn" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
+      <h3>Jogo de Panela</h3>
+      <div class="badge" id="badge-JogoDePanela">Disponível</div>
+      <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
+      <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
+      <button class="btn" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
+      <h3>Jogo De Talher</h3>
+      <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
+      <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
+      <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
+      <button class="btn" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Jarra" data-key="Jarra">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
+      <h3>Jarra</h3>
+      <div class="badge" id="badge-Jarra">Disponível</div>
+      <div class="reserved-note" id="note-Jarra">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Jarra">
+      <input type="email" placeholder="Seu e-mail" id="email-Jarra">
+      <button class="btn" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
+    </div>
+
+    <div class="card" data-item="Cooktop" data-key="Cooktop">
+      <span class="gold-line"></span>
+      <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
+      <h3>Cooktop</h3>
+      <div class="badge" id="badge-Cooktop">Disponível</div>
+      <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
+      <input type="text" placeholder="Seu nome" id="nome-Cooktop">
+      <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+      <button class="btn" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+    </div>
 
   </div>
 </div>
@@ -609,7 +775,6 @@ input{
 window.addEventListener('DOMContentLoaded', function () {
   try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
 
-  // Partículas discretas no fundo
   try{
     if(window.tsParticles){
       tsParticles.load("tsparticles",{
@@ -629,8 +794,44 @@ window.addEventListener('DOMContentLoaded', function () {
     }
   }catch(e){}
 
+  // ✅ ativa efeito no celular ao tocar em um card
+  setupMobileCardEffect();
   try{ aplicarEstadoLista(); }catch(e){}
 });
+
+/* ✅ CELULAR: ao tocar no card, liga o efeito; ao tocar fora, desliga */
+function setupMobileCardEffect(){
+  const cards = Array.from(document.querySelectorAll(".card[data-item]"));
+
+  // garante que todos tenham a linha dourada (mesmo se esquecer de colocar no HTML)
+  cards.forEach(card=>{
+    if(!card.querySelector(".gold-line")){
+      const s = document.createElement("span");
+      s.className = "gold-line";
+      card.prepend(s);
+    }
+  });
+
+  function clearAll(){
+    cards.forEach(c=>c.classList.remove("is-active"));
+  }
+
+  // toque no card ativa (sem atrapalhar clique em input/botão)
+  cards.forEach(card=>{
+    card.addEventListener("pointerdown", (e)=>{
+      const ignore = e.target.closest("input, button, a, label, textarea, select");
+      if(ignore) return;
+      clearAll();
+      card.classList.add("is-active");
+    }, {passive:true});
+  });
+
+  // toque fora desativa
+  document.addEventListener("pointerdown", (e)=>{
+    if(e.target.closest(".card")) return;
+    clearAll();
+  }, {passive:true});
+}
 
 /* countdown */
 const target = new Date("Jun 20, 2026 18:00:00").getTime();
@@ -696,7 +897,6 @@ function voltarPreCapa(){
 document.addEventListener("click", (e)=>{
   const btn = e.target.closest("button");
   if(!btn || btn.disabled) return;
-
   const rect = btn.getBoundingClientRect();
   const ripple = document.createElement("span");
   ripple.className = "ripple";
@@ -716,7 +916,6 @@ const uiNote = document.getElementById("modalNote");
 const uiCancel = document.getElementById("modalCancel");
 const uiConfirm = document.getElementById("modalConfirm");
 const uiBackdrop = document.getElementById("modalBackdrop");
-
 let uiResolve = null;
 
 function uiCloseModal(result=false){
@@ -743,7 +942,6 @@ function uiConfirmar({title, text, note, confirmText="Confirmar", cancelText="Ca
   uiConfirm.focus();
   return new Promise((resolve)=>{ uiResolve = resolve; });
 }
-
 function uiAviso({title, text, note, buttonText="Fechar"}){
   uiTitle.textContent = title || "Aviso";
   uiText.textContent = text || "";
@@ -803,11 +1001,7 @@ function aplicarEstadoLista(){
 /* ========= FUNÇÃO GLOBAL ========= */
 async function Presentear(item){
   if(!window.LISTA_PRESENTES_ABERTA){
-    await uiAviso({
-      title:"Lista ainda não liberada",
-      text:"A lista de presentes ainda está fechada. Volte mais tarde 😊",
-      note:""
-    });
+    await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
     return;
   }
   if(typeof window.__presentearImpl !== "function"){
@@ -823,7 +1017,7 @@ async function Presentear(item){
 window.Presentear = Presentear;
 </script>
 
-<!-- ✅ FIREBASE (COMPAT) - funciona melhor em WebViews (ex: preview do WhatsApp) -->
+<!-- ✅ FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
@@ -839,18 +1033,12 @@ window.Presentear = Presentear;
     appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
   };
 
-  try{
-    firebase.initializeApp(firebaseConfig);
-  }catch(e){
-    // se já inicializou, ignora
-  }
+  try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 
   const db = firebase.firestore();
   const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
 
-  function keyOfItem(item){
-    return String(item).replace(/\s+/g, "_");
-  }
+  function keyOfItem(item){ return String(item).replace(/\s+/g, "_"); }
   function getKeyFromCard(item){
     const card = document.querySelector(`.card[data-item="${item}"]`);
     return card?.getAttribute("data-key") || keyOfItem(item);
@@ -922,15 +1110,11 @@ window.Presentear = Presentear;
 
   async function doReserve(item){
     const key = getKeyFromCard(item);
-    const nome = (document.getElementById("nome-"+key)?.value || "").trim();
+    const nome  = (document.getElementById("nome-"+key)?.value || "").trim();
     const email = (document.getElementById("email-"+key)?.value || "").trim();
 
     if(!nome || !email){
-      await uiAviso({
-        title:"Campos obrigatórios",
-        text:"Preencha nome e e-mail para continuar.",
-        note:""
-      });
+      await uiAviso({ title:"Campos obrigatórios", text:"Preencha nome e e-mail para continuar.", note:"" });
       return;
     }
 
@@ -954,39 +1138,22 @@ window.Presentear = Presentear;
         }
       }catch(e){}
 
-      await uiAviso({
-        title:"Reserva confirmada",
-        text:"Obrigado por fazer parte deste momento 💛",
-        note:"Sua reserva foi registrada com sucesso."
-      });
+      await uiAviso({ title:"Reserva confirmada", text:"Obrigado por fazer parte deste momento 💛", note:"Sua reserva foi registrada com sucesso." });
 
     }catch(e){
       if(String(e?.message || e) === "ja_reservado"){
-        await uiAviso({
-          title:"Ops!",
-          text:"Este item já foi reservado.",
-          note:"Escolha outro presente disponível."
-        });
+        await uiAviso({ title:"Ops!", text:"Este item já foi reservado.", note:"Escolha outro presente disponível." });
       }else{
-        await uiAviso({
-          title:"Erro",
-          text:"Erro ao reservar. Tente novamente.",
-          note:"Se continuar, recarregue a página."
-        });
+        await uiAviso({ title:"Erro", text:"Erro ao reservar. Tente novamente.", note:"Se continuar, recarregue a página." });
       }
     }
   }
 
   async function presentearImpl(item){
     if(!window.LISTA_PRESENTES_ABERTA){
-      await uiAviso({
-        title:"Lista ainda não liberada",
-        text:"A lista de presentes ainda está fechada. Volte mais tarde 😊",
-        note:""
-      });
+      await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
       return;
     }
-
     const ok = await uiConfirmar({
       title:"Confirmar presente",
       text:`Você escolheu: ${item}. Deseja confirmar?`,
@@ -995,17 +1162,11 @@ window.Presentear = Presentear;
       cancelText:"Cancelar"
     });
     if(!ok) return;
-
     await doReserve(item);
   }
 
-  // expõe
   window.__presentearImpl = presentearImpl;
-
-  // inicia watchers
   watchAll();
-
-  // aplica estado geral por garantia
   try{ aplicarEstadoLista(); }catch(e){}
 })();
 </script>
