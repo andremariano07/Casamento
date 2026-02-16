@@ -229,8 +229,19 @@ h1{
   justify-items:center;
   gap:20px;
 }
+
+/* ✅ no celular: 3 cards por linha (3 em 3) */
+@media(max-width:780px){
+  .container{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:12px;
+  }
+  .card{ width:100%; }
+}
 @media(max-width:420px){
-  .container{ grid-template-columns:1fr; }
+  .container{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
 }
 
 /* ===== CARDS ===== */
@@ -257,7 +268,7 @@ h1{
   background:rgba(255,255,255,.08);
   backdrop-filter:blur(12px);
   overflow:hidden;
-  transition:none; /* sem animações de hover/transform */
+  transition:transform .18s ease, box-shadow .18s ease; /* ✅ voltou hover */
 }
 
 .card::after{
@@ -269,24 +280,23 @@ h1{
   pointer-events:none;
 }
 
-/* ✅ Apenas uma luz dourada pulsando ao redor */
+/* ✅ barra/halo dourado mais grosso */
 .card::before{
   content:"";
   position:absolute;
-  inset:-6px;                 /* “fora” do card */
-  border-radius:28px;         /* acompanha a borda */
+  inset:-10px;                /* mais grosso que -6px */
+  border-radius:30px;
   pointer-events:none;
   box-shadow:
-    0 0 22px rgba(212,175,55,.22),
-    0 0 46px rgba(248,231,176,.10);
+    0 0 28px rgba(212,175,55,.26),
+    0 0 56px rgba(248,231,176,.14);
   filter:blur(.2px);
   opacity:1;
   animation:cardPulseGlow 2.8s ease-in-out infinite;
 }
 
 .card:hover{
-  transform:none;
-  box-shadow:none;
+  transform:scale(1.05);
 }
 .card:hover::before{
   filter:blur(.2px);
@@ -493,7 +503,7 @@ input{
   <input type="email" placeholder="Seu e-mail" id="email-Forma de Pudim">
   <button class="btn" id="btn-Forma de Pudim" onclick="Presentear('Forma de Pudim')">Presentear</button>
 </div>
-     
+
      <div class="card" data-item="Escorredor de Macarrao" data-key="Escorredor de Macarrao">
   <div class="product-img"><img src="Imagens/escorredordemacarrao.png" alt="Escorredor de Macarrao"></div>
   <h3>Escorredor de Macarrao</h3>
