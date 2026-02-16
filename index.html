@@ -234,6 +234,21 @@ h1{
 }
 
 /* ===== CARDS ===== */
+@keyframes cardPulseGlow{
+  0%,100%{
+    box-shadow:
+      0 0 0 rgba(212,175,55,0),
+      0 0 22px rgba(212,175,55,.22),
+      0 0 46px rgba(248,231,176,.10);
+  }
+  50%{
+    box-shadow:
+      0 0 0 rgba(212,175,55,0),
+      0 0 30px rgba(212,175,55,.38),
+      0 0 64px rgba(248,231,176,.18);
+  }
+}
+
 .card{
   position:relative;
   width:260px;
@@ -242,8 +257,9 @@ h1{
   background:rgba(255,255,255,.08);
   backdrop-filter:blur(12px);
   overflow:hidden;
-  transition:transform .25s ease, box-shadow .25s ease;
+  transition:none; /* sem animações de hover/transform */
 }
+
 .card::after{
   content:"";
   position:absolute;
@@ -252,38 +268,28 @@ h1{
   border:1px solid rgba(212,175,55,.35);
   pointer-events:none;
 }
+
+/* ✅ Apenas uma luz dourada pulsando ao redor */
 .card::before{
   content:"";
   position:absolute;
-  inset:0;
-  border-radius:22px;
-  padding:2px;
-  background:conic-gradient(
-    from 0deg,
-    rgba(212,175,55,0) 0deg,
-    rgba(212,175,55,0) 330deg,
-    rgba(248,231,176,1) 342deg,
-    rgba(212,175,55,1) 355deg,
-    rgba(212,175,55,0) 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  filter:drop-shadow(0 0 8px rgba(212,175,55,.55));
-  opacity:1;
+  inset:-6px;                 /* “fora” do card */
+  border-radius:28px;         /* acompanha a borda */
   pointer-events:none;
-  animation:spinBorder 2.2s linear infinite;
+  box-shadow:
+    0 0 22px rgba(212,175,55,.22),
+    0 0 46px rgba(248,231,176,.10);
+  filter:blur(.2px);
+  opacity:1;
+  animation:cardPulseGlow 2.8s ease-in-out infinite;
 }
-@keyframes spinBorder{ to{ transform:rotate(360deg); } }
 
 .card:hover{
-  transform:translateY(-6px) scale(1.01);
-  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  transform:none;
+  box-shadow:none;
 }
 .card:hover::before{
-  filter:drop-shadow(0 0 12px rgba(212,175,55,.75));
+  filter:blur(.2px);
 }
 
 .product-img{
@@ -390,6 +396,7 @@ input{
   animation:spinBorder 3.2s linear infinite;
   pointer-events:none;
 }
+@keyframes spinBorder{ to{ transform:rotate(360deg); } }
 @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
 .modal-title{font-size:18px;font-weight:700;margin-bottom:8px}
 .modal-text{font-size:14px;opacity:.92;margin-bottom:14px;line-height:1.35}
