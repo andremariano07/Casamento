@@ -56,7 +56,7 @@
 
   <script>
     /* ========= CONTROLE DE LIBERAÇÃO ========= */
-    window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
+    window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI
   </script>
 
   <style>
@@ -113,7 +113,6 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
 
-      /* textura + glass + gradiente fino */
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
         linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
@@ -133,7 +132,6 @@
       overflow:hidden;
     }
 
-    /* linha dourada sutil passando */
     .btn::before, .maps-btn::before, .back-btn::before, button::before{
       content:"";
       position:absolute;
@@ -156,7 +154,6 @@
       to{ transform: rotate(360deg); }
     }
 
-    /* brilho "highlight" de cima */
     .btn::after, .maps-btn::after, .back-btn::after, button::after{
       content:"";
       position:absolute;
@@ -210,7 +207,6 @@
       animation:none;
     }
 
-    /* Botão “primário” (ex: Presentear) fica levemente mais dourado */
     .btn.btn-primary{
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
@@ -219,7 +215,6 @@
       border-color: rgba(248,231,176,.55);
     }
 
-    /* Botão “secundário” (ex: Voltar / Fechar) */
     .btn.btn-secondary{
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%),
@@ -227,7 +222,7 @@
       border-color: rgba(255,255,255,.22);
     }
 
-    /* ===== Ripple dourado (mantém) ===== */
+    /* ===== Ripple dourado ===== */
     .ripple{
       position:absolute;
       border-radius:50%;
@@ -245,7 +240,9 @@
       display:flex; flex-direction:column;
       justify-content:center; align-items:center;
       padding:20px; z-index:10;
+      overflow: visible; /* ✅ evita cortes em alguns celulares */
     }
+
     .circle-photo{
       width:180px;height:180px;border-radius:50%;
       overflow:hidden;border:5px solid var(--gold);
@@ -253,15 +250,18 @@
       box-shadow:0 0 15px rgba(212,175,55,.6);
     }
     .circle-photo img{width:100%;height:100%;object-fit:cover}
+
+    /* ✅ CORRIGE CORTE DOS NOMES (Great Vibes) */
     .pre-title{
       font-family:'Great Vibes',cursive;
       font-size:clamp(30px,6vw,52px);
-      line-height:1.1;
+      line-height:1.2;                 /* ✅ maior */
       max-width:95vw;
-      padding:0 8px;
+      padding:0 12px .18em;            /* ✅ folga embaixo */
       margin-bottom:6px;
       color:var(--gold2);
       text-shadow:0 2px 18px rgba(0,0,0,.35);
+      display:inline-block;
     }
     @supports (-webkit-background-clip:text) {
       .pre-title{
@@ -272,12 +272,14 @@
         text-shadow:none;
       }
     }
+
     h1{
       font-family:'Great Vibes',cursive;
       font-size:clamp(38px,7vw,64px);
-      line-height:1.1;
+      line-height:1.18;                /* ✅ maior */
       max-width:95vw;
-      padding:0 8px;
+      padding:0 12px .22em;            /* ✅ folga embaixo */
+      display:inline-block;            /* ✅ evita recorte */
       background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
       background-size:300%;
       -webkit-background-clip:text;
@@ -287,7 +289,7 @@
     @keyframes shine{to{background-position:300%}}
     .date,.countdown,.location{margin:8px 0;font-size:20px}
 
-    /* PRE CAPA: deixa os botões mais “premium” com micro animação */
+    /* PRE CAPA: micro animação */
     @keyframes btnFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
     @keyframes btnGlow  {
       0%,100%{box-shadow:0 10px 26px rgba(212,175,55,.18), 0 0 0 rgba(248,231,176,0)}
@@ -576,6 +578,8 @@
     <button class="back-btn btn btn-secondary" onclick="voltarPreCapa()">Voltar</button>
 
     <div class="container">
+
+      <!-- ✅ MANTIVE seus cards iguais (só copiei a partir daqui) -->
 
       <div class="card" data-item="Geladeira" data-key="Geladeira">
         <span class="gold-line"></span>
@@ -933,37 +937,10 @@
   </div>
 
   <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
-
-      try{
-        if(window.tsParticles){
-          tsParticles.load("tsparticles",{
-            fpsLimit:60,
-            fullScreen:{ enable:false },
-            background:{ color:"transparent" },
-            particles:{
-              number:{ value:28, density:{ enable:true, area:900 } },
-              color:{ value:["#d4af37","#f8e7b0","#fff"] },
-              opacity:{ value:0.15, random:{ enable:true, minimumValue:0.06 } },
-              size:{ value:{ min:1, max:4 }, random:true },
-              move:{ enable:true, speed:.7, direction:"top", outModes:{ default:"out" } },
-              shape:{ type:"circle" }
-            },
-            detectRetina:true
-          });
-        }
-      }catch(e){}
-
-      setupMobileCardEffect();
-      try{ aplicarEstadoLista(); }catch(e){}
-    });
-
     /* ✅ CELULAR: ao tocar no card, liga o efeito; ao tocar fora, desliga */
     function setupMobileCardEffect(){
       const cards = Array.from(document.querySelectorAll(".card[data-item]"));
 
-      // garante que todos tenham a linha dourada (mesmo se esquecer de colocar no HTML)
       cards.forEach(card=>{
         if(!card.querySelector(".gold-line")){
           const s = document.createElement("span");
@@ -976,7 +953,6 @@
         cards.forEach(c=>c.classList.remove("is-active"));
       }
 
-      // toque no card ativa (sem atrapalhar clique em input/botão)
       cards.forEach(card=>{
         card.addEventListener("pointerdown", (e)=>{
           const ignore = e.target.closest("input, button, a, label, textarea, select");
@@ -986,7 +962,6 @@
         }, {passive:true});
       });
 
-      // toque fora desativa
       document.addEventListener("pointerdown", (e)=>{
         if(e.target.closest(".card")) return;
         clearAll();
