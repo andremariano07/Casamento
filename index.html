@@ -555,7 +555,7 @@
     <div class="pre-title fade-up" style="animation-delay:.6s;">Chá de Panela</div>
     <h1 class="fade-up" style="animation-delay:1s;">Luiza & André</h1>
 
-    <div class="date fade-up" style="animation-delay:1.4s;">20/06/2026 - 18:00 horas</div>
+    <div class="date fade-up" style="animation-delay:1.4s;">20/06/2026 - 17:00 horas</div>
     <div class="countdown fade-up" id="countdown-pre" style="animation-delay:1.6s;"></div>
     <div class="location fade-up" style="animation-delay:1.8s;">Rua Vera Lucia, 215 - Sinimbu</div>
 
@@ -571,7 +571,7 @@
   <!-- CONTEÚDO -->
   <div class="overlay" id="mainContent">
     <h1>Luiza & André</h1>
-    <div class="date">20/06/2026 - 18:00 horas</div>
+    <div class="date">20/06/2026 - 17:00 horas</div>
     <div class="countdown" id="countdown-main"></div>
     <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
     <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
@@ -1123,7 +1123,7 @@
     }
 
     /* countdown */
-    const target = new Date("Jun 20, 2026 18:00:00").getTime();
+    const target = new Date("Jun 20, 2026 17:00:00").getTime();
     setInterval(()=>{
       const diff = target - Date.now();
       const t = Math.max(0, diff);
