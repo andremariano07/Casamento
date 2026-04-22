@@ -299,6 +299,195 @@
       animation: fadeUp 1.2s ease forwards, btnFloat 2.8s ease-in-out infinite, btnGlow 2.8s ease-in-out infinite;
     }
 
+    .rsvp-panel{
+      width:min(520px, 100%);
+      margin:18px auto 6px;
+      padding:18px 16px;
+      border-radius:24px;
+      background:rgba(18,18,18,.46);
+      border:1px solid rgba(248,231,176,.22);
+      backdrop-filter:blur(14px);
+      box-shadow:0 18px 48px rgba(0,0,0,.28);
+    }
+    .rsvp-title{
+      font-size:20px;
+      font-weight:700;
+      color:var(--gold2);
+    }
+    .rsvp-subtitle{
+      margin-top:6px;
+      font-size:13px;
+      opacity:.84;
+      line-height:1.4;
+    }
+    .rsvp-form{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+    .rsvp-form input,
+    .rsvp-form select,
+    .rsvp-form textarea{
+      width:100%;
+      margin-top:0;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.94);
+      color:#1b160a;
+      font-family:Poppins,sans-serif;
+      font-size:14px;
+      text-align:left;
+      outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    .rsvp-form textarea{
+      min-height:86px;
+      resize:vertical;
+    }
+    .rsvp-form input:focus,
+    .rsvp-form select:focus,
+    .rsvp-form textarea:focus{
+      border-color:rgba(212,175,55,.7);
+      box-shadow:0 0 0 3px rgba(212,175,55,.12);
+    }
+    .rsvp-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+    .rsvp-feedback{
+      min-height:20px;
+      font-size:13px;
+      color:var(--gold2);
+      opacity:.9;
+    }
+    .rsvp-admin{
+      width:min(980px, 100%);
+      margin:26px auto 8px;
+      padding:22px 18px;
+      border-radius:28px;
+      background:rgba(18,18,18,.54);
+      border:1px solid rgba(248,231,176,.22);
+      backdrop-filter:blur(14px);
+      box-shadow:0 18px 48px rgba(0,0,0,.28);
+      text-align:left;
+    }
+    .rsvp-admin-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .rsvp-admin-title{
+      font-size:22px;
+      font-weight:700;
+      color:var(--gold2);
+    }
+    .rsvp-admin-subtitle{
+      margin-top:6px;
+      font-size:13px;
+      opacity:.82;
+      line-height:1.45;
+    }
+    .rsvp-admin-stats{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(120px, 1fr));
+      gap:10px;
+      width:min(420px, 100%);
+    }
+    .rsvp-stat{
+      padding:12px 14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      text-align:center;
+    }
+    .rsvp-stat strong{
+      display:block;
+      font-size:24px;
+      color:var(--gold2);
+    }
+    .rsvp-stat span{
+      display:block;
+      margin-top:4px;
+      font-size:12px;
+      opacity:.8;
+    }
+    .rsvp-admin-list{
+      margin-top:18px;
+      display:grid;
+      gap:12px;
+    }
+    .rsvp-admin-empty{
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.06);
+      border:1px dashed rgba(255,255,255,.18);
+      text-align:center;
+      opacity:.82;
+    }
+    .rsvp-admin-card{
+      padding:16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 10px 30px rgba(0,0,0,.15);
+    }
+    .rsvp-admin-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .rsvp-admin-name{
+      font-size:18px;
+      font-weight:700;
+      color:#fff;
+    }
+    .rsvp-admin-meta{
+      margin-top:8px;
+      display:grid;
+      gap:6px;
+      font-size:14px;
+      opacity:.92;
+    }
+    .rsvp-pill{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .rsvp-pill.sim{
+      background:rgba(212,175,55,.2);
+      border:1px solid rgba(248,231,176,.3);
+      color:var(--gold2);
+    }
+    .rsvp-pill.nao{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;
+    }
+    .rsvp-recado-view{
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(0,0,0,.18);
+      font-size:14px;
+      line-height:1.45;
+      opacity:.94;
+    }
+    @media(max-width:560px){
+      .rsvp-grid{ grid-template-columns:1fr; }
+      .rsvp-panel{ padding:16px 14px; }
+      .rsvp-admin{ padding:18px 14px; }
+      .rsvp-admin-stats{ grid-template-columns:1fr; }
+    }
+
     /* CONTENT */
     .overlay{
       display:none;
@@ -559,6 +748,26 @@
     <div class="countdown fade-up" id="countdown-pre" style="animation-delay:1.6s;"></div>
     <div class="location fade-up" style="animation-delay:1.8s;">Rua Vera Lucia, 215 - Sinimbu</div>
 
+    <div class="rsvp-panel fade-up" style="animation-delay:1.95s;">
+      <div class="rsvp-title">Confirme sua presença</div>
+      <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
+      <div class="rsvp-form">
+        <input type="text" id="rsvp-nome" placeholder="Seu nome completo">
+        <div class="rsvp-grid">
+          <select id="rsvp-status">
+            <option value="sim">Sim, vou estar presente</option>
+            <option value="nao">Não poderei comparecer</option>
+          </select>
+          <input type="number" id="rsvp-acompanhantes" min="0" max="10" value="0" placeholder="Acompanhantes">
+        </div>
+        <input type="email" id="rsvp-email" placeholder="Seu e-mail">
+        <input type="tel" id="rsvp-whatsapp" placeholder="WhatsApp para contato">
+        <textarea id="rsvp-recado" placeholder="Se quiser, deixe um recado para os noivos"></textarea>
+        <button class="btn btn-primary" id="rsvp-btn" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
+        <div class="rsvp-feedback" id="rsvp-feedback"></div>
+      </div>
+    </div>
+
     <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
     <button class="maps-btn btn fade-up" onclick="tocarMusica()" style="animation-delay:2.2s;">Tocar Música</button>
     <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.4s;">Lista de Presente</button>
@@ -576,6 +785,32 @@
     <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
     <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
     <button class="back-btn btn btn-secondary" onclick="voltarPreCapa()">Voltar</button>
+
+    <section class="rsvp-admin" id="rsvpAdmin">
+      <div class="rsvp-admin-header">
+        <div>
+          <div class="rsvp-admin-title">Confirmações de presença</div>
+          <div class="rsvp-admin-subtitle">Painel simples para vocês acompanharem as respostas enviadas pela pré-capa.</div>
+        </div>
+        <div class="rsvp-admin-stats">
+          <div class="rsvp-stat">
+            <strong id="rsvp-total">0</strong>
+            <span>Total</span>
+          </div>
+          <div class="rsvp-stat">
+            <strong id="rsvp-sim">0</strong>
+            <span>Vão</span>
+          </div>
+          <div class="rsvp-stat">
+            <strong id="rsvp-pessoas">0</strong>
+            <span>Pessoas confirmadas</span>
+          </div>
+        </div>
+      </div>
+      <div class="rsvp-admin-list" id="rsvp-admin-list">
+        <div class="rsvp-admin-empty">Carregando confirmações...</div>
+      </div>
+    </section>
 
     <div class="container">
 
@@ -1304,6 +1539,104 @@
       return window.__presentearImpl(item);
     }
     window.Presentear = Presentear;
+
+    function syncRsvpAcompanhantes(){
+      const status = document.getElementById("rsvp-status");
+      const acompanhantes = document.getElementById("rsvp-acompanhantes");
+      if(!status || !acompanhantes) return;
+      const isNao = status.value === "nao";
+      acompanhantes.disabled = isNao;
+      if(isNao) acompanhantes.value = 0;
+    }
+
+    async function ConfirmarPresenca(){
+      if(typeof window.__confirmarPresencaImpl !== "function"){
+        await uiAviso({
+          title:"Erro",
+          text:"Firebase ainda não carregou. Recarregue a página para confirmar sua presença.",
+          note:""
+        });
+        return;
+      }
+      return window.__confirmarPresencaImpl();
+    }
+    window.ConfirmarPresenca = ConfirmarPresenca;
+
+    function formatarDataRsvp(valor){
+      try{
+        if(!valor) return "Agora há pouco";
+        const data = typeof valor.toDate === "function" ? valor.toDate() : new Date(valor);
+        return new Intl.DateTimeFormat("pt-BR", {
+          dateStyle:"short",
+          timeStyle:"short"
+        }).format(data);
+      }catch(e){
+        return "Agora há pouco";
+      }
+    }
+
+    function renderRsvpAdmin(confirmacoes){
+      const list = document.getElementById("rsvp-admin-list");
+      const totalEl = document.getElementById("rsvp-total");
+      const simEl = document.getElementById("rsvp-sim");
+      const pessoasEl = document.getElementById("rsvp-pessoas");
+      if(!list || !totalEl || !simEl || !pessoasEl) return;
+
+      const total = confirmacoes.length;
+      const confirmados = confirmacoes.filter((item)=> item.status === "sim");
+      const pessoas = confirmados.reduce((acc, item)=> acc + 1 + Math.max(0, Number(item.acompanhantes || 0)), 0);
+
+      totalEl.textContent = String(total);
+      simEl.textContent = String(confirmados.length);
+      pessoasEl.textContent = String(pessoas);
+
+      if(!confirmacoes.length){
+        list.innerHTML = '<div class="rsvp-admin-empty">Ainda não há confirmações registradas.</div>';
+        return;
+      }
+
+      list.innerHTML = confirmacoes.map((item)=>{
+        const nome = item.nome || "Sem nome";
+        const email = item.email ? String(item.email) : "Não informado";
+        const whatsapp = item.whatsapp ? String(item.whatsapp) : "Não informado";
+        const acompanhantes = item.status === "sim" ? Math.max(0, Number(item.acompanhantes || 0)) : 0;
+        const recado = item.recado ? String(item.recado) : "";
+        const statusTexto = item.status === "sim" ? "Vai estar presente" : "Não poderá comparecer";
+        const pillClass = item.status === "sim" ? "sim" : "nao";
+        const data = formatarDataRsvp(item.ts);
+        const acompanhantesTexto = item.status === "sim" ? `${1 + acompanhantes} pessoa(s)` : "Sem presença confirmada";
+
+        return `
+          <div class="rsvp-admin-card">
+            <div class="rsvp-admin-top">
+              <div>
+                <div class="rsvp-admin-name">${escapeHtml(nome)}</div>
+                <div style="font-size:12px; opacity:.72; margin-top:4px;">Enviado em ${escapeHtml(data)}</div>
+              </div>
+              <span class="rsvp-pill ${pillClass}">${escapeHtml(statusTexto)}</span>
+            </div>
+            <div class="rsvp-admin-meta">
+              <div><strong>E-mail:</strong> ${escapeHtml(email)}</div>
+              <div><strong>WhatsApp:</strong> ${escapeHtml(whatsapp)}</div>
+              <div><strong>Quantidade:</strong> ${escapeHtml(acompanhantesTexto)}</div>
+            </div>
+            ${recado ? `<div class="rsvp-recado-view"><strong>Recado:</strong> ${escapeHtml(recado)}</div>` : ""}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(value){
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    document.getElementById("rsvp-status")?.addEventListener("change", syncRsvpAcompanhantes);
+    syncRsvpAcompanhantes();
   </script>
 
   <!-- ✅ FIREBASE COMPAT -->
@@ -1326,6 +1659,9 @@
 
       const db = firebase.firestore();
       const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
+      const EMAILJS_SERVICE_ID = "service_7b5jpat";
+      const EMAILJS_TEMPLATE_PRESENTE = "template_kl4avko";
+      const EMAILJS_TEMPLATE_RSVP = "template_3um2jac";
 
       function keyOfItem(item){ return String(item).replace(/\s+/g, "_"); }
       function getKeyFromCard(item){
@@ -1420,7 +1756,7 @@
 
           try{
             if(window.emailjs?.send){
-              await emailjs.send("service_7b5jpat","template_kl4avko",{
+              await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESENTE,{
                 nome,email,item,
                 mensagem:"Obrigado por fazer parte deste momento 💛"
               });
@@ -1454,8 +1790,134 @@
         await doReserve(item);
       }
 
+      async function confirmarPresencaImpl(){
+        const nome = (document.getElementById("rsvp-nome")?.value || "").trim();
+        const email = (document.getElementById("rsvp-email")?.value || "").trim();
+        const whatsapp = (document.getElementById("rsvp-whatsapp")?.value || "").trim();
+        const status = (document.getElementById("rsvp-status")?.value || "sim").trim();
+        const acompanhantesInput = document.getElementById("rsvp-acompanhantes");
+        const acompanhantes = Math.max(0, Number(acompanhantesInput?.value || 0) || 0);
+        const recado = (document.getElementById("rsvp-recado")?.value || "").trim();
+        const btn = document.getElementById("rsvp-btn");
+        const feedback = document.getElementById("rsvp-feedback");
+
+        if(!nome){
+          await uiAviso({
+            title:"Falta seu nome",
+            text:"Preencha seu nome para registrar a confirmação de presença.",
+            note:""
+          });
+          return;
+        }
+        if(!email){
+          await uiAviso({
+            title:"Falta seu e-mail",
+            text:"Preencha seu e-mail para receber a confirmação da presença.",
+            note:""
+          });
+          return;
+        }
+
+        const statusTexto = status === "sim" ? "Sim, vou estar presente" : "Não poderei comparecer";
+        const ok = await uiConfirmar({
+          title:"Confirmar presença",
+          text:`Deseja enviar sua resposta como "${statusTexto}"?`,
+          note:"Você poderá editar depois diretamente no Firestore, se precisar.",
+          confirmText:"Enviar",
+          cancelText:"Voltar"
+        });
+        if(!ok) return;
+
+        if(btn){
+          btn.disabled = true;
+          btn.textContent = "Enviando...";
+        }
+        if(feedback) feedback.textContent = "Salvando sua confirmação...";
+
+        try{
+          await db.collection("confirmacoes_presenca").add({
+            nome,
+            email,
+            whatsapp,
+            status,
+            acompanhantes: status === "sim" ? acompanhantes : 0,
+            recado,
+            origem: "pre-capa",
+            ts: serverTimestamp()
+          });
+
+          let emailEnviado = true;
+          try{
+            if(window.emailjs?.send){
+              const message = status === "sim"
+                ? `Sua presença foi confirmada com sucesso para o Chá de Panela. Total confirmado: ${1 + acompanhantes} pessoa(s).`
+                : "Recebemos sua resposta informando que você não poderá comparecer. Obrigado pelo carinho.";
+              await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RSVP,{
+                name: nome,
+                email,
+                message
+              });
+            }
+          }catch(e){
+            emailEnviado = false;
+          }
+
+          document.getElementById("rsvp-nome").value = "";
+          document.getElementById("rsvp-email").value = "";
+          document.getElementById("rsvp-whatsapp").value = "";
+          document.getElementById("rsvp-status").value = "sim";
+          document.getElementById("rsvp-acompanhantes").value = 0;
+          document.getElementById("rsvp-recado").value = "";
+          try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
+
+          if(feedback){
+            feedback.textContent = emailEnviado
+              ? "Presença confirmada e e-mail enviado com sucesso."
+              : "Presença confirmada, mas o e-mail não pôde ser enviado agora.";
+          }
+          await uiAviso({
+            title:"Resposta enviada",
+            text:"Sua confirmação de presença foi registrada com sucesso 💛",
+            note: emailEnviado
+              ? "Também enviamos uma confirmação para o seu e-mail."
+              : "A confirmação foi salva, mas o envio do e-mail falhou."
+          });
+        }catch(e){
+          if(feedback) feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
+          await uiAviso({
+            title:"Erro ao confirmar",
+            text:"Não conseguimos registrar sua resposta neste momento.",
+            note:"Tente novamente em alguns instantes."
+          });
+        }finally{
+          if(btn){
+            btn.disabled = false;
+            btn.textContent = "Confirmar presença";
+          }
+        }
+      }
+
+      function watchConfirmacoesPresenca(){
+        db.collection("confirmacoes_presenca")
+          .orderBy("ts", "desc")
+          .onSnapshot((snap)=>{
+            const confirmacoes = snap.docs.map((doc)=> ({ id: doc.id, ...doc.data() }));
+            try{ window.renderRsvpAdmin?.(confirmacoes); }catch(e){}
+          }, ()=>{
+            try{
+              window.renderRsvpAdmin?.([]);
+              const list = document.getElementById("rsvp-admin-list");
+              if(list){
+                list.innerHTML = '<div class="rsvp-admin-empty">Não foi possível carregar as confirmações agora.</div>';
+              }
+            }catch(e){}
+          });
+      }
+
       window.__presentearImpl = presentearImpl;
+      window.__confirmarPresencaImpl = confirmarPresencaImpl;
       watchAll();
+      watchConfirmacoesPresenca();
       try{ aplicarEstadoLista(); }catch(e){}
     })();
   </script>
