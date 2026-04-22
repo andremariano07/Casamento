@@ -301,13 +301,25 @@
 
     .rsvp-panel{
       width:min(520px, 100%);
-      margin:18px auto 6px;
+      margin:14px auto 6px;
       padding:18px 16px;
       border-radius:24px;
       background:rgba(18,18,18,.46);
       border:1px solid rgba(248,231,176,.22);
       backdrop-filter:blur(14px);
       box-shadow:0 18px 48px rgba(0,0,0,.28);
+      display:none;
+    }
+    .rsvp-panel.show{
+      display:block;
+      animation:fadeUp .35s ease forwards;
+    }
+    .rsvp-toggle{
+      margin-top:12px;
+    }
+    .rsvp-toggle.active{
+      border-color: rgba(248,231,176,.65);
+      box-shadow: 0 18px 55px rgba(0,0,0,.45);
     }
     .rsvp-title{
       font-size:20px;
@@ -748,7 +760,9 @@
     <div class="countdown fade-up" id="countdown-pre" style="animation-delay:1.6s;"></div>
     <div class="location fade-up" style="animation-delay:1.8s;">Rua Vera Lucia, 215 - Sinimbu</div>
 
-    <div class="rsvp-panel fade-up" style="animation-delay:1.95s;">
+    <button class="maps-btn btn fade-up rsvp-toggle" id="rsvp-toggle-btn" type="button" onclick="toggleRsvpPanel()" style="animation-delay:1.95s;">Confirmação de Presença</button>
+
+    <div class="rsvp-panel" id="rsvp-panel">
       <div class="rsvp-title">Confirme sua presença</div>
       <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
       <div class="rsvp-form">
@@ -1549,6 +1563,16 @@
       if(isNao) acompanhantes.value = 0;
     }
 
+    function toggleRsvpPanel(force){
+      const panel = document.getElementById("rsvp-panel");
+      const btn = document.getElementById("rsvp-toggle-btn");
+      if(!panel || !btn) return;
+      const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("show");
+      panel.classList.toggle("show", shouldShow);
+      btn.classList.toggle("active", shouldShow);
+      btn.textContent = shouldShow ? "Fechar Confirmação" : "Confirmação de Presença";
+    }
+
     async function ConfirmarPresenca(){
       if(typeof window.__confirmarPresencaImpl !== "function"){
         await uiAviso({
@@ -1807,6 +1831,7 @@
             text:"Preencha seu nome para registrar a confirmação de presença.",
             note:""
           });
+          toggleRsvpPanel(true);
           return;
         }
         if(!email){
@@ -1815,6 +1840,7 @@
             text:"Preencha seu e-mail para receber a confirmação da presença.",
             note:""
           });
+          toggleRsvpPanel(true);
           return;
         }
 
@@ -1869,6 +1895,7 @@
           document.getElementById("rsvp-acompanhantes").value = 0;
           document.getElementById("rsvp-recado").value = "";
           try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
+          try{ window.toggleRsvpPanel?.(false); }catch(e){}
 
           if(feedback){
             feedback.textContent = emailEnviado
