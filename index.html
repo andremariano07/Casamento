@@ -772,7 +772,7 @@
             <option value="sim">Sim, vou estar presente</option>
             <option value="nao">Não poderei comparecer</option>
           </select>
-          <input type="number" id="rsvp-acompanhantes" min="0" max="10" value="0" placeholder="Acompanhantes">
+          <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante">
         </div>
         <input type="email" id="rsvp-email" placeholder="Seu e-mail">
         <input type="tel" id="rsvp-whatsapp" placeholder="WhatsApp para contato">
@@ -1556,11 +1556,11 @@
 
     function syncRsvpAcompanhantes(){
       const status = document.getElementById("rsvp-status");
-      const acompanhantes = document.getElementById("rsvp-acompanhantes");
-      if(!status || !acompanhantes) return;
+      const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome");
+      if(!status || !acompanhanteNome) return;
       const isNao = status.value === "nao";
-      acompanhantes.disabled = isNao;
-      if(isNao) acompanhantes.value = 0;
+      acompanhanteNome.disabled = isNao;
+      if(isNao) acompanhanteNome.value = "";
     }
 
     function toggleRsvpPanel(force){
@@ -1608,7 +1608,7 @@
 
       const total = confirmacoes.length;
       const confirmados = confirmacoes.filter((item)=> item.status === "sim");
-      const pessoas = confirmados.reduce((acc, item)=> acc + 1 + Math.max(0, Number(item.acompanhantes || 0)), 0);
+      const pessoas = confirmados.reduce((acc, item)=> acc + 1 + (item.acompanhante_nome ? 1 : 0), 0);
 
       totalEl.textContent = String(total);
       simEl.textContent = String(confirmados.length);
@@ -1623,12 +1623,14 @@
         const nome = item.nome || "Sem nome";
         const email = item.email ? String(item.email) : "Não informado";
         const whatsapp = item.whatsapp ? String(item.whatsapp) : "Não informado";
-        const acompanhantes = item.status === "sim" ? Math.max(0, Number(item.acompanhantes || 0)) : 0;
+        const acompanhanteNome = item.acompanhante_nome ? String(item.acompanhante_nome) : "";
         const recado = item.recado ? String(item.recado) : "";
         const statusTexto = item.status === "sim" ? "Vai estar presente" : "Não poderá comparecer";
         const pillClass = item.status === "sim" ? "sim" : "nao";
         const data = formatarDataRsvp(item.ts);
-        const acompanhantesTexto = item.status === "sim" ? `${1 + acompanhantes} pessoa(s)` : "Sem presença confirmada";
+        const acompanhantesTexto = item.status === "sim"
+          ? (acompanhanteNome ? `2 pessoa(s)` : "1 pessoa")
+          : "Sem presença confirmada";
 
         return `
           <div class="rsvp-admin-card">
@@ -1643,6 +1645,7 @@
               <div><strong>E-mail:</strong> ${escapeHtml(email)}</div>
               <div><strong>WhatsApp:</strong> ${escapeHtml(whatsapp)}</div>
               <div><strong>Quantidade:</strong> ${escapeHtml(acompanhantesTexto)}</div>
+              ${acompanhanteNome ? `<div><strong>Acompanhante:</strong> ${escapeHtml(acompanhanteNome)}</div>` : ""}
             </div>
             ${recado ? `<div class="rsvp-recado-view"><strong>Recado:</strong> ${escapeHtml(recado)}</div>` : ""}
           </div>
@@ -1819,8 +1822,7 @@
         const email = (document.getElementById("rsvp-email")?.value || "").trim();
         const whatsapp = (document.getElementById("rsvp-whatsapp")?.value || "").trim();
         const status = (document.getElementById("rsvp-status")?.value || "sim").trim();
-        const acompanhantesInput = document.getElementById("rsvp-acompanhantes");
-        const acompanhantes = Math.max(0, Number(acompanhantesInput?.value || 0) || 0);
+        const acompanhanteNome = (document.getElementById("rsvp-acompanhante-nome")?.value || "").trim();
         const recado = (document.getElementById("rsvp-recado")?.value || "").trim();
         const btn = document.getElementById("rsvp-btn");
         const feedback = document.getElementById("rsvp-feedback");
@@ -1866,7 +1868,7 @@
             email,
             whatsapp,
             status,
-            acompanhantes: status === "sim" ? acompanhantes : 0,
+            acompanhante_nome: status === "sim" ? acompanhanteNome : "",
             recado,
             origem: "pre-capa",
             ts: serverTimestamp()
@@ -1876,7 +1878,7 @@
           try{
             if(window.emailjs?.send){
               const message = status === "sim"
-                ? `Sua presença foi confirmada com sucesso para o Chá de Panela. Total confirmado: ${1 + acompanhantes} pessoa(s).`
+                ? `Sua presença foi confirmada com sucesso para o Chá de Panela.${acompanhanteNome ? ` Acompanhante: ${acompanhanteNome}.` : ""}`
                 : "Recebemos sua resposta informando que você não poderá comparecer. Obrigado pelo carinho.";
               await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RSVP,{
                 name: nome,
@@ -1892,7 +1894,7 @@
           document.getElementById("rsvp-email").value = "";
           document.getElementById("rsvp-whatsapp").value = "";
           document.getElementById("rsvp-status").value = "sim";
-          document.getElementById("rsvp-acompanhantes").value = 0;
+          document.getElementById("rsvp-acompanhante-nome").value = "";
           document.getElementById("rsvp-recado").value = "";
           try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
           try{ window.toggleRsvpPanel?.(false); }catch(e){}
