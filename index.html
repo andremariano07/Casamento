@@ -689,6 +689,46 @@
     }
     .modal-actions .btn-primary{background:var(--gold);color:#111}
     .small-note{font-size:12px;opacity:.75;margin-top:10px}
+
+    /* Admin styles */
+    #adminLoginModal input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    #adminPanelModal ul {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    #adminPanelModal li {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    #adminBackdrop,
+    #adminPanelBackdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+    }
+    #adminLoginModal,
+    #adminPanelModal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      width: min(420px, 100%);
+      margin: 0;
+    }
   </style>
 </head>
 
@@ -709,8 +749,33 @@
     </div>
   </div>
 
+  <!-- Admin Modals -->
+  <div class="modal-backdrop" id="adminBackdrop"></div>
+  <div class="modal-box" id="adminLoginModal" role="dialog" aria-modal="true">
+    <div class="modal-title">Login Admin</div>
+    <input type="text" id="adminUser" placeholder="Usuário">
+    <input type="password" id="adminPass" placeholder="Senha">
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="hideAdminLogin()">Cancelar</button>
+      <button class="btn btn-primary" onclick="loginAdmin()">Entrar</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="adminPanelBackdrop"></div>
+  <div class="modal-box" id="adminPanelModal" role="dialog" aria-modal="true">
+    <div class="modal-title">Painel Admin</div>
+    <h3>Confirmações de Presença</h3>
+    <ul id="presenceList"></ul>
+    <h3>Presentes Escolhidos</h3>
+    <ul id="giftsList"></ul>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="hideAdminPanel()">Fechar</button>
+    </div>
+  </div>
+
   <!-- PRÉ CAPA -->
   <div class="precover" id="precover">
+    <div id="admin-trigger" style="position:absolute; top:10px; left:10px; width:20px; height:20px; background:transparent; cursor:pointer;" onclick="showAdminLogin()" title="Admin"></div>
     <div class="circle-photo fade-up" style="animation-delay:.2s;">
       <img src="nos.jpeg" alt="Foto do casal">
     </div>
@@ -1533,6 +1598,7 @@
   <!-- ✅ FIREBASE COMPAT -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
     /* ========= FIREBASE + RESERVA (SEM MODULE) ========= */
@@ -1549,6 +1615,9 @@
       try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 
       const db = firebase.firestore();
+      const auth = firebase.auth();
+      window.db = db;
+      window.auth = auth;
       const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
       const EMAILJS_SERVICE_ID = "service_7b5jpat";
       const EMAILJS_TEMPLATE_PRESENTE = "template_kl4avko";
@@ -1754,6 +1823,77 @@
       watchAll();
       try{ aplicarEstadoLista(); }catch(e){}
     })();
+
+    // Admin functions
+    function showAdminLogin() {
+      document.getElementById('adminBackdrop').style.display = 'block';
+      document.getElementById('adminLoginModal').style.display = 'block';
+    }
+
+    function hideAdminLogin() {
+      document.getElementById('adminBackdrop').style.display = 'none';
+      document.getElementById('adminLoginModal').style.display = 'none';
+    }
+
+    async function loginAdmin() {
+      const email = document.getElementById('adminUser').value;
+      const pass = document.getElementById('adminPass').value;
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, pass);
+        hideAdminLogin();
+        showAdminPanel();
+      } catch (error) {
+        alert('Erro no login: ' + error.message);
+      }
+    }
+
+    function showAdminPanel() {
+      fetchPresence();
+      fetchGifts();
+      document.getElementById('adminPanelBackdrop').style.display = 'block';
+      document.getElementById('adminPanelModal').style.display = 'block';
+    }
+
+    function hideAdminPanel() {
+      document.getElementById('adminPanelBackdrop').style.display = 'none';
+      document.getElementById('adminPanelModal').style.display = 'none';
+    }
+
+    async function fetchPresence() {
+      const list = document.getElementById('presenceList');
+      list.innerHTML = 'Carregando...';
+      try {
+        const snapshot = await db.collection('confirmacoes_presenca').get();
+        list.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const li = document.createElement('li');
+          li.textContent = `${data.nome} - ${data.status} - Acompanhante: ${data.acompanhante || 'Nenhum'}`;
+          list.appendChild(li);
+        });
+      } catch (e) {
+        list.innerHTML = 'Erro ao carregar';
+      }
+    }
+
+    async function fetchGifts() {
+      const list = document.getElementById('giftsList');
+      list.innerHTML = 'Carregando...';
+      try {
+        const snapshot = await db.collection('reservas').get();
+        list.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.reservado) {
+            const li = document.createElement('li');
+            li.textContent = `${doc.id} - Reservado por ${data.nome} (${data.email})`;
+            list.appendChild(li);
+          }
+        });
+      } catch (e) {
+        list.innerHTML = 'Erro ao carregar';
+      }
+    }
   </script>
 </body>
 </html>
