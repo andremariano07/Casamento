@@ -51,6 +51,26 @@
       // ✅ ativa efeito no celular ao tocar em um card
       setupMobileCardEffect();
       try{ aplicarEstadoLista(); }catch(e){}
+
+      // ✅ TOCA MÚSICA AUTOMATICAMENTE
+      try{
+        const audio = document.getElementById("bgMusic");
+        if(audio){
+          audio.volume = 0.03;
+          // Ativa som após um pequeno delay e interação do usuário
+          setTimeout(() => {
+            audio.muted = false;
+            audio.play().catch(e => {
+              // Se ainda assim não conseguir, vai tocar quando o usuário interagir
+              document.addEventListener('click', function unmuteOnClick() {
+                audio.muted = false;
+                audio.play().catch(() => {});
+                document.removeEventListener('click', unmuteOnClick);
+              }, { once: true });
+            });
+          }, 500);
+        }
+      }catch(e){}
     });
   </script>
 
@@ -721,11 +741,10 @@
     </div>
 
     <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
-    <button class="maps-btn btn fade-up" onclick="tocarMusica()" style="animation-delay:2.2s;">Tocar Música</button>
-    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.4s;">Lista de Presente</button>
+    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.2s;">Lista de Presente</button>
   </div>
 
-  <audio id="bgMusic" loop preload="auto">
+  <audio id="bgMusic" loop preload="auto" autoplay muted>
     <source src="musica.mp3" type="audio/mpeg">
   </audio>
 
