@@ -1,943 +1,1703 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rifa de Casamento — Luiza e André</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Charraiá - Luiza & André</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+
+      // ✅ ORDENA OS CARDS AUTOMATICAMENTE (A-Z) pelo data-item
+      (function ordenarCards(){
+        const container = document.querySelector(".container");
+        if(!container) return;
+
+        const cards = Array.from(container.querySelectorAll(".card[data-item]"));
+        cards.sort((a, b) => {
+          const nameA = (a.getAttribute("data-item") || "").trim();
+          const nameB = (b.getAttribute("data-item") || "").trim();
+          return nameA.localeCompare(nameB, "pt-BR", { sensitivity: "base" });
+        });
+
+        cards.forEach(card => container.appendChild(card));
+      })();
+
+      try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
+
+      try{
+        if(window.tsParticles){
+          tsParticles.load("tsparticles",{
+            fpsLimit:60,
+            fullScreen:{ enable:false },
+            background:{ color:"transparent" },
+            particles:{
+              number:{ value:28, density:{ enable:true, area:900 } },
+              color:{ value:["#d4af37","#f8e7b0","#fff"] },
+              opacity:{ value:0.15, random:{ enable:true, minimumValue:0.06 } },
+              size:{ value:{ min:1, max:4 }, random:true },
+              move:{ enable:true, speed:.7, direction:"top", outModes:{ default:"out" } },
+              shape:{ type:"circle" }
+            },
+            detectRetina:true
+          });
+        }
+      }catch(e){}
+
+      // ✅ ativa efeito no celular ao tocar em um card
+      setupMobileCardEffect();
+      try{ aplicarEstadoLista(); }catch(e){}
+    });
+  </script>
+
+  <script>
+    /* ========= CONTROLE DE LIBERAÇÃO ========= */
+    window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
+  </script>
 
   <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
     :root{
-      --green:#3f6b57;
-      --green2:#2f5a47;
-      --gridline: rgba(60,80,70,0.12);
-      --text:#243128;
-      --muted:#6e7c75;
-      --sel:#2f7cff;
+      --gold:#d4af37;
+      --gold2:#f8e7b0;
+
+      /* ✅ botões refinados */
+      --btn-bg1: rgba(248,231,176,.22);
+      --btn-bg2: rgba(212,175,55,.18);
+      --btn-border: rgba(248,231,176,.38);
+      --btn-border-strong: rgba(248,231,176,.65);
+      --btn-text: #f7f4ea;
+      --btn-text-dark: #1b160a;
+      --btn-shadow: 0 16px 42px rgba(0,0,0,.35);
     }
 
-    *{box-sizing:border-box}
     body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(900px 500px at 15% 10%, rgba(63,107,87,0.22), transparent 55%),
-        radial-gradient(700px 400px at 90% 5%, rgba(63,107,87,0.16), transparent 55%),
-        linear-gradient(180deg, #d7e3dc 0%, #eef1ee 40%, #e7ebe7 100%);
-      min-height:100vh;
-      padding-bottom: 84px; /* Para não tapar conteúdo no mobile por causa do botão fixo */
-    }
-
-    .wrap{max-width:980px;margin:0 auto;padding:18px}
-
-    .card{
-      border-radius:22px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.80)),
-        radial-gradient(900px 500px at 50% 0%, rgba(0,0,0,0.06), transparent 60%);
-      border:1px solid rgba(0,0,0,0.06);
-      overflow:hidden;
-      box-shadow:0 18px 50px rgba(0,0,0,0.10);
-    }
-
-    .top{
-      padding:18px 18px 10px;
-      background: linear-gradient(180deg, #3f6b57 0%, #2f5a47 100%);
-    }
-
-    .titleRow{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .heading{
-      margin:0;
-      font-size:44px;
-      letter-spacing:0.3px;
-      background: linear-gradient(180deg, #ffffff 0%, #f2f6f3 100%);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      line-height:1;
-    }
-
-    .subHeading{
-      margin-top:6px;
-      font-size:16px;
-      color:rgba(255,255,255,0.85);
-    }
-
-    .couple{
-      margin-top:10px;
-      font-size:18px;
-      color:rgba(255,255,255,0.92);
-      letter-spacing:0.4px;
-    }
-
-    .banner{
-      margin-top:14px;
-      background:rgba(255,255,255,0.90);
-      border:1px solid rgba(0,0,0,0.06);
-      border-radius:16px;
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    .banner strong{font-size:18px}
-    .banner .small{color:var(--muted);font-size:13px}
-
-    .priceTag{
-      background:rgba(255,255,255,0.16);
-      border:1px solid rgba(255,255,255,0.22);
-      color:white;
-      font-weight:900;
-      padding:10px 14px;
-      border-radius:999px;
-      white-space:nowrap;
-      backdrop-filter: blur(6px);
-    }
-
-    .numbersArea{
-      padding:18px;
-      background:
-        radial-gradient(900px 700px at 50% 10%, rgba(0,0,0,0.06), transparent 50%),
-        linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.55)),
-        linear-gradient(0deg, var(--gridline) 1px, transparent 1px),
-        linear-gradient(90deg, var(--gridline) 1px, transparent 1px);
-      background-size: auto, auto, 38px 38px, 38px 38px;
-    }
-
-    .toolbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .status{
-      font-size:13px;
-      color:var(--muted);
-    }
-    .legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-    .pill{
-      display:flex;gap:8px;align-items:center;
-      font-size:13px;color:var(--muted);
-    }
-    .dot{width:10px;height:10px;border-radius:50%}
-    .dot.free{background:#ffffff;border:1px solid rgba(0,0,0,0.18)}
-    .dot.taken{background:var(--green)}
-    .dot.sel{background:var(--sel)}
-
-    .reserveBar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      margin: 10px 0 0;
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.70);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 14px;
-    }
-    .picked{
-      font-size:13px;color:var(--muted);
-    }
-    .reserveBtn{
-      padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.12);
-      background: var(--green);
+      font-family:Poppins,sans-serif;
       color:#fff;
-      cursor:pointer;
-      font-weight:900;
+      text-align:center;
+      min-height:100svh;
+      overflow-x:hidden;
+      background:
+        linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),
+        url('arte_casamento.jpeg');
+      background-size:cover;
+      background-position:center top;
+      background-repeat:no-repeat;
+      background-attachment:fixed;
     }
-    .reserveBtn:disabled{opacity:.6;cursor:not-allowed;}
-    .clearBtn{
-      padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.12);
-      background:#fff;
-      cursor:pointer;
-      font-weight:900;
+    @media(max-width:768px){ body{background-attachment:scroll;} }
+
+    #tsparticles{
+      position:fixed; inset:0; width:100%; height:100%;
+      pointer-events:none; z-index:1;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(10, minmax(0, 1fr));
-      gap:12px;
-      padding:6px 2px 2px;
-    }
-    @media (max-width:780px){
-      .heading{font-size:36px}
-      .grid{grid-template-columns: repeat(5, minmax(0, 1fr));}
-    }
+    /* fade */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up{opacity:0;animation:fadeUp 1.2s ease forwards;}
 
-    .num{
-      width:100%;
-      aspect-ratio: 1 / 1;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#ffffff;
-      border:1px solid rgba(0,0,0,0.10);
-      color:#2b3a31;
-      font-weight:800;
-      cursor:pointer;
-      user-select:none;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-      transition: transform .06s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+    /* ===== Botão premium (padrão refinado) ===== */
+    .btn, .maps-btn, .back-btn, button{
       position:relative;
-    }
-    .num:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 12px 22px rgba(0,0,0,0.10);
-    }
-    .num.selected{
-      border: 2px solid var(--sel);
-      box-shadow: 0 12px 22px rgba(47,124,255,0.20);
-      transform:none;
-    }
-    .num.taken{
-      background: var(--green);
-      color: #ffffff;
-      cursor:not-allowed;
-      box-shadow:none;
-      transform:none;
-      border-color: rgba(0,0,0,0.06);
-    }
-
-    /* ✅ NÃO mostrar nome de quem reservou */
-    .num.taken::after{
-      content: none;
-    }
-
-    /* ✅ ANIMAÇÃO quando virar reservado */
-    .num.justTaken{
-      animation: popTaken .55s ease-out;
-    }
-    @keyframes popTaken{
-      0%   { transform: scale(1);   box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
-      40%  { transform: scale(1.12); box-shadow: 0 18px 34px rgba(0,0,0,0.18); }
-      100% { transform: scale(1);   box-shadow: none; }
-    }
-
-    .footer{
-      padding:14px 18px 18px;
-      background: rgba(255,255,255,0.86);
-      border-top:1px solid rgba(0,0,0,0.06);
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .pixBox{
-      background: rgba(63,107,87,0.12);
-      border:1px solid rgba(63,107,87,0.20);
-      color:#214235;
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:900;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .hint{font-size:13px;color:var(--muted)}
-
-    /* ===== Botão "Copiar Pix" estilo "Copiar código" ===== */
-    .copyPixBtn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:12px 18px;
+      margin-top:12px;
+      padding:12px 22px;
       border-radius:999px;
-      border:1px solid rgba(248,231,176,.38);
+      border:1px solid var(--btn-border);
+      cursor:pointer;
+      outline:none;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
         linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, rgba(248,231,176,.22), rgba(212,175,55,.18));
-      color:#1b160a;
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-      line-height:1;
-      user-select:none;
-      box-shadow:0 16px 42px rgba(0,0,0,.18);
-      overflow:hidden;
-      position:relative;
-      transition:transform .18s ease, filter .18s ease, border-color .18s ease, box-shadow .22s ease;
+        linear-gradient(180deg, var(--btn-bg1), var(--btn-bg2));
       backdrop-filter: blur(10px);
-    }
-    .copyPixBtn::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:999px;
-      background:conic-gradient(from 180deg,
-        rgba(212,175,55,0),
-        rgba(248,231,176,.55),
-        rgba(212,175,55,.85),
-        rgba(248,231,176,.35),
-        rgba(212,175,55,0)
-      );
-      opacity:.32;
-      filter:blur(.2px);
-      pointer-events:none;
-    }
-    .copyPixBtn::after{
-      content:"";
-      position:absolute;
-      left:-40%;
-      top:-120%;
-      width:180%;
-      height:220%;
-      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16), rgba(255,255,255,0));
-      transform:rotate(18deg);
-      opacity:.65;
-      pointer-events:none;
-      transition:opacity .18s ease;
-    }
-    .copyPixBtn:hover{
-      transform:translateY(-2px);
-      filter:brightness(1.05);
-      border-color:rgba(248,231,176,.65);
-      box-shadow:0 18px 55px rgba(0,0,0,.24);
-    }
-    .copyPixBtn:hover::after{opacity:.9;}
-    .copyPixBtn:active{transform: translateY(0) scale(.985);}
-    .copyPixBtn svg{width:16px;height:16px;display:block;fill:#1b160a}
-
-    .copyToast{
-      font-size:12px;
-      color: var(--green2);
-      font-weight:800;
-      display:none;
-    }
-
-    dialog{
-      border:none;
-      border-radius:16px;
-      width:min(520px, 92vw);
-      padding:0;
-      box-shadow:0 20px 60px rgba(0,0,0,0.25);
-    }
-    dialog::backdrop{background:rgba(0,0,0,0.35)}
-    .modal{background:white;padding:16px}
-    .modal h2{margin:0 0 10px;font-size:18px}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .field{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px;margin:8px 0}
-    label{font-size:12px;color:var(--muted)}
-    input{
-      padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,0.15);
-      font-size:14px;
-    }
-    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap;}
-    button{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      min-height:44px;
-      padding:12px 18px;
-      border-radius:999px;
-      border:1px solid rgba(248,231,176,.38);
-      background:
-        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, rgba(248,231,176,.22), rgba(212,175,55,.18));
-      color:#1b160a;
+      color: var(--btn-text);
       font-weight:700;
       letter-spacing:.2px;
-      text-decoration:none;
-      cursor:pointer;
-      user-select:none;
-      box-shadow:0 16px 42px rgba(0,0,0,.25);
-      transition:transform .18s ease, filter .18s ease, border-color .18s ease, box-shadow .22s ease;
+
+      box-shadow: var(--btn-shadow);
+      transform: translateZ(0);
+      transition:
+        transform .18s ease,
+        filter .18s ease,
+        border-color .18s ease,
+        box-shadow .22s ease;
       overflow:hidden;
-      backdrop-filter: blur(10px);
     }
-    button::before{
+
+    .btn::before, .maps-btn::before, .back-btn::before, button::before{
       content:"";
       position:absolute;
       inset:-2px;
       border-radius:999px;
-      background:conic-gradient(from 180deg,
-        rgba(212,175,55,0),
-        rgba(248,231,176,.55),
-        rgba(212,175,55,.85),
-        rgba(248,231,176,.35),
-        rgba(212,175,55,0)
-      );
+      background:
+        conic-gradient(from 180deg,
+          rgba(212,175,55,0),
+          rgba(248,231,176,.55),
+          rgba(212,175,55,.85),
+          rgba(248,231,176,.35),
+          rgba(212,175,55,0)
+        );
       opacity:.32;
-      filter:blur(.2px);
+      filter: blur(.2px);
+      animation: btnShimmer 4.6s linear infinite;
       pointer-events:none;
     }
-    button::after{
+    @keyframes btnShimmer{
+      to{ transform: rotate(360deg); }
+    }
+
+    .btn::after, .maps-btn::after, .back-btn::after, button::after{
       content:"";
       position:absolute;
       left:-40%;
       top:-120%;
       width:180%;
       height:220%;
-      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16), rgba(255,255,255,0));
-      transform:rotate(18deg);
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16), rgba(255,255,255,0));
+      transform: rotate(18deg);
       opacity:.65;
       pointer-events:none;
-      transition:opacity .18s ease;
+      transition: opacity .18s ease;
     }
-    button:hover{
-      transform:translateY(-2px);
-      filter:brightness(1.05);
-      border-color:rgba(248,231,176,.65);
-      box-shadow:0 18px 55px rgba(0,0,0,.30);
+
+    @media (hover:hover){
+      .btn:hover, .maps-btn:hover, .back-btn:hover, button:hover{
+        transform:translateY(-2px);
+        filter:brightness(1.06);
+        border-color: var(--btn-border-strong);
+        box-shadow: 0 18px 55px rgba(0,0,0,.45);
+      }
+      .btn:hover::after, .maps-btn:hover::after, .back-btn:hover::after, button:hover::after{
+        opacity:.9;
+      }
     }
-    button:hover::after{opacity:.9;}
-    button:active{
-      transform:translateY(0) scale(.985);
-      filter:brightness(1.02);
+
+    .btn:active, .maps-btn:active, .back-btn:active, button:active{
+      transform: translateY(0) scale(.985);
+      filter: brightness(1.02);
     }
-    button:focus-visible{
-      outline:none;
-      box-shadow:0 0 0 3px rgba(248,231,176,.20), 0 0 0 6px rgba(212,175,55,.18), 0 16px 42px rgba(0,0,0,.25);
+
+    .btn:focus-visible, .maps-btn:focus-visible, .back-btn:focus-visible, button:focus-visible{
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(248,231,176,.20),
+        0 0 0 6px rgba(212,175,55,.18),
+        var(--btn-shadow);
     }
-    button.primary{
+
+    .btn:disabled, button:disabled{
+      opacity:.62;
+      cursor:not-allowed;
+      filter:none;
+      transform:none;
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+    }
+    .btn:disabled::before, .btn:disabled::after,
+    button:disabled::before, button:disabled::after{
+      opacity:.08;
+      animation:none;
+    }
+
+    .btn.btn-primary{
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
         linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
         linear-gradient(180deg, rgba(212,175,55,.34), rgba(212,175,55,.18));
-      border-color:rgba(248,231,176,.55);
-      color:#1b160a;
+      border-color: rgba(248,231,176,.55);
     }
-    button:disabled{
-      opacity:.62;
-      cursor:not-allowed;
-      border-color:rgba(255,255,255,.18);
-      box-shadow:0 10px 26px rgba(0,0,0,.25);
-    }
-    button:disabled::before,
-    button:disabled::after{
-      opacity:.08;
-      animation:none;
-    }
-    .error{color:#a61b1b;font-size:13px;margin-top:8px;display:none;}
-    .success{color:#1f6a39;font-size:13px;margin-top:8px;display:none;}
 
-    /* ===== Botão flutuante ===== */
-    .floatingReserve{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 9999;
+    .btn.btn-secondary{
+      background:
+        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-color: rgba(255,255,255,.22);
+    }
+
+    /* ===== Ripple dourado ===== */
+    .ripple{
+      position:absolute;
+      border-radius:50%;
+      transform:scale(0);
+      animation:ripple .65s ease-out;
+      background:radial-gradient(circle, rgba(248,231,176,.95) 0%, rgba(212,175,55,.55) 35%, rgba(212,175,55,0) 70%);
+      pointer-events:none;
+    }
+    @keyframes ripple{ to{ transform:scale(4); opacity:0; } }
+
+    /* PRE CAPA */
+    .precover{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.65);
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      gap:8px;
+      padding:28px 18px 34px;
+      z-index:10;
+      overflow-y:auto;
+    }
+
+    .circle-photo{
+      width:150px;height:150px;border-radius:50%;
+      overflow:hidden;border:5px solid var(--gold);
+      margin-bottom:8px;
+      box-shadow:0 0 18px rgba(212,175,55,.45);
+    }
+    .circle-photo img{width:100%;height:100%;object-fit:cover}
+
+    /* ✅ CORRIGE CORTE DOS NOMES (Great Vibes) */
+    .pre-title{
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(30px,6vw,52px);
+      line-height:1.2;                 /* ✅ maior */
+      max-width:95vw;
+      padding:0 12px .18em;            /* ✅ folga embaixo */
+      margin-bottom:6px;
+      color:var(--gold2);
+      text-shadow:0 2px 18px rgba(0,0,0,.35);
+      display:inline-block;
+    }
+    @supports (-webkit-background-clip:text) {
+      .pre-title{
+        background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
+        background-size:300%;
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        text-shadow:none;
+      }
+    }
+
+    h1{
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(38px,7vw,64px);
+      line-height:1.18;                /* ✅ maior */
+      max-width:95vw;
+      padding:0 12px .22em;            /* ✅ folga embaixo */
+      display:inline-block;            /* ✅ evita recorte */
+      background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
+      background-size:300%;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      animation:shine 6s infinite linear;
+    }
+    @keyframes shine{to{background-position:300%}}
+    .date,.countdown,.location{margin:4px 0;font-size:20px}
+
+    /* PRE CAPA: micro animação */
+    @keyframes btnFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    @keyframes btnGlow  {
+      0%,100%{box-shadow:0 10px 26px rgba(212,175,55,.18), 0 0 0 rgba(248,231,176,0)}
+      50%{box-shadow:0 14px 36px rgba(212,175,55,.28), 0 0 18px rgba(248,231,176,.16)}
+    }
+    .precover .btn.fade-up{
+      animation: fadeUp 1.2s ease forwards, btnFloat 2.8s ease-in-out infinite, btnGlow 2.8s ease-in-out infinite;
+    }
+
+    .rsvp-panel{
+      position:relative;
+      width:min(460px, 100%);
+      margin:6px auto 4px;
+      padding:18px;
+      border-radius:28px;
+      background:
+        linear-gradient(180deg, rgba(33,29,27,.92), rgba(22,19,18,.88));
+      border:1px solid rgba(248,231,176,.18);
+      backdrop-filter:blur(14px);
+      box-shadow:0 20px 50px rgba(0,0,0,.26);
+      display:none;
+    }
+    .rsvp-panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:28px;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+      opacity:.7;
+    }
+    .rsvp-panel.show{
+      display:block;
+      animation:fadeUp .35s ease forwards;
+    }
+    .rsvp-toggle{
+      margin-top:2px;
+      min-width:230px;
+    }
+    .rsvp-toggle.active{
+      border-color: rgba(248,231,176,.65);
+      box-shadow: 0 12px 30px rgba(0,0,0,.28);
+    }
+    .rsvp-title{
+      position:relative;
+      z-index:1;
+      font-size:18px;
+      font-weight:700;
+      color:var(--gold2);
+    }
+    .rsvp-subtitle{
+      position:relative;
+      z-index:1;
+      max-width:320px;
+      margin:6px auto 0;
+      font-size:12px;
+      opacity:.82;
+      line-height:1.45;
+    }
+    .rsvp-form{
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+    .rsvp-form input,
+    .rsvp-form select,
+    .rsvp-form textarea{
+      width:100%;
+      margin-top:0;
+      min-height:52px;
+      padding:12px 16px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.96);
+      color:#1b160a;
+      font-family:Poppins,sans-serif;
+      font-size:14px;
+      text-align:left;
+      outline:none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    .rsvp-form textarea{
+      min-height:86px;
+      resize:vertical;
+    }
+    .rsvp-form input:focus,
+    .rsvp-form select:focus,
+    .rsvp-form textarea:focus{
+      border-color:rgba(212,175,55,.7);
+      box-shadow:0 0 0 3px rgba(212,175,55,.12);
+    }
+    .rsvp-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+    .rsvp-feedback{
+      min-height:20px;
+      font-size:12px;
+      color:var(--gold2);
+      opacity:.86;
+    }
+    @media(max-width:560px){
+      .rsvp-grid{ grid-template-columns:1fr; }
+      .circle-photo{ width:132px; height:132px; }
+      .rsvp-panel{ width:min(420px, 100%); padding:16px 14px; }
+      .rsvp-toggle{ min-width:0; width:min(260px, 100%); }
+    }
+
+    /* CONTENT */
+    .overlay{
+      display:none;
+      position:relative;
+      z-index:2;
+      min-height:100svh;
+      padding:20px 20px 70px;
+      background:
+        linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),
+        url('arte_casamento.jpeg');
+      background-size:cover;
+      background-position:center top;
+      background-attachment:fixed;
+    }
+    @media(max-width:768px){ .overlay{background-attachment:scroll;} }
+
+    .container{
+      width:min(980px, 100%);
+      margin:40px auto 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 260px));
+      justify-content:center;
+      justify-items:center;
+      gap:20px;
+    }
+    @media(max-width:420px){ .container{ grid-template-columns:1fr; } }
+
+    /* ===== CARD BASE ===== */
+    @keyframes cardPulseGlow{
+      0%,100%{
+        box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
+      }
+      50%{
+        box-shadow:0 0 30px rgba(212,175,55,.38), 0 0 64px rgba(248,231,176,.18);
+      }
+    }
+
+    .card{
+      position:relative;
+      width:260px;
+      padding:15px;
+      border-radius:22px;
+      background:rgba(255,255,255,.08);
+      backdrop-filter:blur(12px);
+      overflow:hidden;
+      transform:translateZ(0);
+      transition:transform .18s ease, filter .18s ease;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:22px;
+      border:1px solid rgba(212,175,55,.35);
+      pointer-events:none;
+      transition:border-width .18s ease, border-color .18s ease, opacity .18s ease;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-6px;
+      border-radius:28px;
+      pointer-events:none;
+      box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
+      filter:blur(.2px);
+      opacity:1;
+      animation:cardPulseGlow 2.8s ease-in-out infinite;
+    }
+    .card .gold-line{
+      position:absolute;
+      left:10px; right:10px;
+      bottom:10px;
+      height:2px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(212,175,55,0), rgba(212,175,55,.9), rgba(248,231,176,.95), rgba(212,175,55,.9), rgba(212,175,55,0));
+      opacity:0;
+      transform:scaleX(.25);
+      transform-origin:left center;
+      transition:opacity .18s ease, height .18s ease, transform .28s ease;
+      pointer-events:none;
+      filter:drop-shadow(0 0 10px rgba(212,175,55,.25));
+    }
+
+    @media (hover:hover){
+      .card:hover{
+        transform:scale(1.045);
+        filter:brightness(1.03);
+      }
+      .card:hover::after{
+        border-width:3px;
+        border-color:rgba(248,231,176,.80);
+        opacity:1;
+      }
+      .card:hover .gold-line{
+        opacity:1;
+        height:6px;
+        transform:scaleX(1);
+      }
+    }
+    .card.is-active{
+      transform:scale(1.045);
+      filter:brightness(1.03);
+    }
+    .card.is-active::after{
+      border-width:3px;
+      border-color:rgba(248,231,176,.80);
+      opacity:1;
+    }
+    .card.is-active .gold-line{
+      opacity:1;
+      height:6px;
+      transform:scaleX(1);
+    }
+
+    .product-img{
+      width:100%;
+      aspect-ratio: 4 / 3;
+      background:rgba(255,255,255,.92);
+      border-radius:12px;
       display:flex;
       align-items:center;
-      gap:10px;
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(248,231,176,.38);
-      background:
-        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, rgba(248,231,176,.22), rgba(212,175,55,.18));
-      color: #1b160a;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
-      backdrop-filter: blur(10px);
-      position: fixed;
+      justify-content:center;
       overflow:hidden;
     }
-    .floatingReserve::before{
+    .product-img img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      padding:8px;
+    }
+
+    input{
+      margin-top:8px;
+      padding:10px;
+      width:92%;
+      border-radius:18px;
+      border:none;
+      text-align:center;
+    }
+
+    .badge{
+      display:inline-block;
+      margin-top:10px;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      background:rgba(212,175,55,.22);
+      border:1px solid rgba(212,175,55,.28);
+    }
+    .badge.reservado{
+      background:rgba(255,255,255,.12);
+      border-color:rgba(255,255,255,.22);
+    }
+    .badge.closed{
+      background:rgba(255,255,255,.10);
+      border-color:rgba(255,255,255,.16);
+    }
+
+    .card.is-reservado{opacity:.92}
+    .card.is-reservado input{display:none}
+    .card.is-reservado .reserved-note{display:block}
+
+    .card.is-closed{opacity:.95}
+    .card.is-closed input{display:none}
+    .card.is-closed .reserved-note{display:block}
+
+    .reserved-note{
+      display:none;
+      margin-top:10px;
+      font-size:13px;
+      opacity:.9;
+    }
+
+    /* MODAL */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+      padding:18px;
+    }
+    .modal.show{display:flex}
+    .modal-backdrop{
+      position:absolute; inset:0;
+      background:rgba(0,0,0,.65);
+      backdrop-filter:blur(4px);
+    }
+    .modal-box{
+      position:relative;
+      width:min(420px, 100%);
+      border-radius:22px;
+      padding:18px 16px 16px;
+      background:rgba(28,28,28,.72);
+      border:1px solid rgba(212,175,55,.28);
+      box-shadow:0 20px 60px rgba(0,0,0,.5);
+      overflow:hidden;
+      transform:translateY(10px) scale(.98);
+      opacity:0;
+      animation:modalIn .22s ease forwards;
+    }
+    .modal-box::before{
       content:"";
       position:absolute;
       inset:-2px;
-      border-radius:999px;
-      background:conic-gradient(from 180deg,
-        rgba(212,175,55,0),
-        rgba(248,231,176,.55),
-        rgba(212,175,55,.85),
-        rgba(248,231,176,.35),
-        rgba(212,175,55,0)
-      );
-      opacity:.32;
-      filter:blur(.2px);
+      border-radius:24px;
+      padding:2px;
+      background:conic-gradient(from 0deg, rgba(212,175,55,0), rgba(212,175,55,.85), rgba(248,231,176,.6), rgba(212,175,55,0));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:.65;
+      animation:spinBorder 3.2s linear infinite;
       pointer-events:none;
     }
-    .floatingReserve::after{
-      content:"";
-      position:absolute;
-      left:-40%;
-      top:-120%;
-      width:180%;
-      height:220%;
-      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16), rgba(255,255,255,0));
-      transform:rotate(18deg);
-      opacity:.65;
-      pointer-events:none;
-      transition:opacity .18s ease;
+    @keyframes spinBorder{ to{ transform:rotate(360deg); } }
+    @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
+    .modal-title{font-size:18px;font-weight:700;margin-bottom:8px}
+    .modal-text{font-size:14px;opacity:.92;margin-bottom:14px;line-height:1.35}
+    .modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .modal-actions .btn-secondary{
+      background:rgba(255,255,255,.14);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
     }
-    .floatingReserve:hover{
-      transform:translateY(-2px);
-      filter:brightness(1.05);
-      border-color:rgba(248,231,176,.65);
-      box-shadow:0 18px 55px rgba(0,0,0,.22);
-    }
-    .floatingReserve:hover::after{opacity:.9;}
-    .floatingReserve:disabled{opacity:.65;cursor:not-allowed;}
-    .floatingReserve:disabled{
-      opacity:.65;
-      cursor:not-allowed;
-    }
-    .floatingBadge{
-      background: rgba(255,255,255,0.16);
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-    .floatingHint{
-      font-size:12px;
-      font-weight:800;
-      opacity:.92;
-      display:none;
-    }
-    @media (max-width:520px){
-      .floatingReserve{
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        justify-content: space-between;
-      }
-      .floatingHint{display:block;}
-    }
+    .modal-actions .btn-primary{background:var(--gold);color:#111}
+    .small-note{font-size:12px;opacity:.75;margin-top:10px}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="top">
-        <div class="titleRow">
-          <div>
-            <h1 class="heading">Rifa</h1>
-            <div class="subHeading">de Casamento</div>
-            <div class="couple">Luiza e André</div>
-          </div>
-          <div class="priceTag">R$10 reais por número</div>
-        </div>
+  <div id="tsparticles"></div>
 
-        <div class="banner">
-          <div>
-            <strong>Prêmio: Cesta de Café</strong>
-            <div class="small">Ou <b>R$200 no Pix</b></div>
-          </div>
-          <div class="small">Selecione um ou mais números e reserve 🍀</div>
-        </div>
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+      <div class="modal-title" id="modalTitle">Aviso</div>
+      <div class="modal-text" id="modalText"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancel" type="button">Fechar</button>
+        <button class="btn btn-primary" id="modalConfirm" type="button">Confirmar</button>
       </div>
-
-      <div class="numbersArea">
-        <div class="toolbar">
-          <div class="status" id="status">Conectando ao Firebase…</div>
-          <div class="legend">
-            <span class="pill"><span class="dot free"></span>Disponível</span>
-            <span class="pill"><span class="dot sel"></span>Selecionado</span>
-            <span class="pill"><span class="dot taken"></span>Reservado</span>
-          </div>
-        </div>
-
-        <div class="grid" id="grid"></div>
-
-        <div class="reserveBar">
-          <div class="picked" id="pickedInfo">Nenhum número selecionado.</div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="clearBtn" id="clearBtn" type="button" disabled>Limpar</button>
-            <button class="reserveBtn" id="reserveBtn" type="button" disabled>Reservar</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div>
-          <div class="pixBox">
-            Pix: <span id="pixText">31994243195</span>
-
-            <!-- Botão estilo "Copiar código" -->
-            <button class="copyPixBtn" id="copyPixBtn" type="button" title="Copiar Pix">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M16 1H6c-1.1 0-2 .9-2 2v12h2V3h10V1zm3 4H10c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H10V7h9v14z"/>
-              </svg>
-              Copiar Pix
-            </button>
-
-            <span class="copyToast" id="copyToast">Copiado!</span>
-          </div>
-
-          <div class="hint">Ao reservar, o WhatsApp abre automaticamente para confirmar os números.</div>
-        </div>
-      </div>
+      <div class="small-note" id="modalNote"></div>
     </div>
   </div>
 
-  <!-- Botão flutuante -->
-  <button class="floatingReserve" id="floatingReserve" type="button" disabled>
-    <span>Reservar</span>
-    <span class="floatingHint">toque para reservar</span>
-    <span class="floatingBadge" id="floatingBadge">0</span>
-  </button>
-
-  <dialog id="reserveDialog">
-    <div class="modal">
-      <h2 id="modalTitle">Reservar números</h2>
-
-      <div class="row">
-        <div class="field">
-          <label for="buyerName">Nome</label>
-          <input id="buyerName" placeholder="Ex: Luiza" />
-        </div>
-        <div class="field">
-          <label for="buyerContact">Telefone / WhatsApp</label>
-          <input id="buyerContact" placeholder="Ex: (31) 99999-9999" />
-        </div>
-      </div>
-
-      <div class="hint" id="selectedPreview"></div>
-
-      <div class="actions">
-        <button id="cancelBtn" type="button">Cancelar</button>
-        <button class="primary" id="confirmBtn" type="button">Confirmar reserva</button>
-      </div>
-
-      <div class="error" id="err"></div>
-      <div class="success" id="ok"></div>
+  <!-- PRÉ CAPA -->
+  <div class="precover" id="precover">
+    <div class="circle-photo fade-up" style="animation-delay:.2s;">
+      <img src="nos.jpeg" alt="Foto do casal">
     </div>
-  </dialog>
+    <div class="pre-title fade-up" style="animation-delay:.6s;">Charraiá</div>
+    <h1 class="fade-up" style="animation-delay:1s;">Luiza & André</h1>
+
+    <div class="date fade-up" style="animation-delay:1.4s;">20/06/2026 - 17:00 horas</div>
+    <div class="countdown fade-up" id="countdown-pre" style="animation-delay:1.6s;"></div>
+    <div class="location fade-up" style="animation-delay:1.8s;">Rua Vera Lucia, 215 - Sinimbu</div>
+
+    <button class="maps-btn btn fade-up rsvp-toggle" id="rsvp-toggle-btn" type="button" onclick="toggleRsvpPanel()" style="animation-delay:1.95s;">Confirmação de Presença</button>
+
+    <div class="rsvp-panel" id="rsvp-panel">
+      <div class="rsvp-title">Confirme sua presença</div>
+      <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
+      <div class="rsvp-form">
+        <input type="text" id="rsvp-nome" placeholder="Seu nome completo">
+        <div class="rsvp-grid">
+          <select id="rsvp-status">
+            <option value="sim">Sim, vou estar presente</option>
+            <option value="nao">Não poderei comparecer</option>
+          </select>
+          <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante">
+        </div>
+        <button class="btn btn-primary" id="rsvp-btn" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
+        <div class="rsvp-feedback" id="rsvp-feedback"></div>
+      </div>
+    </div>
+
+    <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
+    <button class="maps-btn btn fade-up" onclick="tocarMusica()" style="animation-delay:2.2s;">Tocar Música</button>
+    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.4s;">Lista de Presente</button>
+  </div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- CONTEÚDO -->
+  <div class="overlay" id="mainContent">
+    <h1>Luiza & André</h1>
+    <div class="date">20/06/2026 - 17:00 horas</div>
+    <div class="countdown" id="countdown-main"></div>
+    <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
+    <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
+    <button class="back-btn btn btn-secondary" onclick="voltarPreCapa()">Voltar</button>
+
+    <div class="container">
+
+      <!-- ✅ MANTIVE seus cards iguais (só copiei a partir daqui) -->
+
+      <div class="card" data-item="Geladeira" data-key="Geladeira">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/geladeira.jpg" alt="Geladeira"></div>
+        <h3>Geladeira</h3>
+        <div class="badge" id="badge-Geladeira">Disponível</div>
+        <div class="reserved-note" id="note-Geladeira">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Geladeira">
+        <input type="email" placeholder="Seu e-mail" id="email-Geladeira">
+        <button class="btn btn-primary" id="btn-Geladeira" onclick="Presentear('Geladeira')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Aparelho de Jantar" data-key="aparelho-de-jantar">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/aparelhodesantar.png" alt="Aparelho de Jantar"></div>
+  <h3>Aparelho de Jantar</h3>
+  <div class="badge" id="badge-aparelho-de-jantar">Disponível</div>
+  <div class="reserved-note" id="note-aparelho-de-jantar">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-aparelho-de-jantar">
+  <input type="email" placeholder="Seu e-mail" id="email-aparelho-de-jantar">
+  <button class="btn btn-primary" id="btn-aparelho-de-jantar" onclick="Presentear('aparelho-de-jantar')">Presentear</button>
+</div>
+
+<div class="card" data-item="Chaleira" data-key="chaleira">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/chaleira.png" alt="Chaleira"></div>
+  <h3>Chaleira</h3>
+  <div class="badge" id="badge-chaleira">Disponível</div>
+  <div class="reserved-note" id="note-chaleira">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-chaleira">
+  <input type="email" placeholder="Seu e-mail" id="email-chaleira">
+  <button class="btn btn-primary" id="btn-chaleira" onclick="Presentear('chaleira')">Presentear</button>
+</div>
+
+<div class="card" data-item="Jogo de Taças" data-key="jogo-de-tacas">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/jogodetacas.png" alt="Jogo de Taças"></div>
+  <h3>Jogo de Taças</h3>
+  <div class="badge" id="badge-jogo-de-tacas">Disponível</div>
+  <div class="reserved-note" id="note-jogo-de-tacas">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-jogo-de-tacas">
+  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-tacas">
+  <button class="btn btn-primary" id="btn-jogo-de-tacas" onclick="Presentear('jogo-de-tacas')">Presentear</button>
+</div>
+
+<div class="card" data-item="Fruteira" data-key="fruteira">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/fruteira.png" alt="Fruteira"></div>
+  <h3>Fruteira</h3>
+  <div class="badge" id="badge-fruteira">Disponível</div>
+  <div class="reserved-note" id="note-fruteira">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-fruteira">
+  <input type="email" placeholder="Seu e-mail" id="email-fruteira">
+  <button class="btn btn-primary" id="btn-fruteira" onclick="Presentear('fruteira')">Presentear</button>
+</div>
+
+<div class="card" data-item="Balança pra Cozinha" data-key="balanca-pra-cozinha">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/balancaparacozinha.png" alt="Balança pra Cozinha"></div>
+  <h3>Balança pra Cozinha</h3>
+  <div class="badge" id="badge-balanca-pra-cozinha">Disponível</div>
+  <div class="reserved-note" id="note-balanca-pra-cozinha">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-balanca-pra-cozinha">
+  <input type="email" placeholder="Seu e-mail" id="email-balanca-pra-cozinha">
+  <button class="btn btn-primary" id="btn-balanca-pra-cozinha" onclick="Presentear('balanca-pra-cozinha')">Presentear</button>
+</div>
+
+<div class="card" data-item="Tábua para Queijos e Frios" data-key="tabua-para-queijos-e-frios">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/tabua.png" alt="Tábua para Queijos e Frios"></div>
+  <h3>Tábua para Queijos e Frios</h3>
+  <div class="badge" id="badge-tabua-para-queijos-e-frios">Disponível</div>
+  <div class="reserved-note" id="note-tabua-para-queijos-e-frios">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-tabua-para-queijos-e-frios">
+  <input type="email" placeholder="Seu e-mail" id="email-tabua-para-queijos-e-frios">
+  <button class="btn btn-primary" id="btn-tabua-para-queijos-e-frios" onclick="Presentear('tabua-para-queijos-e-frios')">Presentear</button>
+</div>
+
+<div class="card" data-item="Bomboniere" data-key="bomboniere">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/bomboniere.png" alt="Bomboniere"></div>
+  <h3>Bomboniere</h3>
+  <div class="badge" id="badge-bomboniere">Disponível</div>
+  <div class="reserved-note" id="note-bomboniere">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-bomboniere">
+  <input type="email" placeholder="Seu e-mail" id="email-bomboniere">
+  <button class="btn btn-primary" id="btn-bomboniere" onclick="Presentear('bomboniere')">Presentear</button>
+</div>
+
+<div class="card" data-item="Jogo de Sobremesa" data-key="jogo-de-sobremesa">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/jogodesobremesa.png" alt="Jogo de Sobremesa"></div>
+  <h3>Jogo de Sobremesa</h3>
+  <div class="badge" id="badge-jogo-de-sobremesa">Disponível</div>
+  <div class="reserved-note" id="note-jogo-de-sobremesa">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-jogo-de-sobremesa">
+  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-sobremesa">
+  <button class="btn btn-primary" id="btn-jogo-de-sobremesa" onclick="Presentear('jogo-de-sobremesa')">Presentear</button>
+</div>
+
+<div class="card" data-item="Petisqueira" data-key="petisqueira">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/petisqueira.png" alt="Petisqueira"></div>
+  <h3>Petisqueira</h3>
+  <div class="badge" id="badge-petisqueira">Disponível</div>
+  <div class="reserved-note" id="note-petisqueira">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-petisqueira">
+  <input type="email" placeholder="Seu e-mail" id="email-petisqueira">
+  <button class="btn btn-primary" id="btn-petisqueira" onclick="Presentear('petisqueira')">Presentear</button>
+</div>
+
+<div class="card" data-item="Porta Condimentos" data-key="porta-condimentos">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/portacondimentos.png" alt="Porta Condimentos"></div>
+  <h3>Porta Condimentos</h3>
+  <div class="badge" id="badge-porta-condimentos">Disponível</div>
+  <div class="reserved-note" id="note-porta-condimentos">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-porta-condimentos">
+  <input type="email" placeholder="Seu e-mail" id="email-porta-condimentos">
+  <button class="btn btn-primary" id="btn-porta-condimentos" onclick="Presentear('porta-condimentos')">Presentear</button>
+</div>
+
+<div class="card" data-item="Batedeira" data-key="batedeira">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/batedeira.png" alt="Batedeira"></div>
+  <h3>Batedeira</h3>
+  <div class="badge" id="badge-batedeira">Disponível</div>
+  <div class="reserved-note" id="note-batedeira">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-batedeira">
+  <input type="email" placeholder="Seu e-mail" id="email-batedeira">
+  <button class="btn btn-primary" id="btn-batedeira" onclick="Presentear('batedeira')">Presentear</button>
+</div>
+
+<div class="card" data-item="Jogo de Lençóis" data-key="jogo-de-lencois">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/jogodelonçois.png" alt="Jogo de Lençóis"></div>
+  <h3>Jogo de Lençóis</h3>
+  <div class="badge" id="badge-jogo-de-lencois">Disponível</div>
+  <div class="reserved-note" id="note-jogo-de-lencois">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-jogo-de-lencois">
+  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-lencois">
+  <button class="btn btn-primary" id="btn-jogo-de-lencois" onclick="Presentear('jogo-de-lencois')">Presentear</button>
+</div>
+
+<div class="card" data-item="Edredom" data-key="edredom">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/edredom.png" alt="Edredom"></div>
+  <h3>Edredom</h3>
+  <div class="badge" id="badge-edredom">Disponível</div>
+  <div class="reserved-note" id="note-edredom">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-edredom">
+  <input type="email" placeholder="Seu e-mail" id="email-edredom">
+  <button class="btn btn-primary" id="btn-edredom" onclick="Presentear('edredom')">Presentear</button>
+</div>
+
+<div class="card" data-item="Toalhas de Mesa" data-key="toalhas-de-mesa">
+  <span class="gold-line"></span>
+  <div class="product-img"><img src="Imagens/tolahasdemesa.png" alt="Toalhas de Mesa"></div>
+  <h3>Toalhas de Mesa</h3>
+  <div class="badge" id="badge-toalhas-de-mesa">Disponível</div>
+  <div class="reserved-note" id="note-toalhas-de-mesa">Este item já foi reservado.</div>
+  <input type="text" placeholder="Seu nome" id="nome-toalhas-de-mesa">
+  <input type="email" placeholder="Seu e-mail" id="email-toalhas-de-mesa">
+  <button class="btn btn-primary" id="btn-toalhas-de-mesa" onclick="Presentear('toalhas-de-mesa')">Presentear</button>
+</div>
+
+      <div class="card" data-item="Forno Eletrico" data-key="Forno Eletrico">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/forno.png" alt="Forno Eletrico"></div>
+        <h3>Forno Eletrico</h3>
+        <div class="badge" id="badge-Forno Eletrico">Disponível</div>
+        <div class="reserved-note" id="note-Forno Eletrico">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Forno Eletrico">
+        <input type="email" placeholder="Seu e-mail" id="email-Forno Eletrico">
+        <button class="btn btn-primary" id="btn-Forno Eletrico" onclick="Presentear('Forno Eletrico')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Ferro de Passar" data-key="Ferro de Passar">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/ferrodepassar.png" alt="Ferro de Passar"></div>
+        <h3>Ferro de Passar</h3>
+        <div class="badge" id="badge-Ferro de Passar">Disponível</div>
+        <div class="reserved-note" id="note-Ferro de Passar">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Ferro de Passar">
+        <input type="email" placeholder="Seu e-mail" id="email-Ferro de Passar">
+        <button class="btn btn-primary" id="btn-Ferro de Passar" onclick="Presentear('Ferro de Passar')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Aspirador de Po" data-key="Aspirador de Po">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/aspiradordepo.png" alt="Aspirador de Po"></div>
+        <h3>Aspirador de Po</h3>
+        <div class="badge" id="badge-Aspirador de Po">Disponível</div>
+        <div class="reserved-note" id="note-Aspirador de Po">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Aspirador de Po">
+        <input type="email" placeholder="Seu e-mail" id="email-Aspirador de Po">
+        <button class="btn btn-primary" id="btn-Aspirador de Po" onclick="Presentear('Aspirador de Po')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Roupa de Cama" data-key="Roupa de Cama">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/roupacama.png" alt="Roupa de Cama"></div>
+        <h3>Roupa de Cama</h3>
+        <div class="badge" id="badge-Roupa de Cama">Disponível</div>
+        <div class="reserved-note" id="note-Roupa de Cama">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Roupa de Cama">
+        <input type="email" placeholder="Seu e-mail" id="email-Roupa de Cama">
+        <button class="btn btn-primary" id="btn-Roupa de Cama" onclick="Presentear('Roupa de Cama')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Roupa de Banho" data-key="Roupa de Banho">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/roupabanho.png" alt="Roupa de Banho"></div>
+        <h3>Roupa de Banho</h3>
+        <div class="badge" id="badge-Roupa de Banho">Disponível</div>
+        <div class="reserved-note" id="note-Roupa de Banho">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Roupa de Banho">
+        <input type="email" placeholder="Seu e-mail" id="email-Roupa de Banho">
+        <button class="btn btn-primary" id="btn-Roupa de Banho" onclick="Presentear('Roupa de Banho')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Panela de Pressao" data-key="Panela de Pressao">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/panelapressao.png" alt="Panela de Pressao"></div>
+        <h3>Panela de Pressao</h3>
+        <div class="badge" id="badge-Panela de Pressao">Disponível</div>
+        <div class="reserved-note" id="note-Panela de Pressao">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Panela de Pressao">
+        <input type="email" placeholder="Seu e-mail" id="email-Panela de Pressao">
+        <button class="btn btn-primary" id="btn-Panela de Pressao" onclick="Presentear('Panela de Pressao')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Jogo de Pratos" data-key="Jogo de Pratos">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/jogosdeprato.png" alt="Jogo de Pratos"></div>
+        <h3>Jogo de Pratos</h3>
+        <div class="badge" id="badge-Jogo de Pratos">Disponível</div>
+        <div class="reserved-note" id="note-Jogo de Pratos">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Jogo de Pratos">
+        <input type="email" placeholder="Seu e-mail" id="email-Jogo de Pratos">
+        <button class="btn btn-primary" id="btn-Jogo de Pratos" onclick="Presentear('Jogo de Pratos')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Kit Utensilios de Silicone" data-key="Kit Utensilios de Silicone">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/silicone.png" alt="Kit Utensilios de Silicone"></div>
+        <h3>Kit Utensilios de Silicone</h3>
+        <div class="badge" id="badge-Kit Utensilios de Silicone">Disponível</div>
+        <div class="reserved-note" id="note-Kit Utensilios de Silicone">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Kit Utensilios de Silicone">
+        <input type="email" placeholder="Seu e-mail" id="email-Kit Utensilios de Silicone">
+        <button class="btn btn-primary" id="btn-Kit Utensilios de Silicone" onclick="Presentear('Kit Utensilios de Silicone')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Garrafa de Agua" data-key="Garrafa de Agua">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/garrafa.png" alt="Garrafa de Agua"></div>
+        <h3>Garrafa de Agua</h3>
+        <div class="badge" id="badge-Garrafa de Agua">Disponível</div>
+        <div class="reserved-note" id="note-Garrafa de Agua">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Garrafa de Agua">
+        <input type="email" placeholder="Seu e-mail" id="email-Garrafa de Agua">
+        <button class="btn btn-primary" id="btn-Garrafa de Agua" onclick="Presentear('Garrafa de Agua')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Assadeiras" data-key="Assadeiras">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/assadeiras.png" alt="Assadeiras"></div>
+        <h3>Assadeiras</h3>
+        <div class="badge" id="badge-Assadeiras">Disponível</div>
+        <div class="reserved-note" id="note-Assadeiras">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Assadeiras">
+        <input type="email" placeholder="Seu e-mail" id="email-Assadeiras">
+        <button class="btn btn-primary" id="btn-Assadeiras" onclick="Presentear('Assadeiras')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Cafeteira" data-key="Cafeteira">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/cafeteira.png" alt="Cafeteira"></div>
+        <h3>Cafeteira</h3>
+        <div class="badge" id="badge-Cafeteira">Disponível</div>
+        <div class="reserved-note" id="note-Cafeteira">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Cafeteira">
+        <input type="email" placeholder="Seu e-mail" id="email-Cafeteira">
+        <button class="btn btn-primary" id="btn-Cafeteira" onclick="Presentear('Cafeteira')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Purificador de agua" data-key="Purificador_de_agua">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/purificadoragua.png" alt="Purificador de agua"></div>
+        <h3>Purificador de agua</h3>
+        <div class="badge" id="badge-Purificador_de_agua">Disponível</div>
+        <div class="reserved-note" id="note-Purificador_de_agua">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Purificador_de_agua">
+        <input type="email" placeholder="Seu e-mail" id="email-Purificador_de_agua">
+        <button class="btn btn-primary" id="btn-Purificador_de_agua" onclick="Presentear('Purificador de agua')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Triturador de alho" data-key="Triturador_de_alho">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/trituraralho.png" alt="Triturador de alho"></div>
+        <h3>Triturador de alho</h3>
+        <div class="badge" id="badge-Triturador_de_alho">Disponível</div>
+        <div class="reserved-note" id="note-Triturador_de_alho">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Triturador_de_alho">
+        <input type="email" placeholder="Seu e-mail" id="email-Triturador_de_alho">
+        <button class="btn btn-primary" id="btn-Triturador_de_alho" onclick="Presentear('Triturador de alho')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Multiprocessador + liquidificador" data-key="Multiprocessador_liquidificador">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/multiprocessadorliquidificador.png" alt="Multiprocessador + liquidificador"></div>
+        <h3>Multiprocessador + liquidificador</h3>
+        <div class="badge" id="badge-Multiprocessador_liquidificador">Disponível</div>
+        <div class="reserved-note" id="note-Multiprocessador_liquidificador">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Multiprocessador_liquidificador">
+        <input type="email" placeholder="Seu e-mail" id="email-Multiprocessador_liquidificador">
+        <button class="btn btn-primary" id="btn-Multiprocessador_liquidificador" onclick="Presentear('Multiprocessador + liquidificador')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Garrafa termica" data-key="Garrafa_termica">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/garrafatermica.png" alt="Garrafa termica"></div>
+        <h3>Garrafa termica</h3>
+        <div class="badge" id="badge-Garrafa_termica">Disponível</div>
+        <div class="reserved-note" id="note-Garrafa_termica">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Garrafa_termica">
+        <input type="email" placeholder="Seu e-mail" id="email-Garrafa_termica">
+        <button class="btn btn-primary" id="btn-Garrafa_termica" onclick="Presentear('Garrafa termica')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Rolo de abrir massas" data-key="Rolo_de_abrir_massas">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/rolomassa.png" alt="Rolo de abrir massas"></div>
+        <h3>Rolo de abrir massas</h3>
+        <div class="badge" id="badge-Rolo_de_abrir_massas">Disponível</div>
+        <div class="reserved-note" id="note-Rolo_de_abrir_massas">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Rolo_de_abrir_massas">
+        <input type="email" placeholder="Seu e-mail" id="email-Rolo_de_abrir_massas">
+        <button class="btn btn-primary" id="btn-Rolo_de_abrir_massas" onclick="Presentear('Rolo de abrir massas')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Misteira" data-key="Misteira">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/misteira.png" alt="Misteira"></div>
+        <h3>Misteira</h3>
+        <div class="badge" id="badge-Misteira">Disponível</div>
+        <div class="reserved-note" id="note-Misteira">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Misteira">
+        <input type="email" placeholder="Seu e-mail" id="email-Misteira">
+        <button class="btn btn-primary" id="btn-Misteira" onclick="Presentear('Misteira')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Tigelas" data-key="Tigelas">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/tigelas.png" alt="Tigelas"></div>
+        <h3>Tigelas</h3>
+        <div class="badge" id="badge-Tigelas">Disponível</div>
+        <div class="reserved-note" id="note-Tigelas">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Tigelas">
+        <input type="email" placeholder="Seu e-mail" id="email-Tigelas">
+        <button class="btn btn-primary" id="btn-Tigelas" onclick="Presentear('Tigelas')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Bowls" data-key="Bowls">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/bowls.png" alt="Bowls"></div>
+        <h3>Bowls</h3>
+        <div class="badge" id="badge-Bowls">Disponível</div>
+        <div class="reserved-note" id="note-Bowls">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Bowls">
+        <input type="email" placeholder="Seu e-mail" id="email-Bowls">
+        <button class="btn btn-primary" id="btn-Bowls" onclick="Presentear('Bowls')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Travessas de vidro" data-key="Travessas_de_vidro">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/travessa.png" alt="Travessas de vidro"></div>
+        <h3>Travessas de vidro</h3>
+        <div class="badge" id="badge-Travessas_de_vidro">Disponível</div>
+        <div class="reserved-note" id="note-Travessas_de_vidro">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Travessas_de_vidro">
+        <input type="email" placeholder="Seu e-mail" id="email-Travessas_de_vidro">
+        <button class="btn btn-primary" id="btn-Travessas_de_vidro" onclick="Presentear('Travessas de vidro')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Tabuleiros" data-key="Tabuleiros">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/tabuleiro.png" alt="Tabuleiros"></div>
+        <h3>Tabuleiros</h3>
+        <div class="badge" id="badge-Tabuleiros">Disponível</div>
+        <div class="reserved-note" id="note-Tabuleiros">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Tabuleiros">
+        <input type="email" placeholder="Seu e-mail" id="email-Tabuleiros">
+        <button class="btn btn-primary" id="btn-Tabuleiros" onclick="Presentear('Tabuleiros')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Xícara com pires" data-key="Xicara_com_pires">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/xicara.png" alt="Xícara com pires"></div>
+        <h3>Xícara com pires</h3>
+        <div class="badge" id="badge-Xicara_com_pires">Disponível</div>
+        <div class="reserved-note" id="note-Xicara_com_pires">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Xicara_com_pires">
+        <input type="email" placeholder="Seu e-mail" id="email-Xicara_com_pires">
+        <button class="btn btn-primary" id="btn-Xicara_com_pires" onclick="Presentear('Xícara com pires')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Airfryer" data-key="Airfryer">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/airfryer.png" alt="Airfryer"></div>
+        <h3>Airfryer</h3>
+        <div class="badge" id="badge-Airfryer">Disponível</div>
+        <div class="reserved-note" id="note-Airfryer">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Airfryer">
+        <input type="email" placeholder="Seu e-mail" id="email-Airfryer">
+        <button class="btn btn-primary" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
+        <h3>Porta Tempero</h3>
+        <div class="badge" id="badge-Porta_Tempero">Disponível</div>
+        <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
+        <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
+        <button class="btn btn-primary" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
+        <h3>Jogo de Copos</h3>
+        <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
+        <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
+        <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
+        <button class="btn btn-primary" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
+        <h3>Escorredor De Louças</h3>
+        <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
+        <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
+        <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
+        <button class="btn btn-primary" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Microondas" data-key="Microondas">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
+        <h3>Microondas</h3>
+        <div class="badge" id="badge-Microondas">Disponível</div>
+        <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Microondas">
+        <input type="email" placeholder="Seu e-mail" id="email-Microondas">
+        <button class="btn btn-primary" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
+        <h3>Jogo de Panela</h3>
+        <div class="badge" id="badge-JogoDePanela">Disponível</div>
+        <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
+        <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
+        <button class="btn btn-primary" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
+        <h3>Jogo De Talher</h3>
+        <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
+        <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
+        <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
+        <button class="btn btn-primary" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Jarra" data-key="Jarra">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
+        <h3>Jarra</h3>
+        <div class="badge" id="badge-Jarra">Disponível</div>
+        <div class="reserved-note" id="note-Jarra">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Jarra">
+        <input type="email" placeholder="Seu e-mail" id="email-Jarra">
+        <button class="btn btn-primary" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
+      </div>
+
+      <div class="card" data-item="Cooktop" data-key="Cooktop">
+        <span class="gold-line"></span>
+        <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
+        <h3>Cooktop</h3>
+        <div class="badge" id="badge-Cooktop">Disponível</div>
+        <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
+        <input type="text" placeholder="Seu nome" id="nome-Cooktop">
+        <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
+        <button class="btn btn-primary" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+      </div>
+
+    </div>
+  </div>
 
   <script>
-    /* ========= CONTROLE DE LIBERAÇÃO =========
-       false = rifa fechada (ninguém seleciona / reserva)
-       true  = rifa aberta (normal)
-       -> Para liberar, mude para true e recarregue a página.
-    */
-    window.RIFA_ABERTA = false; // <-- MUDE AQUI QUANDO QUISER
+    /* ✅ CELULAR: ao tocar no card, liga o efeito; ao tocar fora, desliga */
+    function setupMobileCardEffect(){
+      const cards = Array.from(document.querySelectorAll(".card[data-item]"));
+
+      cards.forEach(card=>{
+        if(!card.querySelector(".gold-line")){
+          const s = document.createElement("span");
+          s.className = "gold-line";
+          card.prepend(s);
+        }
+      });
+
+      function clearAll(){
+        cards.forEach(c=>c.classList.remove("is-active"));
+      }
+
+      cards.forEach(card=>{
+        card.addEventListener("pointerdown", (e)=>{
+          const ignore = e.target.closest("input, button, a, label, textarea, select");
+          if(ignore) return;
+          clearAll();
+          card.classList.add("is-active");
+        }, {passive:true});
+      });
+
+      document.addEventListener("pointerdown", (e)=>{
+        if(e.target.closest(".card")) return;
+        clearAll();
+      }, {passive:true});
+    }
+
+    /* countdown */
+    const target = new Date("Jun 20, 2026 17:00:00").getTime();
+    setInterval(()=>{
+      const diff = target - Date.now();
+      const t = Math.max(0, diff);
+      const s = Math.floor(t/1000)%60;
+      const m = Math.floor(t/60000)%60;
+      const h = Math.floor(t/3600000)%24;
+      const days = Math.floor(t/86400000);
+      const txt = `${days} dias ${h}h ${m}m ${s}s`;
+      const a = document.getElementById("countdown-pre");
+      const b = document.getElementById("countdown-main");
+      if(a) a.textContent = txt;
+      if(b) b.textContent = txt;
+    },1000);
+
+    function abrirMapa(){
+      const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
+    }
+
+    /* Música com FADE IN */
+    const audio = document.getElementById("bgMusic");
+    let fadeTimer = null;
+    function fadeInAudio(targetVol = 0.35, step = 0.02, intervalMs = 140){
+      clearInterval(fadeTimer);
+      audio.volume = Math.max(0, Math.min(1, audio.volume || 0));
+      fadeTimer = setInterval(()=>{
+        const next = Math.min(targetVol, audio.volume + step);
+        audio.volume = next;
+        if(next >= targetVol){
+          clearInterval(fadeTimer);
+          fadeTimer = null;
+        }
+      }, intervalMs);
+    }
+    async function tocarMusica(){
+      if(audio.paused){
+        audio.volume = 0.03;
+        try{
+          await audio.play();
+          fadeInAudio(0.35);
+        }catch(e){}
+      }else{
+        audio.pause();
+      }
+    }
+
+    function entrarEvento(){
+      document.getElementById("precover").style.display="none";
+      document.getElementById("mainContent").style.display="block";
+      window.scrollTo({top:0, behavior:"instant"});
+      try{ aplicarEstadoLista(); }catch(e){}
+    }
+    function voltarPreCapa(){
+      document.getElementById("mainContent").style.display="none";
+      document.getElementById("precover").style.display="flex";
+      window.scrollTo({top:0, behavior:"instant"});
+    }
+
+    /* Ripple dourado */
+    document.addEventListener("click", (e)=>{
+      const btn = e.target.closest("button");
+      if(!btn || btn.disabled) return;
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "ripple";
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + "px";
+      ripple.style.left = (e.clientX - rect.left - size/2) + "px";
+      ripple.style.top  = (e.clientY - rect.top  - size/2) + "px";
+      btn.appendChild(ripple);
+      ripple.addEventListener("animationend", ()=> ripple.remove());
+    });
+
+    /* ===== MODAL helpers ===== */
+    const uiModal = document.getElementById("modal");
+    const uiTitle = document.getElementById("modalTitle");
+    const uiText = document.getElementById("modalText");
+    const uiNote = document.getElementById("modalNote");
+    const uiCancel = document.getElementById("modalCancel");
+    const uiConfirm = document.getElementById("modalConfirm");
+    const uiBackdrop = document.getElementById("modalBackdrop");
+    let uiResolve = null;
+
+    function uiCloseModal(result=false){
+      uiModal.classList.remove("show");
+      const r = uiResolve;
+      uiResolve = null;
+      if(r) r(result);
+    }
+    uiBackdrop.addEventListener("click", ()=> uiCloseModal(false));
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape" && uiModal.classList.contains("show")) uiCloseModal(false);
+    });
+    uiCancel.addEventListener("click", ()=> uiCloseModal(false));
+    uiConfirm.addEventListener("click", ()=> uiCloseModal(true));
+
+    function uiConfirmar({title, text, note, confirmText="Confirmar", cancelText="Cancelar"}){
+      uiTitle.textContent = title || "Confirmar";
+      uiText.textContent = text || "";
+      uiNote.textContent = note || "";
+      uiConfirm.style.display = "inline-block";
+      uiConfirm.textContent = confirmText;
+      uiCancel.textContent = cancelText;
+      uiModal.classList.add("show");
+      uiConfirm.focus();
+      return new Promise((resolve)=>{ uiResolve = resolve; });
+    }
+    function uiAviso({title, text, note, buttonText="Fechar"}){
+      uiTitle.textContent = title || "Aviso";
+      uiText.textContent = text || "";
+      uiNote.textContent = note || "";
+      uiConfirm.style.display = "none";
+      uiCancel.textContent = buttonText;
+      uiModal.classList.add("show");
+      uiCancel.focus();
+      return new Promise((resolve)=>{ uiResolve = resolve; });
+    }
+
+    /* ========= CONTROLE DE UI (aberta/fechada) ========= */
+    function aplicarEstadoLista(){
+      const aberta = !!window.LISTA_PRESENTES_ABERTA;
+
+      document.querySelectorAll(".card[data-item]").forEach((card)=>{
+        const key = card.getAttribute("data-key") || "";
+        const badge = document.getElementById("badge-"+key);
+        const note  = document.getElementById("note-"+key);
+        const btn   = document.getElementById("btn-"+key);
+        const inNome  = document.getElementById("nome-"+key);
+        const inEmail = document.getElementById("email-"+key);
+
+        const reservado = card.classList.contains("is-reservado");
+        const fechadoParaEste = (!aberta && !reservado);
+
+        card.classList.toggle("is-closed", fechadoParaEste);
+
+        if(fechadoParaEste){
+          if(badge){
+            badge.textContent = "Em breve";
+            badge.classList.add("closed");
+            badge.classList.remove("reservado");
+          }
+          if(note){
+            note.textContent = "Lista de presentes ainda não liberada.";
+            note.style.display = "block";
+          }
+          if(btn){
+            btn.disabled = true;
+            btn.textContent = "Em breve";
+          }
+          if(inNome){ inNome.disabled = true; }
+          if(inEmail){ inEmail.disabled = true; }
+        }else{
+          if(!reservado){
+            if(badge) badge.classList.remove("closed");
+            if(note)  note.textContent = "Este item já foi reservado.";
+            if(btn && window.LISTA_PRESENTES_ABERTA) btn.textContent = "Presentear";
+            if(inNome){ inNome.disabled = false; }
+            if(inEmail){ inEmail.disabled = false; }
+          }
+        }
+      });
+    }
+
+    /* ========= FUNÇÃO GLOBAL ========= */
+    async function Presentear(item){
+      if(!window.LISTA_PRESENTES_ABERTA){
+        await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
+        return;
+      }
+      if(typeof window.__presentearImpl !== "function"){
+        await uiAviso({
+          title:"Erro",
+          text:"Firebase ainda não carregou. Recarregue a página.",
+          note:"Se estiver abrindo pelo preview do WhatsApp, abra no navegador."
+        });
+        return;
+      }
+      return window.__presentearImpl(item);
+    }
+    window.Presentear = Presentear;
+
+    function syncRsvpAcompanhantes(){
+      const status = document.getElementById("rsvp-status");
+      const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome");
+      if(!status || !acompanhanteNome) return;
+      const isNao = status.value === "nao";
+      acompanhanteNome.disabled = isNao;
+      if(isNao) acompanhanteNome.value = "";
+    }
+
+    function toggleRsvpPanel(force){
+      const panel = document.getElementById("rsvp-panel");
+      const btn = document.getElementById("rsvp-toggle-btn");
+      if(!panel || !btn) return;
+      const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("show");
+      panel.classList.toggle("show", shouldShow);
+      btn.classList.toggle("active", shouldShow);
+      btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+    }
+
+    async function ConfirmarPresenca(){
+      if(typeof window.__confirmarPresencaImpl !== "function"){
+        await uiAviso({
+          title:"Erro",
+          text:"Firebase ainda não carregou. Recarregue a página para confirmar sua presença.",
+          note:""
+        });
+        return;
+      }
+      return window.__confirmarPresencaImpl();
+    }
+    window.ConfirmarPresenca = ConfirmarPresenca;
+
+    function escapeHtml(value){
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    document.getElementById("rsvp-status")?.addEventListener("change", syncRsvpAcompanhantes);
+    syncRsvpAcompanhantes();
   </script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import {
-      getFirestore,
-      doc,
-      collection,
-      onSnapshot,
-      runTransaction,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+  <!-- ✅ FIREBASE COMPAT -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCnDJtjk7O19VV0cgJZryGEPx7j5yJZOqg",
-      authDomain: "rifacasamento-6210d.firebaseapp.com",
-      projectId: "rifacasamento-6210d",
-      storageBucket: "rifacasamento-6210d.firebasestorage.app",
-      messagingSenderId: "974994780308",
-      appId: "1:974994780308:web:0af75b86c6466c71e38481"
-    };
+  <script>
+    /* ========= FIREBASE + RESERVA (SEM MODULE) ========= */
+    (function(){
+      const firebaseConfig = {
+        apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
+        authDomain: "casamento-luiza-andre.firebaseapp.com",
+        projectId: "casamento-luiza-andre",
+        storageBucket: "casamento-luiza-andre.firebasestorage.app",
+        messagingSenderId: "79078651574",
+        appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
+      };
 
-    // ===== CONFIG DA RIFA =====
-    const START = 1;
-    const END = 200;
-    const WPP = "5531994243195";
-    const PIX = "31994243195";
-    // ===========================
+      try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+      const db = firebase.firestore();
+      const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
+      const EMAILJS_SERVICE_ID = "service_7b5jpat";
+      const EMAILJS_TEMPLATE_PRESENTE = "template_kl4avko";
 
-    // UI
-    const statusEl = document.getElementById("status");
-    const grid = document.getElementById("grid");
-
-    const pickedInfo = document.getElementById("pickedInfo");
-    const reserveBtn = document.getElementById("reserveBtn");
-    const clearBtn = document.getElementById("clearBtn");
-
-    const floatingReserve = document.getElementById("floatingReserve");
-    const floatingBadge = document.getElementById("floatingBadge");
-
-    const pixText = document.getElementById("pixText");
-    const copyPixBtn = document.getElementById("copyPixBtn");
-    const copyToast = document.getElementById("copyToast");
-    pixText.textContent = PIX;
-
-    const dlg = document.getElementById("reserveDialog");
-    const modalTitle = document.getElementById("modalTitle");
-    const buyerName = document.getElementById("buyerName");
-    const buyerContact = document.getElementById("buyerContact");
-    const selectedPreview = document.getElementById("selectedPreview");
-    const err = document.getElementById("err");
-    const ok = document.getElementById("ok");
-    const cancelBtn = document.getElementById("cancelBtn");
-    const confirmBtn = document.getElementById("confirmBtn");
-
-    // estado
-    const buttons = new Map();
-    const selected = new Set();
-    const takenCache = new Set();
-
-    function formatNums(nums){
-      return [...nums].sort((a,b)=>a-b).join(", ");
-    }
-
-    function refreshReserveBar(){
-      const count = selected.size;
-
-      if (count === 0){
-        pickedInfo.textContent = "Nenhum número selecionado.";
-        reserveBtn.disabled = true;
-        clearBtn.disabled = true;
-      } else {
-        pickedInfo.textContent = `Selecionados (${count}): ${formatNums(selected)}`;
-        reserveBtn.disabled = false;
-        clearBtn.disabled = false;
+      function keyOfItem(item){ return String(item).replace(/\s+/g, "_"); }
+      function getKeyFromCard(item){
+        const card = document.querySelector(`.card[data-item="${item}"]`);
+        return card?.getAttribute("data-key") || keyOfItem(item);
       }
 
-      floatingBadge.textContent = String(count);
-      floatingReserve.disabled = (count === 0);
-    }
+      function setReservadoUI(item, data){
+        const reservado = !!(data && data.reservado);
+        const card = document.querySelector(`.card[data-item="${item}"]`);
+        const key = getKeyFromCard(item);
 
-    function clearSelection(){
-      for (const n of selected){
-        const b = buttons.get(n);
-        if (b) b.classList.remove("selected");
-      }
-      selected.clear();
-      refreshReserveBar();
-    }
+        const badge = document.getElementById("badge-"+key);
+        const note  = document.getElementById("note-"+key);
+        const btn   = document.getElementById("btn-"+key);
+        const inNome  = document.getElementById("nome-"+key);
+        const inEmail = document.getElementById("email-"+key);
 
-    function waLink(text){
-      return `https://wa.me/${WPP}?text=${encodeURIComponent(text)}`;
-    }
+        if(card) card.classList.toggle("is-reservado", reservado);
 
-    function openReserveModal(){
-      // ✅ trava/libera por chave simples (true/false)
-      if(!window.RIFA_ABERTA){
-        alert("A rifa ainda não foi liberada. Volte mais tarde 😊");
-        return;
-      }
+        const aberta = !!window.LISTA_PRESENTES_ABERTA;
+        const fechadoParaEste = (!aberta && !reservado);
+        if(card) card.classList.toggle("is-closed", fechadoParaEste);
 
-      err.style.display = "none"; err.textContent = "";
-      ok.style.display = "none"; ok.textContent = "";
-
-      const nums = [...selected].sort((a,b)=>a-b);
-      if (!nums.length){
-        alert("Selecione pelo menos um número.");
-        return;
-      }
-
-      modalTitle.textContent = `Reservar ${nums.length} número(s)`;
-      selectedPreview.textContent = `Números: ${nums.join(", ")}`;
-
-      buyerName.value = "";
-      buyerContact.value = "";
-      confirmBtn.disabled = false;
-
-      dlg.showModal();
-      buyerName.focus();
-    }
-
-    // Render
-    for (let n = START; n <= END; n++) {
-      const b = document.createElement("div");
-      b.className = "num";
-      b.textContent = String(n);
-      b.dataset.num = String(n);
-
-      b.addEventListener("click", () => {
-        // ✅ trava/libera por chave simples (true/false)
-        if(!window.RIFA_ABERTA) return;
-
-        if (takenCache.has(n)) return;
-        if (selected.has(n)){
-          selected.delete(n);
-          b.classList.remove("selected");
-        } else {
-          selected.add(n);
-          b.classList.add("selected");
+        if(fechadoParaEste){
+          if(badge){
+            badge.textContent = "Em breve";
+            badge.classList.add("closed");
+            badge.classList.remove("reservado");
+          }
+          if(note){
+            note.textContent = "Lista de presentes ainda não liberada.";
+            note.style.display = "block";
+          }
+          if(btn){
+            btn.disabled = true;
+            btn.textContent = "Em breve";
+          }
+          if(inNome) inNome.disabled = true;
+          if(inEmail) inEmail.disabled = true;
+          return;
         }
-        refreshReserveBar();
-      });
 
-      grid.appendChild(b);
-      buttons.set(n, b);
-    }
-
-    // Snapshot
-    const colRef = collection(db, "rifaNumbers");
-
-    onSnapshot(colRef, (snap) => {
-      const prevTaken = new Set(takenCache);
-
-      takenCache.clear();
-
-      for (let n = START; n <= END; n++) {
-        const b = buttons.get(n);
-        b.classList.remove("taken");
-        b.classList.remove("justTaken");
-        b.removeAttribute("data-buyer");
-        b.removeAttribute("title");
-      }
-
-      snap.forEach((d) => {
-        const data = d.data();
-        const n = Number(d.id);
-        if (!buttons.has(n)) return;
-
-        if (data?.status === "taken") {
-          takenCache.add(n);
-          const b = buttons.get(n);
-          b.classList.add("taken");
-          b.classList.remove("selected");
-
-          // ✅ não mostrar nome/contato (não setar data-buyer / title)
-          b.removeAttribute("data-buyer");
-          b.removeAttribute("title");
-
-          // ✅ anima só quando acabou de virar reservado (mudança no snapshot)
-          if (!prevTaken.has(n)) {
-            b.classList.add("justTaken");
-            setTimeout(() => b.classList.remove("justTaken"), 650);
-          }
-
-          selected.delete(n);
+        if(badge){
+          badge.textContent = reservado ? "Reservado" : "Disponível";
+          badge.classList.toggle("reservado", reservado);
+          badge.classList.remove("closed");
         }
-      });
+        if(note){
+          note.textContent = "Este item já foi reservado.";
+          note.style.display = reservado ? "block" : "none";
+        }
+        if(btn){
+          btn.disabled = reservado;
+          btn.textContent = reservado ? "Já reservado" : "Presentear";
+        }
+        if(inNome) inNome.disabled = reservado;
+        if(inEmail) inEmail.disabled = reservado;
 
-      refreshReserveBar();
-
-      // ✅ status muda conforme a chave
-      statusEl.textContent = window.RIFA_ABERTA ? "Online • Atualiza ao vivo" : "Rifa fechada • Online";
-    }, (e) => {
-      console.error(e);
-      statusEl.textContent = "Erro ao conectar no Firebase (veja o console).";
-    });
-
-    // Botões
-    clearBtn.addEventListener("click", () => {
-      if(!window.RIFA_ABERTA) return;
-      clearSelection();
-    });
-    reserveBtn.addEventListener("click", openReserveModal);
-    floatingReserve.addEventListener("click", openReserveModal);
-    cancelBtn.addEventListener("click", () => dlg.close());
-
-    // Copiar Pix
-    async function copyPix(){
-      const value = PIX;
-      try{
-        await navigator.clipboard.writeText(value);
-      }catch{
-        const ta = document.createElement("textarea");
-        ta.value = value;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-      copyToast.style.display = "inline";
-      clearTimeout(copyPix._t);
-      copyPix._t = setTimeout(() => (copyToast.style.display = "none"), 1400);
-    }
-    copyPixBtn.addEventListener("click", copyPix);
-
-    // Confirmar
-    confirmBtn.addEventListener("click", async () => {
-      // ✅ trava/libera por chave simples (true/false)
-      if(!window.RIFA_ABERTA){
-        err.textContent = "A rifa ainda não foi liberada. Volte mais tarde 😊";
-        err.style.display = "block";
-        return;
+        try{ aplicarEstadoLista(); }catch(e){}
       }
 
-      err.style.display = "none"; err.textContent = "";
-      ok.style.display = "none"; ok.textContent = "";
-
-      const name = buyerName.value.trim();
-      const contact = buyerContact.value.trim();
-      const nums = [...selected].sort((a,b)=>a-b);
-
-      if (!nums.length){
-        err.textContent = "Selecione pelo menos um número.";
-        err.style.display = "block";
-        return;
-      }
-      if (!name || !contact){
-        err.textContent = "Preencha nome e telefone/WhatsApp.";
-        err.style.display = "block";
-        return;
-      }
-
-      confirmBtn.disabled = true;
-
-      let waWin = null;
-      try { waWin = window.open("", "_blank"); } catch {}
-
-      try{
-        await runTransaction(db, async (tx) => {
-          for (const n of nums){
-            const ref = doc(db, "rifaNumbers", String(n));
-            const snap = await tx.get(ref);
-            if (snap.exists() && snap.data()?.status === "taken"){
-              throw new Error(`O número ${n} já foi reservado por outra pessoa.`);
-            }
-          }
-          for (const n of nums){
-            tx.set(doc(db, "rifaNumbers", String(n)), {
-              status: "taken",
-              buyerName: name,
-              buyerContact: contact,
-              reservedAt: serverTimestamp()
-            });
-          }
+      function watchAll(){
+        document.querySelectorAll(".card[data-item]").forEach((card)=>{
+          const item = card.getAttribute("data-item");
+          db.collection("reservas").doc(item).onSnapshot((snap)=>{
+            setReservadoUI(item, snap.exists ? snap.data() : null);
+          });
         });
-
-        const text =
-`Olá! Reserva da Rifa Luiza & André
-Nome: ${name}
-Telefone: ${contact}
-Números: ${nums.join(", ")}
-Pix: ${PIX}`;
-
-        const link = waLink(text);
-
-        if (waWin) waWin.location.href = link;
-        else location.href = link;
-
-        ok.innerHTML = `Reserva feita! Se não abriu o WhatsApp: <a href="${link}" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>`;
-        ok.style.display = "block";
-
-        dlg.close();
-        clearSelection();
-
-      } catch(e){
-        console.error(e);
-        if (waWin) waWin.close?.();
-        err.textContent = e?.message || "Erro ao reservar. Tente novamente.";
-        err.style.display = "block";
-        confirmBtn.disabled = false;
       }
-    });
 
-    refreshReserveBar();
+      async function doReserve(item){
+        const key = getKeyFromCard(item);
+        const nome  = (document.getElementById("nome-"+key)?.value || "").trim();
+        const email = (document.getElementById("email-"+key)?.value || "").trim();
 
-    // ✅ ajusta status inicial conforme a chave
-    statusEl.textContent = window.RIFA_ABERTA ? "Conectando ao Firebase…" : "Rifa fechada • Conectando…";
+        if(!nome || !email){
+          await uiAviso({ title:"Campos obrigatórios", text:"Preencha nome e e-mail para continuar.", note:"" });
+          return;
+        }
+
+        const ref = db.collection("reservas").doc(item);
+        const btn = document.getElementById("btn-"+key);
+        if(btn){ btn.disabled = true; btn.textContent = "Reservando..."; }
+
+        try{
+          await db.runTransaction(async (tx)=>{
+            const snap = await tx.get(ref);
+            if(snap.exists && snap.data()?.reservado) throw new Error("ja_reservado");
+            tx.set(ref, { reservado:true, nome, email, ts: serverTimestamp() });
+          });
+
+          try{
+            if(window.emailjs?.send){
+              await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESENTE,{
+                nome,email,item,
+                mensagem:"Obrigado por fazer parte deste momento 💛"
+              });
+            }
+          }catch(e){}
+
+          await uiAviso({ title:"Reserva confirmada", text:"Obrigado por fazer parte deste momento 💛", note:"Sua reserva foi registrada com sucesso." });
+
+        }catch(e){
+          if(String(e?.message || e) === "ja_reservado"){
+            await uiAviso({ title:"Ops!", text:"Este item já foi reservado.", note:"Escolha outro presente disponível." });
+          }else{
+            await uiAviso({ title:"Erro", text:"Erro ao reservar. Tente novamente.", note:"Se continuar, recarregue a página." });
+          }
+        }
+      }
+
+      async function presentearImpl(item){
+        if(!window.LISTA_PRESENTES_ABERTA){
+          await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
+          return;
+        }
+        const ok = await uiConfirmar({
+          title:"Confirmar presente",
+          text:`Você escolheu: ${item}. Deseja confirmar?`,
+          note:"Após confirmar, este item ficará reservado.",
+          confirmText:"Confirmar",
+          cancelText:"Cancelar"
+        });
+        if(!ok) return;
+        await doReserve(item);
+      }
+
+      async function confirmarPresencaImpl(){
+        const nome = (document.getElementById("rsvp-nome")?.value || "").trim();
+        const status = (document.getElementById("rsvp-status")?.value || "sim").trim();
+        const acompanhanteNome = (document.getElementById("rsvp-acompanhante-nome")?.value || "").trim();
+        const btn = document.getElementById("rsvp-btn");
+        const feedback = document.getElementById("rsvp-feedback");
+
+        if(!nome){
+          await uiAviso({
+            title:"Falta seu nome",
+            text:"Preencha seu nome para registrar a confirmação de presença.",
+            note:""
+          });
+          toggleRsvpPanel(true);
+          return;
+        }
+
+        const statusTexto = status === "sim" ? "Sim, vou estar presente" : "Não poderei comparecer";
+        const ok = await uiConfirmar({
+          title:"Confirmar presença",
+          text:`Deseja enviar sua resposta como "${statusTexto}"?`,
+          note:"Você poderá editar depois diretamente no Firestore, se precisar.",
+          confirmText:"Enviar",
+          cancelText:"Voltar"
+        });
+        if(!ok) return;
+
+        if(btn){
+          btn.disabled = true;
+          btn.textContent = "Enviando...";
+        }
+        if(feedback) feedback.textContent = "Salvando sua confirmação...";
+
+        try{
+          await db.collection("confirmacoes_presenca").add({
+            nome,
+            status,
+            acompanhante_nome: status === "sim" ? acompanhanteNome : "",
+            origem: "pre-capa",
+            ts: serverTimestamp()
+          });
+
+          document.getElementById("rsvp-nome").value = "";
+          document.getElementById("rsvp-status").value = "sim";
+          document.getElementById("rsvp-acompanhante-nome").value = "";
+          try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
+          try{ window.toggleRsvpPanel?.(false); }catch(e){}
+
+          if(feedback) feedback.textContent = "Presença confirmada com sucesso.";
+          await uiAviso({
+            title:"Resposta enviada",
+            text:"Sua confirmação de presença foi registrada com sucesso 💛",
+            note:"Obrigado por confirmar sua presença."
+          });
+        }catch(e){
+          if(feedback) feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
+          await uiAviso({
+            title:"Erro ao confirmar",
+            text:"Não conseguimos registrar sua resposta neste momento.",
+            note:"Tente novamente em alguns instantes."
+          });
+        }finally{
+          if(btn){
+            btn.disabled = false;
+            btn.textContent = "Confirmar presença";
+          }
+        }
+      }
+
+      window.__presentearImpl = presentearImpl;
+      window.__confirmarPresencaImpl = confirmarPresencaImpl;
+      watchAll();
+      try{ aplicarEstadoLista(); }catch(e){}
+    })();
   </script>
 </body>
 </html>
