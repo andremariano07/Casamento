@@ -112,6 +112,11 @@
       outline:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      white-space:nowrap;
+      min-height:44px;
 
       background:
         radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
@@ -129,7 +134,7 @@
         filter .18s ease,
         border-color .18s ease,
         box-shadow .22s ease;
-      overflow:hidden;
+      overflow:visible;
     }
 
     .btn::before, .maps-btn::before, .back-btn::before, button::before{
@@ -218,6 +223,20 @@
       border-color: rgba(255,255,255,.22);
     }
 
+    /* ===== Botões especiais (maps, back, rsvp) ===== */
+    .maps-btn, .back-btn, .rsvp-btn {
+      padding: 14px 28px;
+      min-height: 48px;
+      font-size: 15px;
+    }
+
+    .rsvp-form .btn {
+      padding: 14px 28px;
+      min-height: 48px;
+      font-size: 15px;
+      width: 100%;
+    }
+
     /* ===== Ripple dourado ===== */
     .ripple{
       position:absolute;
@@ -242,12 +261,15 @@
     }
 
     .circle-photo{
-      width:150px;height:150px;border-radius:50%;
+      width:260px;height:260px;border-radius:50%;
       overflow:hidden;border:5px solid var(--gold);
       margin-bottom:8px;
       box-shadow:0 0 18px rgba(212,175,55,.45);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      aspect-ratio:1/1;
     }
-    .circle-photo img{width:100%;height:100%;object-fit:cover}
+    .circle-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 
     /* ✅ CORRIGE CORTE DOS NOMES (Great Vibes) */
     .pre-title{
@@ -390,7 +412,7 @@
     }
     @media(max-width:560px){
       .rsvp-grid{ grid-template-columns:1fr; }
-      .circle-photo{ width:132px; height:132px; }
+      .circle-photo{ width:180px; height:180px; }
       .rsvp-panel{ width:min(420px, 100%); padding:16px 14px; }
       .rsvp-toggle{ min-width:0; width:min(260px, 100%); }
     }
@@ -668,8 +690,8 @@
             <option value="sim">Sim, vou estar presente</option>
             <option value="nao">Não poderei comparecer</option>
           </select>
-          <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante">
         </div>
+        <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante" style="display:none;">
         <button class="btn btn-primary" id="rsvp-btn" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
         <div class="rsvp-feedback" id="rsvp-feedback"></div>
       </div>
@@ -1425,9 +1447,9 @@
       const status = document.getElementById("rsvp-status");
       const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome");
       if(!status || !acompanhanteNome) return;
-      const isNao = status.value === "nao";
-      acompanhanteNome.disabled = isNao;
-      if(isNao) acompanhanteNome.value = "";
+      const isSim = status.value === "sim";
+      acompanhanteNome.style.display = isSim ? "block" : "none";
+      if(!isSim) acompanhanteNome.value = "";
     }
 
     function toggleRsvpPanel(force){
