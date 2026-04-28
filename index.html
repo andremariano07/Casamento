@@ -1,2250 +1,1219 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Charraiá - Luiza & André</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js" defer></script>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-
-      // ✅ ORDENA OS CARDS AUTOMATICAMENTE (A-Z) pelo data-item
-      (function ordenarCards(){
-        const container = document.querySelector(".container");
-        if(!container) return;
-
-        const cards = Array.from(container.querySelectorAll(".card[data-item]"));
-        cards.sort((a, b) => {
-          const nameA = (a.getAttribute("data-item") || "").trim();
-          const nameB = (b.getAttribute("data-item") || "").trim();
-          return nameA.localeCompare(nameB, "pt-BR", { sensitivity: "base" });
-        });
-
-        cards.forEach(card => container.appendChild(card));
-      })();
-
-      try { emailjs.init("3zU5_d_KcUdDLjXQY"); } catch(e){}
-
-      try{
-        if(window.tsParticles){
-          tsParticles.load("tsparticles",{
-            fpsLimit:60,
-            fullScreen:{ enable:false },
-            background:{ color:"transparent" },
-            particles:{
-              number:{ value:28, density:{ enable:true, area:900 } },
-              color:{ value:["#d4af37","#f8e7b0","#fff"] },
-              opacity:{ value:0.15, random:{ enable:true, minimumValue:0.06 } },
-              size:{ value:{ min:1, max:4 }, random:true },
-              move:{ enable:true, speed:.7, direction:"top", outModes:{ default:"out" } },
-              shape:{ type:"circle" }
-            },
-            detectRetina:true
-          });
-        }
-      }catch(e){}
-
-      // ✅ ativa efeito no celular ao tocar em um card
-      setupMobileCardEffect();
-      try{ aplicarEstadoLista(); }catch(e){}
-
-      // ✅ TOCA MÚSICA AUTOMATICAMENTE
-      try{
-        const audio = document.getElementById("bgMusic");
-        if(audio){
-          audio.volume = 0.03;
-          // Ativa som após um pequeno delay e interação do usuário
-          setTimeout(() => {
-            audio.muted = false;
-            audio.play().catch(e => {
-              // Se ainda assim não conseguir, vai tocar quando o usuário interagir
-              document.addEventListener('click', function unmuteOnClick() {
-                audio.muted = false;
-                audio.play().catch(() => {});
-                document.removeEventListener('click', unmuteOnClick);
-              }, { once: true });
-            });
-          }, 500);
-        }
-      }catch(e){}
-    });
-  </script>
-
-  <script>
-    /* ========= CONTROLE DE LIBERAÇÃO ========= */
-    window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
-  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Controle 2026 - Gastos</title>
 
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{height:100%}
     :root{
-      --gold:#d4af37;
-      --gold2:#f8e7b0;
-
-      /* ✅ botões refinados */
-      --btn-bg1: rgba(248,231,176,.22);
-      --btn-bg2: rgba(212,175,55,.18);
-      --btn-border: rgba(248,231,176,.38);
-      --btn-border-strong: rgba(248,231,176,.65);
-      --btn-text: #f7f4ea;
-      --btn-text-dark: #1b160a;
-      --btn-shadow: 0 16px 42px rgba(0,0,0,.35);
+      --bg:#e9ecef; --panel:#f8f9fa; --line:#cfd4da;
+      --blue:#2b67c9; --blue2:#1f56b3; --text:#1c1c1c; --muted:#5f6b76;
+      --radius:14px;
     }
-
     body{
-      font-family:Poppins,sans-serif;
-      color:#fff;
-      text-align:center;
-      min-height:100svh;
-      overflow-x:hidden;
+      margin:0;
+      font-family: Arial, sans-serif;
       background:
-        linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),
-        url('arte_casamento.jpeg');
-      background-size:cover;
-      background-position:center top;
-      background-repeat:no-repeat;
-      background-attachment:fixed;
+        linear-gradient(rgba(233,236,239,.76), rgba(233,236,239,.76)),
+        url("financas.jpg") center / cover fixed no-repeat;
+      color:var(--text);
     }
-    @media(max-width:768px){ body{background-attachment:scroll;} }
+    #loginScreen,
+    #enrollScreen,
+    #mfaScreen{
+      background:transparent !important;
+    }
+    .wrap{ max-width:1200px; margin:18px auto; padding:0 14px 40px; }
 
-    #tsparticles{
-      position:fixed; inset:0; width:100%; height:100%;
-      pointer-events:none; z-index:1;
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:12px 14px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+      flex-wrap: wrap;
     }
+    .month{
+      font-family:"Brush Script MT","Comic Sans MS",cursive;
+      font-size:56px; line-height:1; margin:0;
+      min-width:240px;
+    }
+    .small{ font-size:12px; color:var(--muted); }
+    .saldoBox{
+      flex:1; min-width:260px;
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      background:var(--blue); color:#fff; border-radius:12px; padding:10px 14px; min-height:54px;
+    }
+    .saldoBox .label{ font-weight:800; letter-spacing:.4px; }
+    .saldoBox .value{ font-weight:900; font-size:18px; }
+    .controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-    /* fade */
-    @keyframes fadeUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
-    .fade-up{opacity:0;animation:fadeUp 1.2s ease forwards;}
+    select, input, button{
+      padding:10px; border-radius:10px; border:1px solid var(--line);
+      background:#fff; font-size:14px;
+    }
+    button{ cursor:pointer; background:var(--blue2); color:#fff; border:none; }
+    button:hover{ filter:brightness(1.05); }
+    .ghost{ background:#fff; color:var(--blue2); border:1px solid var(--blue2); }
 
-    /* ===== Botão premium (padrão refinado) ===== */
-    .btn, .maps-btn, .back-btn, button{
-      position:relative;
-      margin-top:12px;
-      padding:12px 22px;
-      border-radius:999px;
-      border:1px solid var(--btn-border);
-      cursor:pointer;
-      outline:none;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      white-space:nowrap;
-      min-height:44px;
-
-      background:
-        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, var(--btn-bg1), var(--btn-bg2));
-      backdrop-filter: blur(10px);
-      color: var(--btn-text);
-      font-weight:700;
-      letter-spacing:.2px;
-
-      box-shadow: var(--btn-shadow);
-      transform: translateZ(0);
-      transition:
-        transform .18s ease,
-        filter .18s ease,
-        border-color .18s ease,
-        box-shadow .22s ease;
-      overflow:visible;
-    }
-
-    .btn::before, .maps-btn::before, .back-btn::before, button::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:999px;
-      background:
-        conic-gradient(from 180deg,
-          rgba(212,175,55,0),
-          rgba(248,231,176,.55),
-          rgba(212,175,55,.85),
-          rgba(248,231,176,.35),
-          rgba(212,175,55,0)
-        );
-      opacity:.32;
-      filter: blur(.2px);
-      pointer-events:none;
-    }
-
-    .btn::after, .maps-btn::after, .back-btn::after, button::after{
-      content:"";
-      position:absolute;
-      left:-40%;
-      top:-120%;
-      width:180%;
-      height:220%;
-      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16), rgba(255,255,255,0));
-      transform: rotate(18deg);
-      opacity:.65;
-      pointer-events:none;
-      transition: opacity .18s ease;
-    }
-
-    @media (hover:hover){
-      .btn:hover, .maps-btn:hover, .back-btn:hover, button:hover{
-        transform:translateY(-2px);
-        filter:brightness(1.06);
-        border-color: var(--btn-border-strong);
-        box-shadow: 0 18px 55px rgba(0,0,0,.45);
-      }
-      .btn:hover::after, .maps-btn:hover::after, .back-btn:hover::after, button:hover::after{
-        opacity:.9;
-      }
-    }
-
-    .btn:active, .maps-btn:active, .back-btn:active, button:active{
-      transform: translateY(0) scale(.985);
-      filter: brightness(1.02);
-    }
-
-    .btn:focus-visible, .maps-btn:focus-visible, .back-btn:focus-visible, button:focus-visible{
-      outline: none;
-      box-shadow:
-        0 0 0 3px rgba(248,231,176,.20),
-        0 0 0 6px rgba(212,175,55,.18),
-        var(--btn-shadow);
-    }
-
-    .btn:disabled, button:disabled{
-      opacity:.62;
-      cursor:not-allowed;
-      filter:none;
-      transform:none;
-      border-color: rgba(255,255,255,.18);
-      box-shadow: 0 10px 26px rgba(0,0,0,.25);
-    }
-    .btn:disabled::before, .btn:disabled::after,
-    button:disabled::before, button:disabled::after{
-      opacity:.08;
-      animation:none;
-    }
-
-    .btn.btn-primary{
-      background:
-        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        linear-gradient(180deg, rgba(212,175,55,.34), rgba(212,175,55,.18));
-      border-color: rgba(248,231,176,.55);
-    }
-
-    .btn.btn-secondary{
-      background:
-        radial-gradient(120% 220% at 20% 15%, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border-color: rgba(255,255,255,.22);
-    }
-
-    /* ===== Botões especiais (maps, back, rsvp) ===== */
-    .maps-btn, .back-btn, .rsvp-btn {
-      padding: 14px 28px;
-      min-height: 48px;
-      font-size: 15px;
-    }
-
-    .rsvp-form .btn {
-      padding: 14px 28px;
-      min-height: 48px;
-      font-size: 15px;
-      width: 100%;
-    }
-
-    /* ===== Ripple dourado ===== */
-    .ripple{
-      position:absolute;
-      border-radius:50%;
-      transform:scale(0);
-      animation:ripple .65s ease-out;
-      background:radial-gradient(circle, rgba(248,231,176,.95) 0%, rgba(212,175,55,.55) 35%, rgba(212,175,55,0) 70%);
-      pointer-events:none;
-    }
-    @keyframes ripple{ to{ transform:scale(4); opacity:0; } }
-
-    /* PRE CAPA */
-    .precover{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.65);
-      display:flex; flex-direction:column;
-      justify-content:center; align-items:center;
-      gap:8px;
-      padding:28px 18px 34px;
-      z-index:10;
-      overflow-y:auto;
-    }
-
-    .circle-photo{
-      width:260px;height:260px;border-radius:50%;
-      overflow:hidden;border:5px solid var(--gold);
-      margin-bottom:8px;
-      box-shadow:0 0 18px rgba(212,175,55,.45);
-      display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;
-      aspect-ratio:1/1;
-    }
-    .circle-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-
-    /* ✅ CORRIGE CORTE DOS NOMES (Great Vibes) */
-    .pre-title{
-      font-family:'Great Vibes',cursive;
-      font-size:clamp(30px,6vw,52px);
-      line-height:1.2;                 /* ✅ maior */
-      max-width:95vw;
-      padding:0 12px .18em;            /* ✅ folga embaixo */
-      margin-bottom:6px;
-      color:var(--gold2);
-      text-shadow:0 2px 18px rgba(0,0,0,.35);
-      display:inline-block;
-    }
-    @supports (-webkit-background-clip:text) {
-      .pre-title{
-        background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
-        background-size:300%;
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-        text-shadow:none;
-      }
-    }
-
-    h1{
-      font-family:'Great Vibes',cursive;
-      font-size:clamp(38px,7vw,64px);
-      line-height:1.18;                /* ✅ maior */
-      max-width:95vw;
-      padding:0 12px .22em;            /* ✅ folga embaixo */
-      display:inline-block;            /* ✅ evita recorte */
-      background:linear-gradient(45deg,#fff,var(--gold2),var(--gold),#fff);
-      background-size:300%;
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      animation:shine 6s infinite linear;
-    }
-    @keyframes shine{to{background-position:300%}}
-    .date,.countdown,.location{margin:4px 0;font-size:20px}
-
-    /* PRE CAPA: micro animação */
-    .precover .btn.fade-up{
-      animation: fadeUp 1.2s ease forwards;
-    }
-
-    .rsvp-panel{
-      position:relative;
-      width:min(460px, 100%);
-      margin:6px auto 4px;
-      padding:18px;
-      border-radius:28px;
-      background:
-        linear-gradient(180deg, rgba(33,29,27,.92), rgba(22,19,18,.88));
-      border:1px solid rgba(248,231,176,.18);
-      backdrop-filter:blur(14px);
-      box-shadow:0 20px 50px rgba(0,0,0,.26);
-      display:none;
-    }
-    .rsvp-panel::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:28px;
-      pointer-events:none;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
-      opacity:.7;
-    }
-    .rsvp-panel.show{
-      display:block;
-      animation:fadeUp .35s ease forwards;
-    }
-    .rsvp-toggle{
-      margin-top:2px;
-      min-width:230px;
-    }
-    .rsvp-toggle.active{
-      border-color: rgba(248,231,176,.65);
-      box-shadow: 0 12px 30px rgba(0,0,0,.28);
-    }
-    .rsvp-title{
-      position:relative;
-      z-index:1;
-      font-size:18px;
-      font-weight:700;
-      color:var(--gold2);
-    }
-    .rsvp-subtitle{
-      position:relative;
-      z-index:1;
-      max-width:320px;
-      margin:6px auto 0;
-      font-size:12px;
-      opacity:.82;
-      line-height:1.45;
-    }
-    .rsvp-form{
-      position:relative;
-      z-index:1;
-      display:grid;
-      gap:12px;
+    .grid{
       margin-top:14px;
-    }
-    .rsvp-form input,
-    .rsvp-form select,
-    .rsvp-form textarea{
-      width:100%;
-      margin-top:0;
-      min-height:52px;
-      padding:12px 16px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.96);
-      color:#1b160a;
-      font-family:Poppins,sans-serif;
-      font-size:14px;
-      text-align:left;
-      outline:none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
-      transition:border-color .18s ease, box-shadow .18s ease;
-    }
-    .rsvp-form textarea{
-      min-height:86px;
-      resize:vertical;
-    }
-    .rsvp-form input:focus,
-    .rsvp-form select:focus,
-    .rsvp-form textarea:focus{
-      border-color:rgba(212,175,55,.7);
-      box-shadow:0 0 0 3px rgba(212,175,55,.12);
-    }
-    .rsvp-grid{
       display:grid;
-      grid-template-columns:repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1.05fr 1.2fr 1.35fr;
+      gap:14px;
+      align-items:start;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+    }
+    .cardTitle{
+      margin:0 0 10px;
+      font-size:14px; letter-spacing:.4px; text-transform:uppercase;
+      color:var(--muted); font-weight:900;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .field{ flex:1; min-width:210px; }
+    .field label{ display:block; font-size:12px; color:var(--muted); font-weight:800; margin:0 0 6px; }
+    .field input{ width:100%; box-sizing:border-box; }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
       gap:10px;
     }
-    .rsvp-feedback{
-      min-height:20px;
-      font-size:12px;
-      color:var(--gold2);
-      opacity:.86;
-    }
-    @media(max-width:560px){
-      .rsvp-grid{ grid-template-columns:1fr; }
-      .circle-photo{ width:180px; height:180px; }
-      .rsvp-panel{ width:min(420px, 100%); padding:16px 14px; }
-      .rsvp-toggle{ min-width:0; width:min(260px, 100%); }
-    }
-
-    /* CONTENT */
-    .overlay{
-      display:none;
-      position:relative;
-      z-index:2;
-      min-height:100svh;
-      padding:20px 20px 70px;
-      background:
-        linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),
-        url('arte_casamento.jpeg');
-      background-size:cover;
-      background-position:center top;
-      background-attachment:fixed;
-    }
-    @media(max-width:768px){ .overlay{background-attachment:scroll;} }
-
-    .container{
-      width:min(980px, 100%);
-      margin:40px auto 0;
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-      justify-content:center;
-      justify-items:center;
-      gap:20px;
-      padding:0 10px;
-    }
-    @media(max-width:768px){ 
-      .container{ 
-        grid-template-columns: repeat(2, 1fr); 
-        gap:15px;
-        padding:0 12px;
-      } 
-    }
-    @media(max-width:420px){ 
-      .container{ 
-        grid-template-columns: repeat(2, 1fr);
-        gap:12px;
-        padding:0 8px;
-        margin:30px auto 0;
-      } 
-    }
-
-    /* ===== CARD BASE ===== */
-    @keyframes cardPulseGlow{
-      0%,100%{
-        box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
-      }
-      50%{
-        box-shadow:0 0 30px rgba(212,175,55,.38), 0 0 64px rgba(248,231,176,.18);
-      }
-    }
-
-    .card{
-      position:relative;
-      width:100%;
-      max-width:260px;
-      padding:15px;
-      border-radius:22px;
-      background:rgba(255,255,255,.08);
-      backdrop-filter:blur(12px);
-      overflow:hidden;
-      transform:translateZ(0);
-      transition:transform .18s ease, filter .18s ease;
-    }
-    .card::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:22px;
-      border:1px solid rgba(212,175,55,.35);
-      pointer-events:none;
-      transition:border-width .18s ease, border-color .18s ease, opacity .18s ease;
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-6px;
-      border-radius:28px;
-      pointer-events:none;
-      box-shadow:0 0 22px rgba(212,175,55,.22), 0 0 46px rgba(248,231,176,.10);
-      filter:blur(.2px);
-      opacity:1;
-      animation:cardPulseGlow 2.8s ease-in-out infinite;
-    }
-    .card .gold-line{
-      position:absolute;
-      left:10px; right:10px;
-      bottom:10px;
-      height:2px;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(212,175,55,0), rgba(212,175,55,.9), rgba(248,231,176,.95), rgba(212,175,55,.9), rgba(212,175,55,0));
-      opacity:0;
-      transform:scaleX(.25);
-      transform-origin:left center;
-      transition:opacity .18s ease, height .18s ease, transform .28s ease;
-      pointer-events:none;
-      filter:drop-shadow(0 0 10px rgba(212,175,55,.25));
-    }
-
-    @media (hover:hover){
-      .card:hover{
-        transform:scale(1.045);
-        filter:brightness(1.03);
-      }
-      .card:hover::after{
-        border-width:3px;
-        border-color:rgba(248,231,176,.80);
-        opacity:1;
-      }
-      .card:hover .gold-line{
-        opacity:1;
-        height:6px;
-        transform:scaleX(1);
-      }
-    }
-    .card.is-active{
-      transform:scale(1.045);
-      filter:brightness(1.03);
-    }
-    .card.is-active::after{
-      border-width:3px;
-      border-color:rgba(248,231,176,.80);
-      opacity:1;
-    }
-    .card.is-active .gold-line{
-      opacity:1;
-      height:6px;
-      transform:scaleX(1);
-    }
-
-    @media(max-width:768px){ 
-      .card{ 
-        max-width: 100%;
-        padding: 12px;
-      }
-      .product-img{ aspect-ratio: 3 / 2.5; }
-    }
-
-    .product-img{
-      width:100%;
-      aspect-ratio: 4 / 3;
-      background:rgba(255,255,255,.92);
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-    }
-    .product-img img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
-      padding:8px;
-    }
-
-    input{
-      margin-top:8px;
+    .kpi{
+      background:#fff; border:1px solid var(--line); border-radius:12px;
       padding:10px;
-      width:92%;
-      border-radius:18px;
-      border:none;
-      text-align:center;
+    }
+    .kpi .t{ font-size:12px; color:var(--muted); font-weight:800; }
+    .kpi .v{ font-size:18px; font-weight:900; margin-top:4px; }
+
+    .totLine{
+      display:flex; justify-content:space-between; align-items:center;
+      margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+      font-weight:900;
     }
 
-    .badge{
-      display:inline-block;
-      margin-top:10px;
-      padding:6px 12px;
-      border-radius:999px;
-      font-size:12px;
-      background:rgba(212,175,55,.22);
-      border:1px solid rgba(212,175,55,.28);
-    }
-    .badge.reservado{
-      background:rgba(255,255,255,.12);
-      border-color:rgba(255,255,255,.22);
-    }
-    .badge.closed{
-      background:rgba(255,255,255,.10);
-      border-color:rgba(255,255,255,.16);
+    .chartBox{
+      background:#fff; border:1px solid var(--line); border-radius:12px;
+      padding:12px;
     }
 
-    .card.is-reservado{opacity:.92}
-    .card.is-reservado input{display:none}
-    .card.is-reservado .reserved-note{display:block}
+    .status{
+      margin-top:8px;
+      padding:8px 10px;
+      background:#fff; border:1px solid var(--line); border-radius:12px;
+      font-size:12px; color:var(--muted);
+      word-break: break-word;
+    }
 
-    .card.is-closed{opacity:.95}
-    .card.is-closed input{display:none}
-    .card.is-closed .reserved-note{display:block}
-
-    .reserved-note{
-      display:none;
-      margin-top:10px;
+    .secretBox{
+      background:#fff; border:1px dashed var(--line); border-radius:12px;
+      padding:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:13px;
-      opacity:.9;
     }
 
-    /* MODAL */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:999;
-      padding:18px;
+    .toggleLine{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px;
     }
-    .modal.show{display:flex}
-    .modal-backdrop{
-      position:absolute; inset:0;
-      background:rgba(0,0,0,.65);
-      backdrop-filter:blur(4px);
-    }
-    .modal-box{
-      position:relative;
-      width:min(420px, 100%);
-      border-radius:22px;
-      padding:18px 16px 16px;
-      background:rgba(28,28,28,.72);
-      border:1px solid rgba(212,175,55,.28);
-      box-shadow:0 20px 60px rgba(0,0,0,.5);
-      overflow:hidden;
-      transform:translateY(10px) scale(.98);
-      opacity:0;
-      animation:modalIn .22s ease forwards;
-    }
-    .modal-box::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:24px;
-      padding:2px;
-      background:conic-gradient(from 0deg, rgba(212,175,55,0), rgba(212,175,55,.85), rgba(248,231,176,.6), rgba(212,175,55,0));
-      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor;
-      mask-composite:exclude;
-      opacity:.65;
-      animation:spinBorder 3.2s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes spinBorder{ to{ transform:rotate(360deg); } }
-    @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
-    .modal-title{font-size:18px;font-weight:700;margin-bottom:8px}
-    .modal-text{font-size:14px;opacity:.92;margin-bottom:14px;line-height:1.35}
-    .modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-    .modal-actions .btn-secondary{
-      background:rgba(255,255,255,.14);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.18);
-    }
-    .modal-actions .btn-primary{background:var(--gold);color:#111}
-    .small-note{font-size:12px;opacity:.75;margin-top:10px}
+    .toggleLine input[type="checkbox"]{ transform: scale(1.2); }
 
-    /* Admin styles */
-    #adminLoginModal input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    #adminPanelModal ul {
-      list-style: none;
-      padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    #adminPanelModal li {
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-    }
-    #adminBackdrop,
-    #adminPanelBackdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
-      z-index: 999;
-    }
-    #adminLoginModal,
-    #adminPanelModal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-      width: min(420px, 100%);
-      margin: 0;
+    @media (max-width: 1020px){
+      .grid{ grid-template-columns: 1fr; }
+      .month{ font-size:44px; }
     }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 
 <body>
-  <div id="tsparticles"></div>
 
-  <!-- MODAL -->
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
-      <div class="modal-title" id="modalTitle">Aviso</div>
-      <div class="modal-text" id="modalText"></div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="modalCancel" type="button">Fechar</button>
-        <button class="btn btn-primary" id="modalConfirm" type="button">Confirmar</button>
-      </div>
-      <div class="small-note" id="modalNote"></div>
-    </div>
-  </div>
+  <!-- LOGIN -->
+  <div id="loginScreen" style="display:none; min-height:100vh; background:var(--bg);">
+    <div style="max-width:440px; margin:0 auto; padding:28px 14px;">
+      <div class="card">
+        <p class="cardTitle">Entrar</p>
 
-  <!-- Admin Modals -->
-  <div class="modal-backdrop" id="adminBackdrop"></div>
-  <div class="modal-box" id="adminLoginModal" role="dialog" aria-modal="true">
-    <div class="modal-title">Login Admin</div>
-    <input type="text" id="adminUser" placeholder="Usuário">
-    <input type="password" id="adminPass" placeholder="Senha">
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="hideAdminLogin()">Cancelar</button>
-      <button class="btn btn-primary" onclick="loginAdmin()">Entrar</button>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="adminPanelBackdrop"></div>
-  <div class="modal-box" id="adminPanelModal" role="dialog" aria-modal="true">
-    <div class="modal-title">Painel Admin</div>
-    <h3>Confirmações de Presença</h3>
-    <ul id="presenceList"></ul>
-    <h3>Presentes Escolhidos</h3>
-    <ul id="giftsList"></ul>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="hideAdminPanel()">Fechar</button>
-    </div>
-  </div>
-
-  <!-- PRÉ CAPA -->
-  <div class="precover" id="precover">
-    <div id="admin-trigger" style="position:absolute; top:10px; left:10px; width:20px; height:20px; background:transparent; cursor:pointer;" onclick="showAdminLogin()" title="Admin"></div>
-    <div class="circle-photo fade-up" style="animation-delay:.2s;">
-      <img src="nos.jpeg" alt="Foto do casal">
-    </div>
-    <div class="pre-title fade-up" style="animation-delay:.6s;">Charraiá</div>
-    <h1 class="fade-up" style="animation-delay:1s;">Luiza & André</h1>
-
-    <div class="date fade-up" style="animation-delay:1.4s;">20/06/2026 - 17:00 horas</div>
-    <div class="countdown fade-up" id="countdown-pre" style="animation-delay:1.6s;"></div>
-    <div class="location fade-up" style="animation-delay:1.8s;">Rua Vera Lucia, 215 - Sinimbu</div>
-
-    <button class="maps-btn btn fade-up rsvp-toggle" id="rsvp-toggle-btn" type="button" onclick="toggleRsvpPanel()" style="animation-delay:1.95s;">Confirmação de Presença</button>
-
-    <div class="rsvp-panel" id="rsvp-panel">
-      <div class="rsvp-title">Confirme sua presença</div>
-      <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
-      <div class="rsvp-form">
-        <input type="text" id="rsvp-nome" placeholder="Seu nome completo">
-        <div class="rsvp-grid">
-          <select id="rsvp-status">
-            <option value="sim">Sim, vou estar presente</option>
-            <option value="nao">Não poderei comparecer</option>
-          </select>
+        <div class="field" style="margin-bottom:10px;">
+          <label>E-mail</label>
+          <input id="loginEmail" type="email" placeholder="seuemail@exemplo.com" autocomplete="email">
         </div>
-        <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante" style="display:none;">
-        <button class="btn btn-primary" id="rsvp-btn" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
-        <div class="rsvp-feedback" id="rsvp-feedback"></div>
+
+        <div class="field" style="margin-bottom:10px;">
+          <label>Senha</label>
+          <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <div class="row" style="margin-top:6px;">
+          <button id="btnLogin">Entrar</button>
+          <button id="btnRegister" class="ghost">Criar conta</button>
+        </div>
+
+        <div class="status" id="loginStatus" style="margin-top:10px;">Digite e-mail e senha.</div>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="btnResendVerify" class="ghost">Reenviar verificação</button>
+        </div>
+
+        <div class="small" style="margin-top:8px; line-height:1.45;">
+          Este modo usa <b>TOTP manual</b> (Authenticator) sem MFA do Firebase.
+          <br><b>Obs:</b> para criar a conta, o e-mail precisa ser confirmado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENROLL TOTP (manual) -->
+  <div id="enrollScreen" style="display:none; min-height:100vh; background:var(--bg);">
+    <div style="max-width:520px; margin:0 auto; padding:28px 14px;">
+      <div class="card">
+        <p class="cardTitle">Ativar MFA (Google Authenticator) — modo manual</p>
+
+        <div class="small" style="line-height:1.55; margin-bottom:10px;">
+          1) Clique em <b>Gerar QR</b><br>
+          2) No Google Authenticator, adicione uma conta e escaneie o QR (ou use a chave)<br>
+          3) Digite o código de 6 dígitos e confirme
+        </div>
+
+        <div class="row" style="margin-top:6px;">
+          <button id="btnTotpGenerate">Gerar QR</button>
+          <button id="btnEnrollLogout" class="ghost">Sair</button>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+          <div style="background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px;">
+            <canvas id="qrCanvas" width="180" height="180" style="display:block;"></canvas>
+            <div class="small" style="margin-top:6px;">Escaneie o QR (ou use a chave)</div>
+          </div>
+
+          <div style="flex:1; min-width:240px;">
+            <div class="small" style="margin-bottom:6px;"><b>Chave (se não puder escanear):</b></div>
+            <div id="secretKeyBox" class="secretBox">—</div>
+            <div class="small" style="margin-top:8px;">
+              Guarde com cuidado. Não compartilhe.
+              <br><b>Nota:</b> este modo é “manual” (não é MFA oficial do Firebase).
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:12px;">
+          <label>Código do Authenticator</label>
+          <input id="totpCode" type="text" inputmode="numeric" placeholder="123456" autocomplete="one-time-code">
+        </div>
+
+        <div class="row" style="margin-top:6px;">
+          <button id="btnTotpVerify">Confirmar e continuar</button>
+        </div>
+
+        <div class="status" id="enrollStatus" style="margin-top:10px;">
+          Clique em <b>Gerar QR</b> para iniciar.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE TOTP (manual) -->
+  <div id="mfaScreen" style="display:none; min-height:100vh; background:var(--bg);">
+    <div style="max-width:460px; margin:0 auto; padding:28px 14px;">
+      <div class="card">
+        <p class="cardTitle">Verificação (Authenticator)</p>
+
+        <div class="small" style="line-height:1.5; margin-bottom:10px;">
+          Digite o código do Google Authenticator para continuar.
+        </div>
+
+        <div class="field" style="margin-top:10px;">
+          <label>Código (6 dígitos)</label>
+          <input id="mfaCode" type="text" inputmode="numeric" placeholder="123456" autocomplete="one-time-code">
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="btnMfaVerify">Confirmar</button>
+          <button id="btnMfaBack" class="ghost">Sair</button>
+        </div>
+
+        <div class="status" id="mfaStatus" style="margin-top:10px;">Aguardando…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appScreen" class="wrap" style="display:none;">
+    <div class="topbar">
+      <div>
+        <h1 class="month" id="monthTitle">janeiro</h1>
+        <div class="small">
+          Ano: <b>2026</b> • Saldo final projetado = saldo em conta + (salário − (Inter + C6 + Seguro))
+        </div>
+      </div>
+
+      <div class="saldoBox">
+        <div class="label">SALDO FINAL (PROJETADO)</div>
+        <div class="value">R$ <span id="saldoFinal">0,00</span></div>
+      </div>
+
+      <div class="controls">
+        <select id="monthSelect"></select>
+        <button id="resetBtn" class="ghost" title="Só zera os campos do mês selecionado (não apaga outros meses).">Zerar mês</button>
+        <button id="logoutBtn" class="ghost">Sair</button>
       </div>
     </div>
 
-    <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
-    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.2s;">Lista de Presente</button>
-  </div>
+    <div class="grid">
 
-  <audio id="bgMusic" loop preload="auto" autoplay muted>
-    <source src="musica.mp3" type="audio/mpeg">
-  </audio>
+      <!-- CARD 1 -->
+      <div class="card">
+        <p class="cardTitle">Campos do mês</p>
 
-  <!-- CONTEÚDO -->
-  <div class="overlay" id="mainContent">
-    <h1>Luiza & André</h1>
-    <div class="date">20/06/2026 - 17:00 horas</div>
-    <div class="countdown" id="countdown-main"></div>
-    <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
-    <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
-    <button class="back-btn btn btn-secondary" onclick="voltarPreCapa()">Voltar</button>
+        <div class="row">
+          <div class="field">
+            <label>Salário do mês (R$)</label>
+            <input id="salario" type="text" inputmode="decimal" placeholder="R$ 3.500,00" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Cartão Inter - fatura (R$)</label>
+            <input id="inter" type="text" inputmode="decimal" placeholder="R$ 1.200,00" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Cartão C6 - fatura (R$)</label>
+            <input id="c6" type="text" inputmode="decimal" placeholder="R$ 800,00" autocomplete="off">
+          </div>
 
-    <div class="container">
+          <div class="field">
+            <label>Seguro do carro (R$)</label>
+            <input id="seguroCarro" type="text" inputmode="decimal" placeholder="R$ 250,00" autocomplete="off">
+          </div>
 
-      <!-- ✅ MANTIVE seus cards iguais (só copiei a partir daqui) -->
+          <div class="field">
+            <label>Quanto tenho na conta (R$)</label>
+            <input id="saldoConta" type="text" inputmode="decimal" placeholder="R$ 500,00" autocomplete="off">
+          </div>
+        </div>
 
- <div class="card" data-item="Luvas térmicas + Assadeira de silicone para Airfryer" data-key="LuvastermicasAssadeiradesiliconeparaAirfryer">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/luvastermicasassadeiradesiliconeparaairfryer.png" alt="Luvas térmicas + Assadeira de silicone para Airfryer"></div>
-  <h3>Luvas térmicas + Assadeira de silicone para Airfryer</h3>
-  <div class="badge" id="badge-LuvastermicasAssadeiradesiliconeparaAirfryer">Disponível</div>
-  <div class="reserved-note" id="note-LuvastermicasAssadeiradesiliconeparaAirfryer">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-LuvastermicasAssadeiradesiliconeparaAirfryer">
-  <input type="email" placeholder="Seu e-mail" id="email-LuvastermicasAssadeiradesiliconeparaAirfryer">
-  <button class="btn btn-primary" id="btn-LuvastermicasAssadeiradesiliconeparaAirfryer" onclick="Presentear('LuvastermicasAssadeiradesiliconeparaAirfryer')">Presentear</button>
-</div>
+        <div class="status" id="status">Aguardando login…</div>
 
-<div class="card" data-item="Descanso de panelas + descanso de colheres" data-key="DescansodepanelasDescansodecolheres">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/descansodepanelasdescansodecolheres.png" alt="Descanso de panelas + descanso de colheres"></div>
-  <h3>Descanso de panelas + descanso de colheres</h3>
-  <div class="badge" id="badge-DescansodepanelasDescansodecolheres">Disponível</div>
-  <div class="reserved-note" id="note-DescansodepanelasDescansodecolheres">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-DescansodepanelasDescansodecolheres">
-  <input type="email" placeholder="Seu e-mail" id="email-DescansodepanelasDescansodecolheres">
-  <button class="btn btn-primary" id="btn-DescansodepanelasDescansodecolheres" onclick="Presentear('DescansodepanelasDescansodecolheres')">Presentear</button>
-</div>
-      
-  <div class="card" data-item="PortacoposPortafrios" data-key="PortacoposPortafrios">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/portacoposportafrios.png" alt="Porta-copos + Porta-frios"></div>
-  <h3>Porta-copos + Porta-frios</h3>
-  <div class="badge" id="badge-PortacoposPortafrios">Disponível</div>
-  <div class="reserved-note" id="note-PortacoposPortafrios">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-PortacoposPortafrios">
-  <input type="email" placeholder="Seu e-mail" id="email-PortacoposPortafrios">
-  <button class="btn btn-primary" id="btn-PortacoposPortafrios" onclick="Presentear('PortacoposPortafrios')">Presentear</button>
-</div>
+        <div style="margin-top:12px" class="kpis">
+          <div class="kpi">
+            <div class="t">Total Saídas (Inter + C6 + Seguro)</div>
+            <div class="v">R$ <span id="totalCartoes">0,00</span></div>
+          </div>
+          <div class="kpi">
+            <div class="t">Sobra do Salário (Salário − Saídas)</div>
+            <div class="v">R$ <span id="sobraSalario">0,00</span></div>
+          </div>
+          <div class="kpi" style="grid-column: 1 / -1;">
+            <div class="t">Saldo Final Projetado (Saldo em conta + Sobra do salário)</div>
+            <div class="v">R$ <span id="saldoFinal2">0,00</span></div>
+          </div>
+        </div>
 
-<div class="card" data-item="JogoamericanoSuporterolospapeltoalhafilmeealuminio" data-key="JogoamericanoSuporterolospapeltoalhafilmeealuminio">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogoamericanosuporterolospapeltoalhafilmeealuminio.png" alt="Jogo americano + suporte rolos papel toalha, filme e alumínio"></div>
-  <h3>Jogo americano + suporte rolos papel toalha, filme e alumínio</h3>
-  <div class="badge" id="badge-JogoamericanoSuporterolospapeltoalhafilmeealuminio">Disponível</div>
-  <div class="reserved-note" id="note-JogoamericanoSuporterolospapeltoalhafilmeealuminio">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-JogoamericanoSuporterolospapeltoalhafilmeealuminio">
-  <input type="email" placeholder="Seu e-mail" id="email-JogoamericanoSuporterolospapeltoalhafilmeealuminio">
-  <button class="btn btn-primary" id="btn-JogoamericanoSuporterolospapeltoalhafilmeealuminio" onclick="Presentear('JogoamericanoSuporterolospapeltoalhafilmeealuminio')">Presentear</button>
-</div>
+        <div class="totLine">
+          <div>Resumo rápido</div>
+          <div id="quickHint" class="small"></div>
+        </div>
 
-<div class="card" data-item="Pipoqueira" data-key="Pipoqueira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/pipoqueira.png" alt="Pipoqueira"></div>
-  <h3>Pipoqueira</h3>
-  <div class="badge" id="badge-Pipoqueira">Disponível</div>
-  <div class="reserved-note" id="note-Pipoqueira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Pipoqueira">
-  <input type="email" placeholder="Seu e-mail" id="email-Pipoqueira">
-  <button class="btn btn-primary" id="btn-Pipoqueira" onclick="Presentear('Pipoqueira')">Presentear</button>
-</div>
-
-<div class="card" data-item="MartelodecarneCortadordepizzaebolo" data-key="MartelodecarneCortadordepizzaebolo">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/martelodecarnecortadordepizzaebolo.png" alt="Martelo de carne + cortador de pizza e bolo"></div>
-  <h3>Martelo de carne + cortador de pizza e bolo</h3>
-  <div class="badge" id="badge-MartelodecarneCortadordepizzaebolo">Disponível</div>
-  <div class="reserved-note" id="note-MartelodecarneCortadordepizzaebolo">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-MartelodecarneCortadordepizzaebolo">
-  <input type="email" placeholder="Seu e-mail" id="email-MartelodecarneCortadordepizzaebolo">
-  <button class="btn btn-primary" id="btn-MartelodecarneCortadordepizzaebolo" onclick="Presentear('MartelodecarneCortadordepizzaebolo')">Presentear</button>
-</div>
-
-<div class="card" data-item="CoadordecafePeneiras" data-key="CoadordecafePeneiras">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/coadordecafepeneiras.png" alt="Coador de café + peneiras"></div>
-  <h3>Coador de café + peneiras</h3>
-  <div class="badge" id="badge-CoadordecafePeneiras">Disponível</div>
-  <div class="reserved-note" id="note-CoadordecafePeneiras">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-CoadordecafePeneiras">
-  <input type="email" placeholder="Seu e-mail" id="email-CoadordecafePeneiras">
-  <button class="btn btn-primary" id="btn-CoadordecafePeneiras" onclick="Presentear('CoadordecafePeneiras')">Presentear</button>
-</div>
-
-<div class="card" data-item="QueijeiraFunil" data-key="QueijeiraFunil">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/queijeirafunil.png" alt="Queijeira + funil"></div>
-  <h3>Queijeira + funil</h3>
-  <div class="badge" id="badge-QueijeiraFunil">Disponível</div>
-  <div class="reserved-note" id="note-QueijeiraFunil">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-QueijeiraFunil">
-  <input type="email" placeholder="Seu e-mail" id="email-QueijeiraFunil">
-  <button class="btn btn-primary" id="btn-QueijeiraFunil" onclick="Presentear('QueijeiraFunil')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogodeformasparapizza" data-key="Jogodeformasparapizza">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodeformasparapizza.png" alt="Jogo de formas para pizza"></div>
-  <h3>Jogo de formas para pizza</h3>
-  <div class="badge" id="badge-Jogodeformasparapizza">Disponível</div>
-  <div class="reserved-note" id="note-Jogodeformasparapizza">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogodeformasparapizza">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogodeformasparapizza">
-  <button class="btn btn-primary" id="btn-Jogodeformasparapizza" onclick="Presentear('Jogodeformasparapizza')">Presentear</button>
-</div>
-
-<div class="card" data-item="BoleiraAcucareiro" data-key="BoleiraAcucareiro">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/boleiraacucareiro.png" alt="Boleira + açucareiro"></div>
-  <h3>Boleira + açucareiro</h3>
-  <div class="badge" id="badge-BoleiraAcucareiro">Disponível</div>
-  <div class="reserved-note" id="note-BoleiraAcucareiro">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-BoleiraAcucareiro">
-  <input type="email" placeholder="Seu e-mail" id="email-BoleiraAcucareiro">
-  <button class="btn btn-primary" id="btn-BoleiraAcucareiro" onclick="Presentear('BoleiraAcucareiro')">Presentear</button>
-</div>
-
-<div class="card" data-item="Organizadordegeladeira" data-key="Organizadordegeladeira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/organizadordegeladeira.png" alt="Organizador de geladeira"></div>
-  <h3>Organizador de geladeira</h3>
-  <div class="badge" id="badge-Organizadordegeladeira">Disponível</div>
-  <div class="reserved-note" id="note-Organizadordegeladeira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Organizadordegeladeira">
-  <input type="email" placeholder="Seu e-mail" id="email-Organizadordegeladeira">
-  <button class="btn btn-primary" id="btn-Organizadordegeladeira" onclick="Presentear('Organizadordegeladeira')">Presentear</button>
-</div>
-      <div class="card" data-item="Kitvassourarodoepadelixo" data-key="Kitvassourarodoepadelixo">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/kitvassourarodoepadelixo.png" alt="Kit vassoura, rodo e pá de lixo"></div>
-  <h3>Kit vassoura, rodo e pá de lixo</h3>
-  <div class="badge" id="badge-Kitvassourarodoepadelixo">Disponível</div>
-  <div class="reserved-note" id="note-Kitvassourarodoepadelixo">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Kitvassourarodoepadelixo">
-  <input type="email" placeholder="Seu e-mail" id="email-Kitvassourarodoepadelixo">
-  <button class="btn btn-primary" id="btn-Kitvassourarodoepadelixo" onclick="Presentear('Kitvassourarodoepadelixo')">Presentear</button>
-</div>
-
-<div class="card" data-item="JogodepregadoresVaraldepe" data-key="JogodepregadoresVaraldepe">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodepregadoresvaraldepe.png" alt="Jogo de pregadores + Varal de pé"></div>
-  <h3>Jogo de pregadores + Varal de pé</h3>
-  <div class="badge" id="badge-JogodepregadoresVaraldepe">Disponível</div>
-  <div class="reserved-note" id="note-JogodepregadoresVaraldepe">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-JogodepregadoresVaraldepe">
-  <input type="email" placeholder="Seu e-mail" id="email-JogodepregadoresVaraldepe">
-  <button class="btn btn-primary" id="btn-JogodepregadoresVaraldepe" onclick="Presentear('JogodepregadoresVaraldepe')">Presentear</button>
-</div>
-
-<div class="card" data-item="RaladorEscorredordemassa" data-key="RaladorEscorredordemassa">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/raladorescorredordemassa.png" alt="Ralador + escorredor de massa"></div>
-  <h3>Ralador + escorredor de massa</h3>
-  <div class="badge" id="badge-RaladorEscorredordemassa">Disponível</div>
-  <div class="reserved-note" id="note-RaladorEscorredordemassa">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-RaladorEscorredordemassa">
-  <input type="email" placeholder="Seu e-mail" id="email-RaladorEscorredordemassa">
-  <button class="btn btn-primary" id="btn-RaladorEscorredordemassa" onclick="Presentear('RaladorEscorredordemassa')">Presentear</button>
-</div>
-
-<div class="card" data-item="CopomedidordealimentosColheresdemedidas" data-key="CopomedidordealimentosColheresdemedidas">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/copomedidordealimentoscolheresdemedidas.png" alt="Copo medidor de alimentos + colheres de medidas"></div>
-  <h3>Copo medidor de alimentos + colheres de medidas</h3>
-  <div class="badge" id="badge-CopomedidordealimentosColheresdemedidas">Disponível</div>
-  <div class="reserved-note" id="note-CopomedidordealimentosColheresdemedidas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-CopomedidordealimentosColheresdemedidas">
-  <input type="email" placeholder="Seu e-mail" id="email-CopomedidordealimentosColheresdemedidas">
-  <button class="btn btn-primary" id="btn-CopomedidordealimentosColheresdemedidas" onclick="Presentear('CopomedidordealimentosColheresdemedidas')">Presentear</button>
-</div>
-
-<div class="card" data-item="ColheresdepauEspremedor" data-key="ColheresdepauEspremedor">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/colheresdepauespremedor.png" alt="Colheres de pau + Espremedor"></div>
-  <h3>Colheres de pau + Espremedor</h3>
-  <div class="badge" id="badge-ColheresdepauEspremedor">Disponível</div>
-  <div class="reserved-note" id="note-ColheresdepauEspremedor">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-ColheresdepauEspremedor">
-  <input type="email" placeholder="Seu e-mail" id="email-ColheresdepauEspremedor">
-  <button class="btn btn-primary" id="btn-ColheresdepauEspremedor" onclick="Presentear('ColheresdepauEspremedor')">Presentear</button>
-</div>
-
-<div class="card" data-item="TesouradecozinhaAbridordelataegarrafa" data-key="TesouradecozinhaAbridordelataegarrafa">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/tesouradecozinhaabridordelataegarrafa.png" alt="Tesoura de cozinha + abridor de lata e garrafa"></div>
-  <h3>Tesoura de cozinha + abridor de lata e garrafa</h3>
-  <div class="badge" id="badge-TesouradecozinhaAbridordelataegarrafa">Disponível</div>
-  <div class="reserved-note" id="note-TesouradecozinhaAbridordelataegarrafa">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-TesouradecozinhaAbridordelataegarrafa">
-  <input type="email" placeholder="Seu e-mail" id="email-TesouradecozinhaAbridordelataegarrafa">
-  <button class="btn btn-primary" id="btn-TesouradecozinhaAbridordelataegarrafa" onclick="Presentear('TesouradecozinhaAbridordelataegarrafa')">Presentear</button>
-</div>
-
-<div class="card" data-item="KitespatulassiliconeFouet" data-key="KitespatulassiliconeFouet">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/kitespatulassiliconefouet.png" alt="Kit espátulas silicone + fouet"></div>
-  <h3>Kit espátulas silicone + fouet</h3>
-  <div class="badge" id="badge-KitespatulassiliconeFouet">Disponível</div>
-  <div class="reserved-note" id="note-KitespatulassiliconeFouet">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-KitespatulassiliconeFouet">
-  <input type="email" placeholder="Seu e-mail" id="email-KitespatulassiliconeFouet">
-  <button class="btn btn-primary" id="btn-KitespatulassiliconeFouet" onclick="Presentear('KitespatulassiliconeFouet')">Presentear</button>
-</div>
-
-<div class="card" data-item="SaladeiraCentrifugadesalada" data-key="SaladeiraCentrifugadesalada">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/saladeiracentrifugadesalada.png" alt="Saladeira + centrífuga de salada"></div>
-  <h3>Saladeira + centrífuga de salada</h3>
-  <div class="badge" id="badge-SaladeiraCentrifugadesalada">Disponível</div>
-  <div class="reserved-note" id="note-SaladeiraCentrifugadesalada">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-SaladeiraCentrifugadesalada">
-  <input type="email" placeholder="Seu e-mail" id="email-SaladeiraCentrifugadesalada">
-  <button class="btn btn-primary" id="btn-SaladeiraCentrifugadesalada" onclick="Presentear('SaladeiraCentrifugadesalada')">Presentear</button>
-</div>
-
-<div class="card" data-item="KitRamekins" data-key="KitRamekins">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/kitramekins.png" alt="Kit Ramekins"></div>
-  <h3>Kit Ramekins</h3>
-  <div class="badge" id="badge-KitRamekins">Disponível</div>
-  <div class="reserved-note" id="note-KitRamekins">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-KitRamekins">
-  <input type="email" placeholder="Seu e-mail" id="email-KitRamekins">
-  <button class="btn btn-primary" id="btn-KitRamekins" onclick="Presentear('KitRamekins')">Presentear</button>
-</div>
-
-<div class="card" data-item="CestoderoupaSuporteparadetergente" data-key="CestoderoupaSuporteparadetergente">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/cestoderoupasuporteparadetergente.png" alt="Cesto de roupa + suporte para detergente"></div>
-  <h3>Cesto de roupa + suporte para detergente</h3>
-  <div class="badge" id="badge-CestoderoupaSuporteparadetergente">Disponível</div>
-  <div class="reserved-note" id="note-CestoderoupaSuporteparadetergente">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-CestoderoupaSuporteparadetergente">
-  <input type="email" placeholder="Seu e-mail" id="email-CestoderoupaSuporteparadetergente">
-  <button class="btn btn-primary" id="btn-CestoderoupaSuporteparadetergente" onclick="Presentear('CestoderoupaSuporteparadetergente')">Presentear</button>
-</div>
-
-      <div class="card" data-item="Jogodecopos" data-key="Jogodecopos">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodecopos.png" alt="Jogo de copos"></div>
-  <h3>Jogo de copos</h3>
-  <div class="badge" id="badge-Jogodecopos">Disponível</div>
-  <div class="reserved-note" id="note-Jogodecopos">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogodecopos">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogodecopos">
-  <button class="btn btn-primary" id="btn-Jogodecopos" onclick="Presentear('Jogodecopos')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogodepratossobremesas" data-key="Jogodepratossobremesas">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/Jogodepratosdesobremesas.png" alt="Jogo de pratos sobremesas"></div>
-  <h3>Jogo de pratos sobremesas</h3>
-  <div class="badge" id="badge-Jogodepratossobremesas">Disponível</div>
-  <div class="reserved-note" id="note-Jogodepratossobremesas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogodepratossobremesas">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogodepratossobremesas">
-  <button class="btn btn-primary" id="btn-Jogodepratossobremesas" onclick="Presentear('Jogodepratossobremesas')">Presentear</button>
-</div>
-
-<div class="card" data-item="Frigideirasantiaderentes" data-key="Frigideirasantiaderentes">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/Frigideirasantiaderentes.png" alt="Frigideiras antiaderentes"></div>
-  <h3>Frigideiras antiaderentes</h3>
-  <div class="badge" id="badge-Frigideirasantiaderentes">Disponível</div>
-  <div class="reserved-note" id="note-Frigideirasantiaderentes">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Frigideirasantiaderentes">
-  <input type="email" placeholder="Seu e-mail" id="email-Frigideirasantiaderentes">
-  <button class="btn btn-primary" id="btn-Frigideirasantiaderentes" onclick="Presentear('Frigideirasantiaderentes')">Presentear</button>
-</div>
-
-<div class="card" data-item="Dispenserdemantimentoscombicodosador" data-key="Dispenserdemantimentoscombicodosador">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/Dispenserdemantimentoscombicodosador.png" alt="Dispenser de mantimentos com bico dosador"></div>
-  <h3>Dispenser de mantimentos com bico dosador</h3>
-  <div class="badge" id="badge-Dispenserdemantimentoscombicodosador">Disponível</div>
-  <div class="reserved-note" id="note-Dispenserdemantimentoscombicodosador">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Dispenserdemantimentoscombicodosador">
-  <input type="email" placeholder="Seu e-mail" id="email-Dispenserdemantimentoscombicodosador">
-  <button class="btn btn-primary" id="btn-Dispenserdemantimentoscombicodosador" onclick="Presentear('Dispenserdemantimentoscombicodosador')">Presentear</button>
-</div>
-
-<div class="card" data-item="Cortadormultifuncional" data-key="Cortadormultifuncional">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/cortadormultifuncional.png" alt="Cortador multifuncional"></div>
-  <h3>Cortador multifuncional</h3>
-  <div class="badge" id="badge-Cortadormultifuncional">Disponível</div>
-  <div class="reserved-note" id="note-Cortadormultifuncional">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Cortadormultifuncional">
-  <input type="email" placeholder="Seu e-mail" id="email-Cortadormultifuncional">
-  <button class="btn btn-primary" id="btn-Cortadormultifuncional" onclick="Presentear('Cortadormultifuncional')">Presentear</button>
-</div>
-
-<div class="card" data-item="PotesHermeticos" data-key="PotesHermeticos">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/poteshermeticos.png" alt="Potes Herméticos"></div>
-  <h3>Potes Herméticos</h3>
-  <div class="badge" id="badge-PotesHermeticos">Disponível</div>
-  <div class="reserved-note" id="note-PotesHermeticos">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-PotesHermeticos">
-  <input type="email" placeholder="Seu e-mail" id="email-PotesHermeticos">
-  <button class="btn btn-primary" id="btn-PotesHermeticos" onclick="Presentear('PotesHermeticos')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogodesousplat" data-key="Jogodesousplat">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodesousplat.png" alt="Jogo de sousplat"></div>
-  <h3>Jogo de sousplat</h3>
-  <div class="badge" id="badge-Jogodesousplat">Disponível</div>
-  <div class="reserved-note" id="note-Jogodesousplat">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Jogodesousplat">
-  <input type="email" placeholder="Seu e-mail" id="email-Jogodesousplat">
-  <button class="btn btn-primary" id="btn-Jogodesousplat" onclick="Presentear('Jogodesousplat')">Presentear</button>
-</div>
-
-<div class="card" data-item="Tabuadevidro" data-key="Tabuadevidro">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/tabuadevidro.png" alt="Tabua de vidro"></div>
-  <h3>Tabua de vidro</h3>
-  <div class="badge" id="badge-Tabuadevidro">Disponível</div>
-  <div class="reserved-note" id="note-Tabuadevidro">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Tabuadevidro">
-  <input type="email" placeholder="Seu e-mail" id="email-Tabuadevidro">
-  <button class="btn btn-primary" id="btn-Tabuadevidro" onclick="Presentear('Tabuadevidro')">Presentear</button>
-</div>
-
-<div class="card" data-item="Formadepudim" data-key="Formadepudim">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/formadepudim.png" alt="Forma de pudim"></div>
-  <h3>Forma de pudim</h3>
-  <div class="badge" id="badge-Formadepudim">Disponível</div>
-  <div class="reserved-note" id="note-Formadepudim">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Formadepudim">
-  <input type="email" placeholder="Seu e-mail" id="email-Formadepudim">
-  <button class="btn btn-primary" id="btn-Formadepudim" onclick="Presentear('Formadepudim')">Presentear</button>
-</div>
-
-<div class="card" data-item="Leiteira" data-key="Leiteira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/leiteira.png" alt="Leiteira"></div>
-  <h3>Leiteira</h3>
-  <div class="badge" id="badge-Leiteira">Disponível</div>
-  <div class="reserved-note" id="note-Leiteira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Leiteira">
-  <input type="email" placeholder="Seu e-mail" id="email-Leiteira">
-  <button class="btn btn-primary" id="btn-Leiteira" onclick="Presentear('Leiteira')">Presentear</button>
-</div>
-
-<div class="card" data-item="Baldesplasticos" data-key="Baldesplasticos">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/baldesplasticos.png" alt="Baldes plásticos"></div>
-  <h3>Baldes plásticos</h3>
-  <div class="badge" id="badge-Baldesplasticos">Disponível</div>
-  <div class="reserved-note" id="note-Baldesplasticos">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-Baldesplasticos">
-  <input type="email" placeholder="Seu e-mail" id="email-Baldesplasticos">
-  <button class="btn btn-primary" id="btn-Baldesplasticos" onclick="Presentear('Baldesplasticos')">Presentear</button>
-</div>
-      
- <div class="card" data-item="Aparelho de Jantar" data-key="aparelho-de-jantar">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/aparelhodesantar.png" alt="Aparelho de Jantar"></div>
-  <h3>Aparelho de Jantar</h3>
-  <div class="badge" id="badge-aparelho-de-jantar">Disponível</div>
-  <div class="reserved-note" id="note-aparelho-de-jantar">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-aparelho-de-jantar">
-  <input type="email" placeholder="Seu e-mail" id="email-aparelho-de-jantar">
-  <button class="btn btn-primary" id="btn-aparelho-de-jantar" onclick="Presentear('aparelho-de-jantar')">Presentear</button>
-</div>
-
-<div class="card" data-item="Chaleira" data-key="chaleira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/chaleira.png" alt="Chaleira"></div>
-  <h3>Chaleira</h3>
-  <div class="badge" id="badge-chaleira">Disponível</div>
-  <div class="reserved-note" id="note-chaleira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-chaleira">
-  <input type="email" placeholder="Seu e-mail" id="email-chaleira">
-  <button class="btn btn-primary" id="btn-chaleira" onclick="Presentear('chaleira')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogo de Taças" data-key="jogo-de-tacas">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodetacas.png" alt="Jogo de Taças"></div>
-  <h3>Jogo de Taças</h3>
-  <div class="badge" id="badge-jogo-de-tacas">Disponível</div>
-  <div class="reserved-note" id="note-jogo-de-tacas">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-jogo-de-tacas">
-  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-tacas">
-  <button class="btn btn-primary" id="btn-jogo-de-tacas" onclick="Presentear('jogo-de-tacas')">Presentear</button>
-</div>
-
-<div class="card" data-item="Fruteira" data-key="fruteira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/fruteira.png" alt="Fruteira"></div>
-  <h3>Fruteira</h3>
-  <div class="badge" id="badge-fruteira">Disponível</div>
-  <div class="reserved-note" id="note-fruteira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-fruteira">
-  <input type="email" placeholder="Seu e-mail" id="email-fruteira">
-  <button class="btn btn-primary" id="btn-fruteira" onclick="Presentear('fruteira')">Presentear</button>
-</div>
-
-<div class="card" data-item="Balança pra Cozinha" data-key="balanca-pra-cozinha">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/balancaparacozinha.png" alt="Balança pra Cozinha"></div>
-  <h3>Balança pra Cozinha</h3>
-  <div class="badge" id="badge-balanca-pra-cozinha">Disponível</div>
-  <div class="reserved-note" id="note-balanca-pra-cozinha">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-balanca-pra-cozinha">
-  <input type="email" placeholder="Seu e-mail" id="email-balanca-pra-cozinha">
-  <button class="btn btn-primary" id="btn-balanca-pra-cozinha" onclick="Presentear('balanca-pra-cozinha')">Presentear</button>
-</div>
-
-<div class="card" data-item="Tábua para Queijos e Frios" data-key="tabua-para-queijos-e-frios">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/tabua.png" alt="Tábua para Queijos e Frios"></div>
-  <h3>Tábua para Queijos e Frios</h3>
-  <div class="badge" id="badge-tabua-para-queijos-e-frios">Disponível</div>
-  <div class="reserved-note" id="note-tabua-para-queijos-e-frios">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-tabua-para-queijos-e-frios">
-  <input type="email" placeholder="Seu e-mail" id="email-tabua-para-queijos-e-frios">
-  <button class="btn btn-primary" id="btn-tabua-para-queijos-e-frios" onclick="Presentear('tabua-para-queijos-e-frios')">Presentear</button>
-</div>
-
-<div class="card" data-item="Bomboniere" data-key="bomboniere">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/bomboniere.png" alt="Bomboniere"></div>
-  <h3>Bomboniere</h3>
-  <div class="badge" id="badge-bomboniere">Disponível</div>
-  <div class="reserved-note" id="note-bomboniere">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-bomboniere">
-  <input type="email" placeholder="Seu e-mail" id="email-bomboniere">
-  <button class="btn btn-primary" id="btn-bomboniere" onclick="Presentear('bomboniere')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogo de Sobremesa" data-key="jogo-de-sobremesa">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodesobremesa.png" alt="Jogo de Sobremesa"></div>
-  <h3>Jogo de Sobremesa</h3>
-  <div class="badge" id="badge-jogo-de-sobremesa">Disponível</div>
-  <div class="reserved-note" id="note-jogo-de-sobremesa">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-jogo-de-sobremesa">
-  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-sobremesa">
-  <button class="btn btn-primary" id="btn-jogo-de-sobremesa" onclick="Presentear('jogo-de-sobremesa')">Presentear</button>
-</div>
-
-<div class="card" data-item="Petisqueira" data-key="petisqueira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/petisqueira.png" alt="Petisqueira"></div>
-  <h3>Petisqueira</h3>
-  <div class="badge" id="badge-petisqueira">Disponível</div>
-  <div class="reserved-note" id="note-petisqueira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-petisqueira">
-  <input type="email" placeholder="Seu e-mail" id="email-petisqueira">
-  <button class="btn btn-primary" id="btn-petisqueira" onclick="Presentear('petisqueira')">Presentear</button>
-</div>
-
-<div class="card" data-item="Porta Condimentos" data-key="porta-condimentos">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/portacondimentos.png" alt="Porta Condimentos"></div>
-  <h3>Porta Condimentos</h3>
-  <div class="badge" id="badge-porta-condimentos">Disponível</div>
-  <div class="reserved-note" id="note-porta-condimentos">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-porta-condimentos">
-  <input type="email" placeholder="Seu e-mail" id="email-porta-condimentos">
-  <button class="btn btn-primary" id="btn-porta-condimentos" onclick="Presentear('porta-condimentos')">Presentear</button>
-</div>
-
-<div class="card" data-item="Batedeira" data-key="batedeira">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/batedeira.png" alt="Batedeira"></div>
-  <h3>Batedeira</h3>
-  <div class="badge" id="badge-batedeira">Disponível</div>
-  <div class="reserved-note" id="note-batedeira">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-batedeira">
-  <input type="email" placeholder="Seu e-mail" id="email-batedeira">
-  <button class="btn btn-primary" id="btn-batedeira" onclick="Presentear('batedeira')">Presentear</button>
-</div>
-
-<div class="card" data-item="Jogo de Lençóis" data-key="jogo-de-lencois">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/jogodelonçois.png" alt="Jogo de Lençóis"></div>
-  <h3>Jogo de Lençóis</h3>
-  <div class="badge" id="badge-jogo-de-lencois">Disponível</div>
-  <div class="reserved-note" id="note-jogo-de-lencois">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-jogo-de-lencois">
-  <input type="email" placeholder="Seu e-mail" id="email-jogo-de-lencois">
-  <button class="btn btn-primary" id="btn-jogo-de-lencois" onclick="Presentear('jogo-de-lencois')">Presentear</button>
-</div>
-
-<div class="card" data-item="Edredom" data-key="edredom">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/edredom.png" alt="Edredom"></div>
-  <h3>Edredom</h3>
-  <div class="badge" id="badge-edredom">Disponível</div>
-  <div class="reserved-note" id="note-edredom">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-edredom">
-  <input type="email" placeholder="Seu e-mail" id="email-edredom">
-  <button class="btn btn-primary" id="btn-edredom" onclick="Presentear('edredom')">Presentear</button>
-</div>
-
-<div class="card" data-item="Toalhas de Mesa" data-key="toalhas-de-mesa">
-  <span class="gold-line"></span>
-  <div class="product-img"><img src="Imagens/tolahasdemesa.png" alt="Toalhas de Mesa"></div>
-  <h3>Toalhas de Mesa</h3>
-  <div class="badge" id="badge-toalhas-de-mesa">Disponível</div>
-  <div class="reserved-note" id="note-toalhas-de-mesa">Este item já foi reservado.</div>
-  <input type="text" placeholder="Seu nome" id="nome-toalhas-de-mesa">
-  <input type="email" placeholder="Seu e-mail" id="email-toalhas-de-mesa">
-  <button class="btn btn-primary" id="btn-toalhas-de-mesa" onclick="Presentear('toalhas-de-mesa')">Presentear</button>
-</div>
-
-      <div class="card" data-item="Forno Eletrico" data-key="Forno Eletrico">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/forno.png" alt="Forno Eletrico"></div>
-        <h3>Forno Eletrico</h3>
-        <div class="badge" id="badge-Forno Eletrico">Disponível</div>
-        <div class="reserved-note" id="note-Forno Eletrico">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Forno Eletrico">
-        <input type="email" placeholder="Seu e-mail" id="email-Forno Eletrico">
-        <button class="btn btn-primary" id="btn-Forno Eletrico" onclick="Presentear('Forno Eletrico')">Presentear</button>
+        <div style="margin-top:15px;">
+          <p class="cardTitle">Dados Salvos no Firebase (Mês Atual)</p>
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden;">
+              <thead style="background:#dde2e7;">
+                <tr>
+                  <th style="padding:8px; border:1px solid #cfd4da; text-align:left;">Campo</th>
+                  <th style="padding:8px; border:1px solid #cfd4da; text-align:left;">Valor</th>
+                </tr>
+              </thead>
+              <tbody id="dadosSalvosTabela"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div class="card" data-item="Ferro de Passar" data-key="Ferro de Passar">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/ferrodepassar.png" alt="Ferro de Passar"></div>
-        <h3>Ferro de Passar</h3>
-        <div class="badge" id="badge-Ferro de Passar">Disponível</div>
-        <div class="reserved-note" id="note-Ferro de Passar">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Ferro de Passar">
-        <input type="email" placeholder="Seu e-mail" id="email-Ferro de Passar">
-        <button class="btn btn-primary" id="btn-Ferro de Passar" onclick="Presentear('Ferro de Passar')">Presentear</button>
+      <!-- CARD 2 (NOVO) -->
+      <div class="card">
+        <p class="cardTitle">Relatório Mensal (Telegram + IA)</p>
+
+        <div class="toggleLine">
+          <input id="reportEnabled" type="checkbox">
+          <label for="reportEnabled" style="font-weight:900;">Ativar relatório automático todo mês</label>
+          <span class="small">Enviado no dia 1 (09:00) com fechamento do mês anterior.</span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="field">
+            <label>Alerta se Saídas passarem de (% do salário)</label>
+            <input id="reportAlertPct" type="number" min="10" max="200" step="1" placeholder="70">
+          </div>
+          <div class="field">
+            <label>Observações (opcional)</label>
+            <input id="reportNotes" type="text" placeholder="Ex: meta reduzir C6 em 15%">
+          </div>
+        </div>
+
+        <div class="status" id="reportStatus">Configuração do relatório: carregando…</div>
+
+        <div class="small" style="margin-top:10px; line-height:1.5;">
+          <b>Como funciona:</b> essa tela só salva suas preferências no Firestore.  
+          O envio para o Telegram é feito por uma <b>Cloud Function agendada</b> (backend),
+          usando o token do bot guardado com segurança (Secrets).
+        </div>
       </div>
 
-      <div class="card" data-item="Aspirador de Po" data-key="Aspirador de Po">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/aspiradordepo.png" alt="Aspirador de Po"></div>
-        <h3>Aspirador de Po</h3>
-        <div class="badge" id="badge-Aspirador de Po">Disponível</div>
-        <div class="reserved-note" id="note-Aspirador de Po">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Aspirador de Po">
-        <input type="email" placeholder="Seu e-mail" id="email-Aspirador de Po">
-        <button class="btn btn-primary" id="btn-Aspirador de Po" onclick="Presentear('Aspirador de Po')">Presentear</button>
-      </div>
+      <!-- CARD 3 -->
+      <div class="card">
+        <p class="cardTitle">Gráfico 2026</p>
+        <div class="chartBox">
+          <canvas id="chart" height="120"></canvas>
+        </div>
 
-      <div class="card" data-item="Roupa de Cama" data-key="Roupa de Cama">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/roupacama.png" alt="Roupa de Cama"></div>
-        <h3>Roupa de Cama</h3>
-        <div class="badge" id="badge-Roupa de Cama">Disponível</div>
-        <div class="reserved-note" id="note-Roupa de Cama">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Roupa de Cama">
-        <input type="email" placeholder="Seu e-mail" id="email-Roupa de Cama">
-        <button class="btn btn-primary" id="btn-Roupa de Cama" onclick="Presentear('Roupa de Cama')">Presentear</button>
-      </div>
+        <div class="card" style="margin-top:14px;">
+          <p class="cardTitle">Como o gráfico funciona</p>
+          <div class="small" style="line-height:1.55">
+            <b>Barras (12 meses):</b><br>
+            • <b>Salário</b> (positivo)<br>
+            • <b>Saídas (Inter + C6 + Seguro)</b> (mostrado como valor positivo, mas representa “saída”)<br><br>
 
-      <div class="card" data-item="Roupa de Banho" data-key="Roupa de Banho">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/roupabanho.png" alt="Roupa de Banho"></div>
-        <h3>Roupa de Banho</h3>
-        <div class="badge" id="badge-Roupa de Banho">Disponível</div>
-        <div class="reserved-note" id="note-Roupa de Banho">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Roupa de Banho">
-        <input type="email" placeholder="Seu e-mail" id="email-Roupa de Banho">
-        <button class="btn btn-primary" id="btn-Roupa de Banho" onclick="Presentear('Roupa de Banho')">Presentear</button>
-      </div>
+            <b>Linha (12 meses):</b><br>
+            • <b>Saldo Final Projetado</b> = saldo em conta + (salário − saídas)<br><br>
 
-      <div class="card" data-item="Panela de Pressao" data-key="Panela de Pressao">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/panelapressao.png" alt="Panela de Pressao"></div>
-        <h3>Panela de Pressao</h3>
-        <div class="badge" id="badge-Panela de Pressao">Disponível</div>
-        <div class="reserved-note" id="note-Panela de Pressao">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Panela de Pressao">
-        <input type="email" placeholder="Seu e-mail" id="email-Panela de Pressao">
-        <button class="btn btn-primary" id="btn-Panela de Pressao" onclick="Presentear('Panela de Pressao')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Jogo de Pratos" data-key="Jogo de Pratos">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/jogosdeprato.png" alt="Jogo de Pratos"></div>
-        <h3>Jogo de Pratos</h3>
-        <div class="badge" id="badge-Jogo de Pratos">Disponível</div>
-        <div class="reserved-note" id="note-Jogo de Pratos">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Jogo de Pratos">
-        <input type="email" placeholder="Seu e-mail" id="email-Jogo de Pratos">
-        <button class="btn btn-primary" id="btn-Jogo de Pratos" onclick="Presentear('Jogo de Pratos')">Presentear</button>
-      </div>
-
-       <div class="card" data-item="Jogo de Pratos Fundos" data-key="Jogo de Pratos Fundos">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/Jogodepratosfundos.png" alt="Jogo de Pratos Fundos"></div>
-        <h3>Jogo de Pratos Fundos</h3>
-        <div class="badge" id="badge-Jogo de Pratos Fundos">Disponível</div>
-        <div class="reserved-note" id="note-Jogo de Pratos Fundos">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Jogo de Pratos Fundos">
-        <input type="email" placeholder="Seu e-mail" id="email-Jogo de Pratos Fundos">
-        <button class="btn btn-primary" id="btn-Jogo de Pratos Fundos" onclick="Presentear('Jogo de Pratos Fundos')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Kit Utensilios de Silicone" data-key="Kit Utensilios de Silicone">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/silicone.png" alt="Kit Utensilios de Silicone"></div>
-        <h3>Kit Utensilios de Silicone</h3>
-        <div class="badge" id="badge-Kit Utensilios de Silicone">Disponível</div>
-        <div class="reserved-note" id="note-Kit Utensilios de Silicone">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Kit Utensilios de Silicone">
-        <input type="email" placeholder="Seu e-mail" id="email-Kit Utensilios de Silicone">
-        <button class="btn btn-primary" id="btn-Kit Utensilios de Silicone" onclick="Presentear('Kit Utensilios de Silicone')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Garrafa de Agua" data-key="Garrafa de Agua">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/garrafa.png" alt="Garrafa de Agua"></div>
-        <h3>Garrafa de Agua</h3>
-        <div class="badge" id="badge-Garrafa de Agua">Disponível</div>
-        <div class="reserved-note" id="note-Garrafa de Agua">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Garrafa de Agua">
-        <input type="email" placeholder="Seu e-mail" id="email-Garrafa de Agua">
-        <button class="btn btn-primary" id="btn-Garrafa de Agua" onclick="Presentear('Garrafa de Agua')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Assadeiras" data-key="Assadeiras">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/assadeiras.png" alt="Assadeiras"></div>
-        <h3>Assadeiras</h3>
-        <div class="badge" id="badge-Assadeiras">Disponível</div>
-        <div class="reserved-note" id="note-Assadeiras">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Assadeiras">
-        <input type="email" placeholder="Seu e-mail" id="email-Assadeiras">
-        <button class="btn btn-primary" id="btn-Assadeiras" onclick="Presentear('Assadeiras')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Cafeteira" data-key="Cafeteira">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/cafeteira.png" alt="Cafeteira"></div>
-        <h3>Cafeteira</h3>
-        <div class="badge" id="badge-Cafeteira">Disponível</div>
-        <div class="reserved-note" id="note-Cafeteira">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Cafeteira">
-        <input type="email" placeholder="Seu e-mail" id="email-Cafeteira">
-        <button class="btn btn-primary" id="btn-Cafeteira" onclick="Presentear('Cafeteira')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Purificador de agua" data-key="Purificador_de_agua">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/purificadoragua.png" alt="Purificador de agua"></div>
-        <h3>Purificador de agua</h3>
-        <div class="badge" id="badge-Purificador_de_agua">Disponível</div>
-        <div class="reserved-note" id="note-Purificador_de_agua">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Purificador_de_agua">
-        <input type="email" placeholder="Seu e-mail" id="email-Purificador_de_agua">
-        <button class="btn btn-primary" id="btn-Purificador_de_agua" onclick="Presentear('Purificador de agua')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Triturador de alho" data-key="Triturador_de_alho">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/trituraralho.png" alt="Triturador de alho"></div>
-        <h3>Triturador de alho</h3>
-        <div class="badge" id="badge-Triturador_de_alho">Disponível</div>
-        <div class="reserved-note" id="note-Triturador_de_alho">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Triturador_de_alho">
-        <input type="email" placeholder="Seu e-mail" id="email-Triturador_de_alho">
-        <button class="btn btn-primary" id="btn-Triturador_de_alho" onclick="Presentear('Triturador de alho')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Multiprocessador + liquidificador" data-key="Multiprocessador_liquidificador">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/multiprocessadorliquidificador.png" alt="Multiprocessador + liquidificador"></div>
-        <h3>Multiprocessador + liquidificador</h3>
-        <div class="badge" id="badge-Multiprocessador_liquidificador">Disponível</div>
-        <div class="reserved-note" id="note-Multiprocessador_liquidificador">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Multiprocessador_liquidificador">
-        <input type="email" placeholder="Seu e-mail" id="email-Multiprocessador_liquidificador">
-        <button class="btn btn-primary" id="btn-Multiprocessador_liquidificador" onclick="Presentear('Multiprocessador + liquidificador')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Garrafa termica" data-key="Garrafa_termica">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/garrafatermica.png" alt="Garrafa termica"></div>
-        <h3>Garrafa termica</h3>
-        <div class="badge" id="badge-Garrafa_termica">Disponível</div>
-        <div class="reserved-note" id="note-Garrafa_termica">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Garrafa_termica">
-        <input type="email" placeholder="Seu e-mail" id="email-Garrafa_termica">
-        <button class="btn btn-primary" id="btn-Garrafa_termica" onclick="Presentear('Garrafa termica')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Rolo de abrir massas" data-key="Rolo_de_abrir_massas">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/rolomassa.png" alt="Rolo de abrir massas"></div>
-        <h3>Rolo de abrir massas</h3>
-        <div class="badge" id="badge-Rolo_de_abrir_massas">Disponível</div>
-        <div class="reserved-note" id="note-Rolo_de_abrir_massas">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Rolo_de_abrir_massas">
-        <input type="email" placeholder="Seu e-mail" id="email-Rolo_de_abrir_massas">
-        <button class="btn btn-primary" id="btn-Rolo_de_abrir_massas" onclick="Presentear('Rolo de abrir massas')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Misteira" data-key="Misteira">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/misteira.png" alt="Misteira"></div>
-        <h3>Misteira</h3>
-        <div class="badge" id="badge-Misteira">Disponível</div>
-        <div class="reserved-note" id="note-Misteira">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Misteira">
-        <input type="email" placeholder="Seu e-mail" id="email-Misteira">
-        <button class="btn btn-primary" id="btn-Misteira" onclick="Presentear('Misteira')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Tigelas" data-key="Tigelas">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/tigelas.png" alt="Tigelas"></div>
-        <h3>Tigelas</h3>
-        <div class="badge" id="badge-Tigelas">Disponível</div>
-        <div class="reserved-note" id="note-Tigelas">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Tigelas">
-        <input type="email" placeholder="Seu e-mail" id="email-Tigelas">
-        <button class="btn btn-primary" id="btn-Tigelas" onclick="Presentear('Tigelas')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Bowls" data-key="Bowls">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/bowls.png" alt="Bowls"></div>
-        <h3>Bowls</h3>
-        <div class="badge" id="badge-Bowls">Disponível</div>
-        <div class="reserved-note" id="note-Bowls">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Bowls">
-        <input type="email" placeholder="Seu e-mail" id="email-Bowls">
-        <button class="btn btn-primary" id="btn-Bowls" onclick="Presentear('Bowls')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Travessas de vidro" data-key="Travessas_de_vidro">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/travessa.png" alt="Travessas de vidro"></div>
-        <h3>Travessas de vidro</h3>
-        <div class="badge" id="badge-Travessas_de_vidro">Disponível</div>
-        <div class="reserved-note" id="note-Travessas_de_vidro">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Travessas_de_vidro">
-        <input type="email" placeholder="Seu e-mail" id="email-Travessas_de_vidro">
-        <button class="btn btn-primary" id="btn-Travessas_de_vidro" onclick="Presentear('Travessas de vidro')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Tabuleiros" data-key="Tabuleiros">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/tabuleiro.png" alt="Tabuleiros"></div>
-        <h3>Tabuleiros</h3>
-        <div class="badge" id="badge-Tabuleiros">Disponível</div>
-        <div class="reserved-note" id="note-Tabuleiros">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Tabuleiros">
-        <input type="email" placeholder="Seu e-mail" id="email-Tabuleiros">
-        <button class="btn btn-primary" id="btn-Tabuleiros" onclick="Presentear('Tabuleiros')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Xícara com pires" data-key="Xicara_com_pires">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/xicara.png" alt="Xícara com pires"></div>
-        <h3>Xícara com pires</h3>
-        <div class="badge" id="badge-Xicara_com_pires">Disponível</div>
-        <div class="reserved-note" id="note-Xicara_com_pires">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Xicara_com_pires">
-        <input type="email" placeholder="Seu e-mail" id="email-Xicara_com_pires">
-        <button class="btn btn-primary" id="btn-Xicara_com_pires" onclick="Presentear('Xícara com pires')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Airfryer" data-key="Airfryer">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/airfryer.png" alt="Airfryer"></div>
-        <h3>Airfryer</h3>
-        <div class="badge" id="badge-Airfryer">Disponível</div>
-        <div class="reserved-note" id="note-Airfryer">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Airfryer">
-        <input type="email" placeholder="Seu e-mail" id="email-Airfryer">
-        <button class="btn btn-primary" id="btn-Airfryer" onclick="Presentear('Airfryer')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Porta Tempero" data-key="Porta_Tempero">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/portatempero.png" alt="Porta Tempero"></div>
-        <h3>Porta Tempero</h3>
-        <div class="badge" id="badge-Porta_Tempero">Disponível</div>
-        <div class="reserved-note" id="note-Porta_Tempero">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Porta_Tempero">
-        <input type="email" placeholder="Seu e-mail" id="email-Porta_Tempero">
-        <button class="btn btn-primary" id="btn-Porta_Tempero" onclick="Presentear('Porta Tempero')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Jogo de Copos" data-key="Jogo_de_Copos">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/jogocopos.png" alt="Jogo de Copos"></div>
-        <h3>Jogo de Copos</h3>
-        <div class="badge" id="badge-Jogo_de_Copos">Disponível</div>
-        <div class="reserved-note" id="note-Jogo_de_Copos">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Jogo_de_Copos">
-        <input type="email" placeholder="Seu e-mail" id="email-Jogo_de_Copos">
-        <button class="btn btn-primary" id="btn-Jogo_de_Copos" onclick="Presentear('Jogo de Copos')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Escorredor De Louças" data-key="Escorredor_De_Loucas">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/escorredorlouca.png" alt="Escorredor De Louças"></div>
-        <h3>Escorredor De Louças</h3>
-        <div class="badge" id="badge-Escorredor_De_Loucas">Disponível</div>
-        <div class="reserved-note" id="note-Escorredor_De_Loucas">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Escorredor_De_Loucas">
-        <input type="email" placeholder="Seu e-mail" id="email-Escorredor_De_Loucas">
-        <button class="btn btn-primary" id="btn-Escorredor_De_Loucas" onclick="Presentear('Escorredor De Louças')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Microondas" data-key="Microondas">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/microondas.jpg" alt="Microondas"></div>
-        <h3>Microondas</h3>
-        <div class="badge" id="badge-Microondas">Disponível</div>
-        <div class="reserved-note" id="note-Microondas">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Microondas">
-        <input type="email" placeholder="Seu e-mail" id="email-Microondas">
-        <button class="btn btn-primary" id="btn-Microondas" onclick="Presentear('Microondas')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="JogoDePanela" data-key="JogoDePanela">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/jogodepanela.png" alt="Jogo de Panela"></div>
-        <h3>Jogo de Panela</h3>
-        <div class="badge" id="badge-JogoDePanela">Disponível</div>
-        <div class="reserved-note" id="note-JogoDePanela">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-JogoDePanela">
-        <input type="email" placeholder="Seu e-mail" id="email-JogoDePanela">
-        <button class="btn btn-primary" id="btn-JogoDePanela" onclick="Presentear('JogoDePanela')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Jogo De Talher" data-key="Jogo_De_Talher">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/jogodetalher.png" alt="Jogo De Talher"></div>
-        <h3>Jogo De Talher</h3>
-        <div class="badge" id="badge-Jogo_De_Talher">Disponível</div>
-        <div class="reserved-note" id="note-Jogo_De_Talher">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Jogo_De_Talher">
-        <input type="email" placeholder="Seu e-mail" id="email-Jogo_De_Talher">
-        <button class="btn btn-primary" id="btn-Jogo_De_Talher" onclick="Presentear('Jogo De Talher')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Jarra" data-key="Jarra">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/jarra.png" alt="Jarra"></div>
-        <h3>Jarra</h3>
-        <div class="badge" id="badge-Jarra">Disponível</div>
-        <div class="reserved-note" id="note-Jarra">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Jarra">
-        <input type="email" placeholder="Seu e-mail" id="email-Jarra">
-        <button class="btn btn-primary" id="btn-Jarra" onclick="Presentear('Jarra')">Presentear</button>
-      </div>
-
-      <div class="card" data-item="Cooktop" data-key="Cooktop">
-        <span class="gold-line"></span>
-        <div class="product-img"><img src="Imagens/cooktop.png" alt="Cooktop"></div>
-        <h3>Cooktop</h3>
-        <div class="badge" id="badge-Cooktop">Disponível</div>
-        <div class="reserved-note" id="note-Cooktop">Este item já foi reservado.</div>
-        <input type="text" placeholder="Seu nome" id="nome-Cooktop">
-        <input type="email" placeholder="Seu e-mail" id="email-Cooktop">
-        <button class="btn btn-primary" id="btn-Cooktop" onclick="Presentear('Cooktop')">Presentear</button>
+            Assim você enxerga fácil:
+            <ul>
+              <li>se as saídas (cartões + seguro) estão consumindo muito do salário</li>
+              <li>se o saldo final projetado está subindo ou caindo ao longo de 2026</li>
+            </ul>
+          </div>
+          <div class="small" style="margin-top:10px">
+            Dica: preencha mês a mês (Jan…Dez). O gráfico se atualiza automaticamente.
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <script>
-    /* ✅ CELULAR: ao tocar no card, liga o efeito; ao tocar fora, desliga */
-    function setupMobileCardEffect(){
-      const cards = Array.from(document.querySelectorAll(".card[data-item]"));
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, collection, onSnapshot, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import {
+      getAuth, onAuthStateChanged,
+      signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      signOut, setPersistence, browserSessionPersistence,
+      sendEmailVerification, reload
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-      cards.forEach(card=>{
-        if(!card.querySelector(".gold-line")){
-          const s = document.createElement("span");
-          s.className = "gold-line";
-          card.prepend(s);
-        }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOZap1gB8N8k-3-4nhA-jd2k7HlFJgIes",
+      authDomain: "gastos-92e20.firebaseapp.com",
+      projectId: "gastos-92e20",
+      storageBucket: "gastos-92e20.firebasestorage.app",
+      messagingSenderId: "248552638302",
+      appId: "1:248552638302:web:0588762093eaf4108d31cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    await setPersistence(auth, browserSessionPersistence);
+
+    const $ = (id) => document.getElementById(id);
+
+    function showOnly(id){
+      ["loginScreen","enrollScreen","mfaScreen","appScreen"].forEach(x=>{
+        const el = $(x); if (!el) return;
+        el.style.display = (x===id) ? "block" : "none";
       });
+    }
+    function showLogin(msg){ showOnly("loginScreen"); $("loginStatus").textContent = msg || "Digite e-mail e senha."; }
+    function showEnroll(msg){ showOnly("enrollScreen"); $("enrollStatus").textContent = msg || "Configure o Authenticator."; }
+    function showMfa(msg){ showOnly("mfaScreen"); $("mfaStatus").textContent = msg || "Digite o código do Authenticator."; }
+    function showApp(){ showOnly("appScreen"); }
 
-      function clearAll(){
-        cards.forEach(c=>c.classList.remove("is-active"));
-      }
-
-      cards.forEach(card=>{
-        card.addEventListener("pointerdown", (e)=>{
-          const ignore = e.target.closest("input, button, a, label, textarea, select");
-          if(ignore) return;
-          clearAll();
-          card.classList.add("is-active");
-        }, {passive:true});
-      });
-
-      document.addEventListener("pointerdown", (e)=>{
-        if(e.target.closest(".card")) return;
-        clearAll();
-      }, {passive:true});
+    function brl(n){
+      const s = (Number(n)||0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+      return s.replace(/\u00A0/g, " ");
+    }
+    function brNum(n){
+      return (Number(n)||0).toLocaleString("pt-BR",{ minimumFractionDigits:2, maximumFractionDigits:2 });
+    }
+    function parseBRL(value){
+      if (value == null) return 0;
+      let s = String(value).trim();
+      if (!s) return 0;
+      s = s.replace(/\s/g,"").replace(/^R\$/i,"");
+      s = s.replace(/[^\d,.\-]/g, "");
+      if (s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
+      const n = Number(s);
+      return Number.isFinite(n) ? n : 0;
+    }
+    function formatInputToBRL(el){
+      const n = parseBRL(el.value);
+      el.value = brl(n);
     }
 
-    /* countdown */
-    const target = new Date("Jun 20, 2026 17:00:00").getTime();
-    setInterval(()=>{
-      const diff = target - Date.now();
-      const t = Math.max(0, diff);
-      const s = Math.floor(t/1000)%60;
-      const m = Math.floor(t/60000)%60;
-      const h = Math.floor(t/3600000)%24;
-      const days = Math.floor(t/86400000);
-      const txt = `${days} dias ${h}h ${m}m ${s}s`;
-      const a = document.getElementById("countdown-pre");
-      const b = document.getElementById("countdown-main");
-      if(a) a.textContent = txt;
-      if(b) b.textContent = txt;
-    },1000);
-
-    function abrirMapa(){
-      const q = encodeURIComponent("Rua Vera Lucia, 215 - Sinimbu");
-      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`,"_blank");
+    const editing = new Set();
+    function markEditing(el, on){ if(on) editing.add(el.id); else editing.delete(el.id); }
+    function safeSetInput(id, value){
+      const el = $(id);
+      if (!el) return;
+      if (editing.has(id)) return;
+      el.value = brl(value);
     }
 
-    /* Música com FADE IN */
-    const audio = document.getElementById("bgMusic");
-    let fadeTimer = null;
-    function fadeInAudio(targetVol = 0.35, step = 0.02, intervalMs = 140){
-      clearInterval(fadeTimer);
-      audio.volume = Math.max(0, Math.min(1, audio.volume || 0));
-      fadeTimer = setInterval(()=>{
-        const next = Math.min(targetVol, audio.volume + step);
-        audio.volume = next;
-        if(next >= targetVol){
-          clearInterval(fadeTimer);
-          fadeTimer = null;
-        }
-      }, intervalMs);
-    }
-    async function tocarMusica(){
-      if(audio.paused){
-        audio.volume = 0.03;
-        try{
-          await audio.play();
-          fadeInAudio(0.35);
-        }catch(e){}
-      }else{
-        audio.pause();
-      }
-    }
+    const months = Array.from({length:12}, (_,i)=> `2026-${String(i+1).padStart(2,"0")}`);
+    const monthNames = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 
-    function entrarEvento(){
-      document.getElementById("precover").style.display="none";
-      document.getElementById("mainContent").style.display="block";
-      window.scrollTo({top:0, behavior:"instant"});
-      try{ aplicarEstadoLista(); }catch(e){}
-    }
-    function voltarPreCapa(){
-      document.getElementById("mainContent").style.display="none";
-      document.getElementById("precover").style.display="flex";
-      window.scrollTo({top:0, behavior:"instant"});
-    }
-
-    /* Ripple dourado */
-    document.addEventListener("click", (e)=>{
-      const btn = e.target.closest("button");
-      if(!btn || btn.disabled) return;
-      const rect = btn.getBoundingClientRect();
-      const ripple = document.createElement("span");
-      ripple.className = "ripple";
-      const size = Math.max(rect.width, rect.height);
-      ripple.style.width = ripple.style.height = size + "px";
-      ripple.style.left = (e.clientX - rect.left - size/2) + "px";
-      ripple.style.top  = (e.clientY - rect.top  - size/2) + "px";
-      btn.appendChild(ripple);
-      ripple.addEventListener("animationend", ()=> ripple.remove());
+    months.forEach((id, i) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = `${monthNames[i]} / 2026`;
+      $("monthSelect").appendChild(opt);
     });
 
-    /* ===== MODAL helpers ===== */
-    const uiModal = document.getElementById("modal");
-    const uiTitle = document.getElementById("modalTitle");
-    const uiText = document.getElementById("modalText");
-    const uiNote = document.getElementById("modalNote");
-    const uiCancel = document.getElementById("modalCancel");
-    const uiConfirm = document.getElementById("modalConfirm");
-    const uiBackdrop = document.getElementById("modalBackdrop");
-    let uiResolve = null;
+    const now = new Date();
+    const defaultMonth = (now.getFullYear() === 2026) ? `2026-${String(now.getMonth()+1).padStart(2,"0")}` : "2026-01";
+    $("monthSelect").value = defaultMonth;
+    $("monthTitle").textContent = monthNames[months.indexOf($("monthSelect").value)];
 
-    function uiCloseModal(result=false){
-      uiModal.classList.remove("show");
-      const r = uiResolve;
-      uiResolve = null;
-      if(r) r(result);
-    }
-    uiBackdrop.addEventListener("click", ()=> uiCloseModal(false));
-    document.addEventListener("keydown",(e)=>{
-      if(e.key==="Escape" && uiModal.classList.contains("show")) uiCloseModal(false);
-    });
-    uiCancel.addEventListener("click", ()=> uiCloseModal(false));
-    uiConfirm.addEventListener("click", ()=> uiCloseModal(true));
+    let uid = null;
+    let unsubSelected = null;
+    let unsubAllMonths = null;
+    let unsubReportSettings = null;
 
-    function uiConfirmar({title, text, note, confirmText="Confirmar", cancelText="Cancelar"}){
-      uiTitle.textContent = title || "Confirmar";
-      uiText.textContent = text || "";
-      uiNote.textContent = note || "";
-      uiConfirm.style.display = "inline-block";
-      uiConfirm.textContent = confirmText;
-      uiCancel.textContent = cancelText;
-      uiModal.classList.add("show");
-      uiConfirm.focus();
-      return new Promise((resolve)=>{ uiResolve = resolve; });
-    }
-    function uiAviso({title, text, note, buttonText="Fechar"}){
-      uiTitle.textContent = title || "Aviso";
-      uiText.textContent = text || "";
-      uiNote.textContent = note || "";
-      uiConfirm.style.display = "none";
-      uiCancel.textContent = buttonText;
-      uiModal.classList.add("show");
-      uiCancel.focus();
-      return new Promise((resolve)=>{ uiResolve = resolve; });
+    const monthsData = new Map(months.map(m => [m, { salario:0, inter:0, c6:0, seguroCarro:0, saldoConta:0 }]));
+    let chart = null;
+
+    let autosaveTimer = null;
+    let autosaveInFlight = false;
+    let pendingSaveAfter = false;
+
+    function calcFields(d){
+      const salario = parseBRL(d.salario);
+      const inter = parseBRL(d.cartaoInter ?? d.inter);
+      const c6 = parseBRL(d.cartaoC6 ?? d.c6);
+      const seguroCarro = parseBRL(d.seguroCarro);
+      const saldoConta = parseBRL(d.saldoConta);
+      const totalSaidas = inter + c6 + seguroCarro;
+      const sobraSalario = salario - totalSaidas;
+      const saldoFinal = saldoConta + sobraSalario;
+      return { salario, inter, c6, seguroCarro, saldoConta, totalSaidas, sobraSalario, saldoFinal };
     }
 
-    /* ========= CONTROLE DE UI (aberta/fechada) ========= */
-    function aplicarEstadoLista(){
-      const aberta = !!window.LISTA_PRESENTES_ABERTA;
+    function updateKPIs(d){
+      const c = calcFields(d);
+      $("totalCartoes").textContent = brNum(c.totalSaidas);
+      $("sobraSalario").textContent = brNum(c.sobraSalario);
+      $("saldoFinal").textContent = brNum(c.saldoFinal);
+      $("saldoFinal2").textContent = brNum(c.saldoFinal);
 
-      document.querySelectorAll(".card[data-item]").forEach((card)=>{
-        const key = card.getAttribute("data-key") || "";
-        const badge = document.getElementById("badge-"+key);
-        const note  = document.getElementById("note-"+key);
-        const btn   = document.getElementById("btn-"+key);
-        const inNome  = document.getElementById("nome-"+key);
-        const inEmail = document.getElementById("email-"+key);
+      if (c.sobraSalario >= 0) {
+        $("quickHint").textContent = `Sobrou ${brl(c.sobraSalario)} do salário; somando com a conta, saldo final projeta ${brl(c.saldoFinal)}.`;
+      } else {
+        $("quickHint").textContent = `Saídas passaram ${brl(Math.abs(c.sobraSalario))} do salário; seu saldo final projeta ${brl(c.saldoFinal)}.`;
+      }
+    }
 
-        const reservado = card.classList.contains("is-reservado");
-        const fechadoParaEste = (!aberta && !reservado);
+    function atualizarTabelaSalvos(d, updatedAtMillis = null){
+      const c = calcFields(d);
+      const tbody = $("dadosSalvosTabela");
+      if (!tbody) return;
 
-        card.classList.toggle("is-closed", fechadoParaEste);
+      const updatedText = updatedAtMillis ? new Date(updatedAtMillis).toLocaleString("pt-BR") : "-";
+      const linhas = [
+        ["Salário", brl(c.salario)],
+        ["Cartão Inter", brl(c.inter)],
+        ["Cartão C6", brl(c.c6)],
+        ["Seguro Carro", brl(c.seguroCarro)],
+        ["Saldo em Conta", brl(c.saldoConta)],
+        ["Total Saídas", brl(c.totalSaidas)],
+        ["Sobra do Salário", brl(c.sobraSalario)],
+        ["Saldo Final Projetado", brl(c.saldoFinal)],
+        ["Última Atualização", updatedText]
+      ];
 
-        if(fechadoParaEste){
-          if(badge){
-            badge.textContent = "Em breve";
-            badge.classList.add("closed");
-            badge.classList.remove("reservado");
-          }
-          if(note){
-            note.textContent = "Lista de presentes ainda não liberada.";
-            note.style.display = "block";
-          }
-          if(btn){
-            btn.disabled = true;
-            btn.textContent = "Em breve";
-          }
-          if(inNome){ inNome.disabled = true; }
-          if(inEmail){ inEmail.disabled = true; }
-        }else{
-          if(!reservado){
-            if(badge) badge.classList.remove("closed");
-            if(note)  note.textContent = "Este item já foi reservado.";
-            if(btn && window.LISTA_PRESENTES_ABERTA) btn.textContent = "Presentear";
-            if(inNome){ inNome.disabled = false; }
-            if(inEmail){ inEmail.disabled = false; }
-          }
+      tbody.innerHTML = "";
+      linhas.forEach(([campo, valor]) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td style="padding:8px; border:1px solid #cfd4da;">${campo}</td>
+          <td style="padding:8px; border:1px solid #cfd4da; font-weight:900;">${valor}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setInputsFromDoc(d){
+      safeSetInput("salario", d.salario);
+      safeSetInput("inter", d.cartaoInter ?? d.inter);
+      safeSetInput("c6", d.cartaoC6 ?? d.c6);
+      safeSetInput("seguroCarro", d.seguroCarro);
+      safeSetInput("saldoConta", d.saldoConta);
+
+      updateKPIs(d);
+      const updatedAtMillis = d?.updatedAt?.toMillis?.() ?? null;
+      atualizarTabelaSalvos(d, updatedAtMillis);
+    }
+
+    function currentMonthId(){ return $("monthSelect").value; }
+    function monthDocRef(monthId){ return doc(db, "users", uid, "months", monthId); }
+    function mfaDocRef(){ return doc(db, "users", uid, "mfa", "customTotp"); }
+    function reportSettingsRef(){ return doc(db, "users", uid, "settings", "report"); }
+
+    async function ensureMonthDocsExist(){
+      for (const m of months){
+        const ref = monthDocRef(m);
+        const snap = await getDoc(ref);
+        if (!snap.exists()){
+          await setDoc(ref, {
+            salario: 0, cartaoInter: 0, cartaoC6: 0, seguroCarro: 0, saldoConta: 0,
+            createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+          });
+        }
+      }
+    }
+
+    async function ensureReportSettingsExist(){
+      const ref = reportSettingsRef();
+      const snap = await getDoc(ref);
+      if (!snap.exists()){
+        await setDoc(ref, {
+          enabled: false,
+          alertPct: 70,
+          notes: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      }
+    }
+
+    function rebuildChart(){
+      const labels = months.map(m => monthNames[months.indexOf(m)].slice(0,3).toUpperCase());
+      const salarios = months.map(m => calcFields(monthsData.get(m)).salario);
+      const saidas = months.map(m => calcFields(monthsData.get(m)).totalSaidas);
+      const saldoFinal = months.map(m => calcFields(monthsData.get(m)).saldoFinal);
+
+      const ctx = $("chart");
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "bar",
+        data: { labels, datasets: [
+          { label: "Salário", data: salarios, borderWidth: 1 },
+          { label: "Saídas (Inter + C6 + Seguro)", data: saidas, borderWidth: 1 },
+          { label: "Saldo Final Projetado", data: saldoFinal, type: "line", tension: 0.25, borderWidth: 2, pointRadius: 3, yAxisID: "y" }
+        ]},
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${brl(ctx.parsed.y)}` } }
+          },
+          scales: { y: { ticks: { callback: (v) => brl(v) } } }
         }
       });
     }
 
-    /* ========= FUNÇÃO GLOBAL ========= */
-    async function Presentear(item){
-      if(!window.LISTA_PRESENTES_ABERTA){
-        await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
-        return;
-      }
-      if(typeof window.__presentearImpl !== "function"){
-        await uiAviso({
-          title:"Erro",
-          text:"Firebase ainda não carregou. Recarregue a página.",
-          note:"Se estiver abrindo pelo preview do WhatsApp, abra no navegador."
+    function listenAllMonths(){
+      const colRef = collection(db, "users", uid, "months");
+      unsubAllMonths = onSnapshot(colRef, (snap) => {
+        snap.forEach(docSnap => {
+          const monthId = docSnap.id;
+          if (!monthsData.has(monthId)) return;
+          const d = docSnap.data() || {};
+          monthsData.set(monthId, {
+            salario: parseBRL(d.salario),
+            cartaoInter: parseBRL(d.cartaoInter),
+            cartaoC6: parseBRL(d.cartaoC6),
+            seguroCarro: parseBRL(d.seguroCarro),
+            saldoConta: parseBRL(d.saldoConta)
+          });
         });
-        return;
-      }
-      return window.__presentearImpl(item);
-    }
-    window.Presentear = Presentear;
-
-    function syncRsvpAcompanhantes(){
-      const status = document.getElementById("rsvp-status");
-      const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome");
-      if(!status || !acompanhanteNome) return;
-      const isSim = status.value === "sim";
-      acompanhanteNome.style.display = isSim ? "block" : "none";
-      if(!isSim) acompanhanteNome.value = "";
+        rebuildChart();
+      });
     }
 
-    function toggleRsvpPanel(force){
-      const panel = document.getElementById("rsvp-panel");
-      const btn = document.getElementById("rsvp-toggle-btn");
-      if(!panel || !btn) return;
-      const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("show");
-      panel.classList.toggle("show", shouldShow);
-      btn.classList.toggle("active", shouldShow);
-      btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+    function listenSelectedMonth(){
+      if (unsubSelected) unsubSelected();
+
+      const m = currentMonthId();
+      $("monthTitle").textContent = monthNames[months.indexOf(m)];
+
+      const ref = monthDocRef(m);
+      unsubSelected = onSnapshot(ref, (snap) => {
+        if (!snap.exists()){
+          const empty = {salario:0, cartaoInter:0, cartaoC6:0, seguroCarro:0, saldoConta:0};
+          setInputsFromDoc(empty);
+          $("status").textContent = `Carregado: ${m} • (vazio)`;
+          return;
+        }
+        const d = snap.data() || {};
+        setInputsFromDoc(d);
+        $("status").textContent = `Carregado: ${m} • Última atualização: ok`;
+      });
     }
 
-    async function ConfirmarPresenca(){
-      if(typeof window.__confirmarPresencaImpl !== "function"){
-        await uiAviso({
-          title:"Erro",
-          text:"Firebase ainda não carregou. Recarregue a página para confirmar sua presença.",
-          note:""
-        });
-        return;
-      }
-      return window.__confirmarPresencaImpl();
-    }
-    window.ConfirmarPresenca = ConfirmarPresenca;
+    async function saveCurrentMonthAuto(){
+      if (!uid) return;
+      const m = currentMonthId();
+      const ref = monthDocRef(m);
 
-    function escapeHtml(value){
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    document.getElementById("rsvp-status")?.addEventListener("change", syncRsvpAcompanhantes);
-    syncRsvpAcompanhantes();
-  </script>
-
-  <!-- ✅ FIREBASE COMPAT -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-  <script>
-    /* ========= FIREBASE + RESERVA (SEM MODULE) ========= */
-    (function(){
-      const firebaseConfig = {
-        apiKey: "AIzaSyBv1JPd9CIzGsdEAEozbns7O87ct11dbIw",
-        authDomain: "casamento-luiza-andre.firebaseapp.com",
-        projectId: "casamento-luiza-andre",
-        storageBucket: "casamento-luiza-andre.firebasestorage.app",
-        messagingSenderId: "79078651574",
-        appId: "1:79078651574:web:71d4b92e7ed41de2c49817"
+      const payload = {
+        salario: parseBRL($("salario").value),
+        cartaoInter: parseBRL($("inter").value),
+        cartaoC6: parseBRL($("c6").value),
+        seguroCarro: parseBRL($("seguroCarro").value),
+        saldoConta: parseBRL($("saldoConta").value),
+        updatedAt: serverTimestamp()
       };
 
-      try{ firebase.initializeApp(firebaseConfig); }catch(e){}
+      if (autosaveInFlight) { pendingSaveAfter = true; return; }
 
-      const db = firebase.firestore();
-      const auth = firebase.auth();
-      window.db = db;
-      window.auth = auth;
-      const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
-      const EMAILJS_SERVICE_ID = "service_7b5jpat";
-      const EMAILJS_TEMPLATE_PRESENTE = "template_kl4avko";
-
-      function keyOfItem(item){ return String(item).replace(/\s+/g, "_"); }
-      function getKeyFromCard(item){
-        const card = document.querySelector(`.card[data-item="${item}"]`);
-        return card?.getAttribute("data-key") || keyOfItem(item);
+      autosaveInFlight = true;
+      try{
+        $("status").textContent = "Salvando…";
+        await setDoc(ref, payload, { merge: true });
+        updateKPIs(payload);
+        atualizarTabelaSalvos(payload, Date.now());
+        $("status").textContent = `Salvo automaticamente: ${m}`;
+      } catch (e){
+        console.error(e);
+        $("status").textContent = "Falha ao salvar. Verifique sua internet e tente novamente.";
+      } finally {
+        autosaveInFlight = false;
+        if (pendingSaveAfter) { pendingSaveAfter = false; scheduleAutosave(); }
       }
+    }
 
-      function setReservadoUI(item, data){
-        const reservado = !!(data && data.reservado);
-        const card = document.querySelector(`.card[data-item="${item}"]`);
-        const key = getKeyFromCard(item);
+    function scheduleAutosave(){
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(() => saveCurrentMonthAuto(), 1500);
+    }
 
-        const badge = document.getElementById("badge-"+key);
-        const note  = document.getElementById("note-"+key);
-        const btn   = document.getElementById("btn-"+key);
-        const inNome  = document.getElementById("nome-"+key);
-        const inEmail = document.getElementById("email-"+key);
+    async function resetCurrentMonth(){
+      const m = currentMonthId();
+      const ref = monthDocRef(m);
 
-        if(card) card.classList.toggle("is-reservado", reservado);
+      const payload = { salario:0, cartaoInter:0, cartaoC6:0, seguroCarro:0, saldoConta:0, updatedAt: serverTimestamp() };
+      await setDoc(ref, payload, { merge: true });
+      $("status").textContent = `Zerado: ${m}`;
+      updateKPIs(payload);
+      atualizarTabelaSalvos(payload, Date.now());
+      ["salario","inter","c6","seguroCarro","saldoConta"].forEach(id => safeSetInput(id, 0));
+    }
 
-        const aberta = !!window.LISTA_PRESENTES_ABERTA;
-        const fechadoParaEste = (!aberta && !reservado);
-        if(card) card.classList.toggle("is-closed", fechadoParaEste);
+    $("monthSelect").addEventListener("change", () => listenSelectedMonth());
+    $("resetBtn").addEventListener("click", resetCurrentMonth);
 
-        if(fechadoParaEste){
-          if(badge){
-            badge.textContent = "Em breve";
-            badge.classList.add("closed");
-            badge.classList.remove("reservado");
-          }
-          if(note){
-            note.textContent = "Lista de presentes ainda não liberada.";
-            note.style.display = "block";
-          }
-          if(btn){
-            btn.disabled = true;
-            btn.textContent = "Em breve";
-          }
-          if(inNome) inNome.disabled = true;
-          if(inEmail) inEmail.disabled = true;
+    const moneyFields = ["salario","inter","c6","seguroCarro","saldoConta"];
+    moneyFields.forEach(id => {
+      const el = $(id);
+      el.addEventListener("focus", () => markEditing(el, true));
+      el.addEventListener("input", () => {
+        el.value = el.value.replace(/[^\d,.\-R$\s]/g, "");
+        const draft = {
+          salario: $("salario").value,
+          cartaoInter: $("inter").value,
+          cartaoC6: $("c6").value,
+          seguroCarro: $("seguroCarro").value,
+          saldoConta: $("saldoConta").value
+        };
+        updateKPIs(draft);
+        atualizarTabelaSalvos(draft, null);
+        scheduleAutosave();
+      });
+      el.addEventListener("blur", () => {
+        markEditing(el, false);
+        formatInputToBRL(el);
+        saveCurrentMonthAuto();
+      });
+    });
+
+    function formatAllInputsNow(){
+      moneyFields.forEach(id => {
+        const el = $(id);
+        if (!el || !el.value || editing.has(id)) return;
+        formatInputToBRL(el);
+      });
+    }
+
+    let reportSaveTimer = null;
+    let reportSaveInFlight = false;
+
+    function setReportUiFromDoc(d){
+      const enabled = !!d.enabled;
+      const alertPct = Number(d.alertPct ?? 70);
+      const notes = String(d.notes ?? "");
+
+      $("reportEnabled").checked = enabled;
+      $("reportAlertPct").value = Number.isFinite(alertPct) ? alertPct : 70;
+      $("reportNotes").value = notes;
+      $("reportStatus").textContent = enabled
+        ? "Relatório ATIVADO ✅ (enviado automaticamente pelo backend)"
+        : "Relatório DESATIVADO ❌";
+    }
+
+    function scheduleReportSave(){
+      clearTimeout(reportSaveTimer);
+      reportSaveTimer = setTimeout(saveReportSettings, 600);
+    }
+
+    async function saveReportSettings(){
+      if (!uid) return;
+      if (reportSaveInFlight) return;
+      reportSaveInFlight = true;
+
+      try{
+        $("reportStatus").textContent = "Salvando preferência do relatório…";
+        const ref = reportSettingsRef();
+        const payload = {
+          enabled: !!$("reportEnabled").checked,
+          alertPct: Math.max(10, Math.min(200, Number($("reportAlertPct").value || 70))),
+          notes: String($("reportNotes").value || "").slice(0, 140),
+          updatedAt: serverTimestamp()
+        };
+        await setDoc(ref, payload, { merge: true });
+        $("reportStatus").textContent = payload.enabled
+          ? "Relatório ATIVADO ✅ (o backend vai enviar todo mês)"
+          : "Relatório DESATIVADO ❌";
+      } catch(e){
+        console.error(e);
+        $("reportStatus").textContent = "Falha ao salvar preferências do relatório.";
+      } finally {
+        reportSaveInFlight = false;
+      }
+    }
+
+    function listenReportSettings(){
+      if (unsubReportSettings) unsubReportSettings();
+      const ref = reportSettingsRef();
+      unsubReportSettings = onSnapshot(ref, (snap) => {
+        if (!snap.exists()){
+          setReportUiFromDoc({ enabled:false, alertPct:70, notes:"" });
+          return;
+        }
+        setReportUiFromDoc(snap.data() || {});
+      });
+    }
+
+    ["reportEnabled","reportAlertPct","reportNotes"].forEach(id => {
+      const el = $(id);
+      el.addEventListener("input", scheduleReportSave);
+      el.addEventListener("change", scheduleReportSave);
+      el.addEventListener("blur", saveReportSettings);
+    });
+
+    const ISSUER = "Controle 2026 - Gastos";
+    const SESSION_KEY = "mfa_verified_until_ms";
+
+    function clearTotpUi(){
+      $("secretKeyBox").textContent = "—";
+      $("totpCode").value = "";
+      $("mfaCode").value = "";
+      const c = $("qrCanvas");
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0,0,c.width,c.height);
+    }
+
+    function base32Encode(bytes){
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      let bits = 0, value = 0, output = "";
+      for (const b of bytes){
+        value = (value << 8) | b;
+        bits += 8;
+        while (bits >= 5){
+          output += alphabet[(value >>> (bits - 5)) & 31];
+          bits -= 5;
+        }
+      }
+      if (bits > 0){
+        output += alphabet[(value << (5 - bits)) & 31];
+      }
+      return output;
+    }
+
+    function base32Decode(str){
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      const clean = str.replace(/=+$/,"").toUpperCase().replace(/[^A-Z2-7]/g,"");
+      let bits = 0, value = 0;
+      const out = [];
+      for (const ch of clean){
+        const idx = alphabet.indexOf(ch);
+        if (idx < 0) continue;
+        value = (value << 5) | idx;
+        bits += 5;
+        if (bits >= 8){
+          out.push((value >>> (bits - 8)) & 255);
+          bits -= 8;
+        }
+      }
+      return new Uint8Array(out);
+    }
+
+    function toBigEndianCounter(counter){
+      const buf = new ArrayBuffer(8);
+      const view = new DataView(buf);
+      const high = Math.floor(counter / 2**32);
+      const low = counter >>> 0;
+      view.setUint32(0, high);
+      view.setUint32(4, low);
+      return new Uint8Array(buf);
+    }
+
+    async function hotp(secretBytes, counter, digits=6){
+      const key = await crypto.subtle.importKey(
+        "raw",
+        secretBytes,
+        { name:"HMAC", hash:"SHA-1" },
+        false,
+        ["sign"]
+      );
+      const msg = toBigEndianCounter(counter);
+      const sig = new Uint8Array(await crypto.subtle.sign("HMAC", key, msg));
+      const offset = sig[sig.length - 1] & 0x0f;
+      const bin =
+        ((sig[offset] & 0x7f) << 24) |
+        ((sig[offset+1] & 0xff) << 16) |
+        ((sig[offset+2] & 0xff) << 8) |
+        (sig[offset+3] & 0xff);
+      const mod = bin % (10 ** digits);
+      return String(mod).padStart(digits, "0");
+    }
+
+    async function totp(secretBase32, { period=30, digits=6, driftSteps=1 } = {}){
+      const secretBytes = base32Decode(secretBase32);
+      const nowSec = Math.floor(Date.now()/1000);
+      const counter = Math.floor(nowSec / period);
+
+      const codes = [];
+      for (let d=-driftSteps; d<=driftSteps; d++){
+        codes.push(await hotp(secretBytes, counter + d, digits));
+      }
+      return codes;
+    }
+
+    function makeOtpAuthUrl(email, secretBase32){
+      const label = encodeURIComponent(`${ISSUER}:${email}`);
+      const issuer = encodeURIComponent(ISSUER);
+      const secret = encodeURIComponent(secretBase32);
+      return `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
+    }
+
+    function renderQrOrFallback(uri){
+      return new Promise((resolve) => {
+        const canvas = $("qrCanvas");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        const QR = window.QRCode;
+        if (!QR){
+          ctx.font = "12px Arial";
+          ctx.fillStyle = "#5f6b76";
+          ctx.fillText("QR indisponível.", 35, 85);
+          ctx.fillText("Use a chave ao lado.", 25, 105);
+          resolve({ ok:false, reason:"QRCode lib não carregou" });
           return;
         }
 
-        if(badge){
-          badge.textContent = reservado ? "Reservado" : "Disponível";
-          badge.classList.toggle("reservado", reservado);
-          badge.classList.remove("closed");
-        }
-        if(note){
-          note.textContent = "Este item já foi reservado.";
-          note.style.display = reservado ? "block" : "none";
-        }
-        if(btn){
-          btn.disabled = reservado;
-          btn.textContent = reservado ? "Já reservado" : "Presentear";
-        }
-        if(inNome) inNome.disabled = reservado;
-        if(inEmail) inEmail.disabled = reservado;
-
-        try{ aplicarEstadoLista(); }catch(e){}
-      }
-
-      function watchAll(){
-        document.querySelectorAll(".card[data-item]").forEach((card)=>{
-          const item = card.getAttribute("data-item");
-          db.collection("reservas").doc(item).onSnapshot((snap)=>{
-            setReservadoUI(item, snap.exists ? snap.data() : null);
+        if (typeof QR.toCanvas === "function"){
+          QR.toCanvas(canvas, uri, { width: 180, margin: 1 }, (err) => {
+            if (err){
+              ctx.font = "12px Arial";
+              ctx.fillStyle = "#5f6b76";
+              ctx.fillText("Falha ao gerar QR.", 30, 85);
+              ctx.fillText("Use a chave ao lado.", 25, 105);
+              resolve({ ok:false, reason:String(err) });
+            } else resolve({ ok:true });
           });
-        });
-      }
-
-      async function doReserve(item){
-        const key = getKeyFromCard(item);
-        const nome  = (document.getElementById("nome-"+key)?.value || "").trim();
-        const email = (document.getElementById("email-"+key)?.value || "").trim();
-
-        if(!nome || !email){
-          await uiAviso({ title:"Campos obrigatórios", text:"Preencha nome e e-mail para continuar.", note:"" });
           return;
         }
-
-        const ref = db.collection("reservas").doc(item);
-        const btn = document.getElementById("btn-"+key);
-        if(btn){ btn.disabled = true; btn.textContent = "Reservando..."; }
 
         try{
-          await db.runTransaction(async (tx)=>{
-            const snap = await tx.get(ref);
-            if(snap.exists && snap.data()?.reservado) throw new Error("ja_reservado");
-            tx.set(ref, { reservado:true, nome, email, ts: serverTimestamp() });
-          });
-
-          try{
-            if(window.emailjs?.send){
-              await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESENTE,{
-                nome,email,item,
-                mensagem:"Obrigado por fazer parte deste momento 💛"
-              });
-            }
-          }catch(e){}
-
-          await uiAviso({ title:"Reserva confirmada", text:"Obrigado por fazer parte deste momento 💛", note:"Sua reserva foi registrada com sucesso." });
-
-        }catch(e){
-          if(String(e?.message || e) === "ja_reservado"){
-            await uiAviso({ title:"Ops!", text:"Este item já foi reservado.", note:"Escolha outro presente disponível." });
-          }else{
-            await uiAviso({ title:"Erro", text:"Erro ao reservar. Tente novamente.", note:"Se continuar, recarregue a página." });
+          if (typeof QR.toDataURL === "function"){
+            QR.toDataURL(uri, { width: 180, margin: 1 }, (err, url) => {
+              if (err || !url){
+                ctx.font = "12px Arial";
+                ctx.fillStyle = "#5f6b76";
+                ctx.fillText("Falha ao gerar QR.", 30, 85);
+                ctx.fillText("Use a chave ao lado.", 25, 105);
+                resolve({ ok:false, reason:String(err || "sem url") });
+                return;
+              }
+              const img = new Image();
+              img.onload = () => { ctx.drawImage(img, 0, 0, 180, 180); resolve({ ok:true }); };
+              img.onerror = () => {
+                ctx.font = "12px Arial";
+                ctx.fillStyle = "#5f6b76";
+                ctx.fillText("Falha ao renderizar.", 30, 85);
+                ctx.fillText("Use a chave ao lado.", 25, 105);
+                resolve({ ok:false, reason:"img load fail" });
+              };
+              img.src = url;
+            });
+            return;
           }
-        }
-      }
+        } catch(e){}
 
-      async function presentearImpl(item){
-        if(!window.LISTA_PRESENTES_ABERTA){
-          await uiAviso({ title:"Lista ainda não liberada", text:"A lista de presentes ainda está fechada. Volte mais tarde 😊", note:"" });
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#5f6b76";
+        ctx.fillText("QR indisponível.", 35, 85);
+        ctx.fillText("Use a chave ao lado.", 25, 105);
+        resolve({ ok:false, reason:"API QRCode não compatível" });
+      });
+    }
+
+    function isSessionMfaValid(){
+      const until = Number(sessionStorage.getItem(SESSION_KEY) || "0");
+      return Date.now() < until;
+    }
+    function setSessionMfaValid(minutes=360){
+      sessionStorage.setItem(SESSION_KEY, String(Date.now() + minutes*60*1000));
+    }
+    function clearSessionMfa(){
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    async function loadCustomTotpConfig(){
+      const ref = mfaDocRef();
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return { enabled:false };
+      return snap.data() || { enabled:false };
+    }
+
+    $("btnLogin").addEventListener("click", async () => {
+      try{
+        $("loginStatus").textContent = "Entrando…";
+        await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPass").value);
+      } catch(e){
+        console.error(e);
+        $("loginStatus").textContent = "Erro ao entrar: " + (e.code || e.message);
+      }
+    });
+
+    $("btnRegister").addEventListener("click", async () => {
+      try{
+        $("loginStatus").textContent = "Criando conta…";
+        const cred = await createUserWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPass").value);
+        await sendEmailVerification(cred.user, { url: window.location.href, handleCodeInApp: false });
+        $("loginStatus").textContent = "Enviado ✅ Verifique seu e-mail e depois faça login.";
+        await signOut(auth);
+      } catch(e){
+        console.error(e);
+        $("loginStatus").textContent = "Erro ao criar conta: " + (e.code || e.message);
+      }
+    });
+
+    $("btnResendVerify").addEventListener("click", async () => {
+      try{
+        const email = $("loginEmail").value.trim();
+        const pass = $("loginPass").value;
+        if (!email || !pass){
+          $("loginStatus").textContent = "Preencha e-mail e senha para reenviar a verificação.";
           return;
         }
-        const ok = await uiConfirmar({
-          title:"Confirmar presente",
-          text:`Você escolheu: ${item}. Deseja confirmar?`,
-          note:"Após confirmar, este item ficará reservado.",
-          confirmText:"Confirmar",
-          cancelText:"Cancelar"
-        });
-        if(!ok) return;
-        await doReserve(item);
+        $("loginStatus").textContent = "Reenviando verificação…";
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        await sendEmailVerification(cred.user, { url: window.location.href, handleCodeInApp: false });
+        $("loginStatus").textContent = "Enviado ✅ Verifique seu e-mail e depois faça login.";
+        await signOut(auth);
+      } catch(e){
+        console.error(e);
+        $("loginStatus").textContent = "Erro ao reenviar: " + (e.code || e.message);
       }
+    });
 
-      async function confirmarPresencaImpl(){
-        const nome = (document.getElementById("rsvp-nome")?.value || "").trim();
-        const status = (document.getElementById("rsvp-status")?.value || "sim").trim();
-        const acompanhanteNome = (document.getElementById("rsvp-acompanhante-nome")?.value || "").trim();
-        const btn = document.getElementById("rsvp-btn");
-        const feedback = document.getElementById("rsvp-feedback");
+    $("logoutBtn").addEventListener("click", async () => {
+      clearSessionMfa();
+      await signOut(auth);
+    });
 
-        if(!nome){
-          await uiAviso({
-            title:"Falta seu nome",
-            text:"Preencha seu nome para registrar a confirmação de presença.",
-            note:""
-          });
-          toggleRsvpPanel(true);
+    $("btnEnrollLogout").addEventListener("click", async () => {
+      clearSessionMfa();
+      await signOut(auth);
+    });
+
+    $("btnMfaBack").addEventListener("click", async () => {
+      clearSessionMfa();
+      await signOut(auth);
+    });
+
+    let pendingSecretBase32 = null;
+
+    $("btnTotpGenerate").addEventListener("click", async () => {
+      try{
+        const user = auth.currentUser;
+        if (!user) { showLogin("Faça login novamente."); return; }
+
+        await reload(user);
+        if (!user.emailVerified){
+          $("enrollStatus").textContent = "Confirme seu e-mail antes de ativar o Authenticator (use Reenviar verificação).";
           return;
         }
 
-        const statusTexto = status === "sim" ? "Sim, vou estar presente" : "Não poderei comparecer";
-        const ok = await uiConfirmar({
-          title:"Confirmar presença",
-          text:`Deseja enviar sua resposta como "${statusTexto}"?`,
-          note:"Você poderá editar depois diretamente no Firestore, se precisar.",
-          confirmText:"Enviar",
-          cancelText:"Voltar"
-        });
-        if(!ok) return;
+        clearTotpUi();
+        $("enrollStatus").textContent = "Gerando segredo…";
 
-        if(btn){
-          btn.disabled = true;
-          btn.textContent = "Enviando...";
+        const raw = crypto.getRandomValues(new Uint8Array(20));
+        pendingSecretBase32 = base32Encode(raw);
+
+        const uri = makeOtpAuthUrl(user.email || "usuario", pendingSecretBase32);
+
+        $("secretKeyBox").textContent = pendingSecretBase32;
+
+        const qr = await renderQrOrFallback(uri);
+        if (!qr.ok){
+          $("enrollStatus").textContent = "QR indisponível ✅ Use a CHAVE ao lado no Authenticator e digite o código.";
+        } else {
+          $("enrollStatus").textContent = "QR pronto ✅ Abra o Authenticator e digite o código.";
         }
-        if(feedback) feedback.textContent = "Salvando sua confirmação...";
+      } catch(e){
+        console.error(e);
+        $("enrollStatus").textContent = "Erro ao gerar QR/segredo: " + (e.code || e.message);
+      }
+    });
 
-        try{
-          await db.collection("confirmacoes_presenca").add({
-            nome,
-            status,
-            acompanhante_nome: status === "sim" ? acompanhanteNome : "",
-            origem: "pre-capa",
-            ts: serverTimestamp()
-          });
+    $("btnTotpVerify").addEventListener("click", async () => {
+      try{
+        const user = auth.currentUser;
+        if (!user) { showLogin("Faça login novamente."); return; }
 
-          document.getElementById("rsvp-nome").value = "";
-          document.getElementById("rsvp-status").value = "sim";
-          document.getElementById("rsvp-acompanhante-nome").value = "";
-          try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
-          try{ window.toggleRsvpPanel?.(false); }catch(e){}
-
-          if(feedback) feedback.textContent = "Presença confirmada com sucesso.";
-          await uiAviso({
-            title:"Resposta enviada",
-            text:"Sua confirmação de presença foi registrada com sucesso 💛",
-            note:"Obrigado por confirmar sua presença."
-          });
-        }catch(e){
-          if(feedback) feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
-          await uiAviso({
-            title:"Erro ao confirmar",
-            text:"Não conseguimos registrar sua resposta neste momento.",
-            note:"Tente novamente em alguns instantes."
-          });
-        }finally{
-          if(btn){
-            btn.disabled = false;
-            btn.textContent = "Confirmar presença";
-          }
+        const code = $("totpCode").value.trim();
+        if (!pendingSecretBase32){
+          $("enrollStatus").textContent = "Clique em Gerar QR primeiro.";
+          return;
         }
+        if (!/^\d{6}$/.test(code)){
+          $("enrollStatus").textContent = "Digite um código válido de 6 dígitos.";
+          return;
+        }
+
+        $("enrollStatus").textContent = "Validando…";
+        const validCodes = await totp(pendingSecretBase32, { driftSteps: 1 });
+        if (!validCodes.includes(code)){
+          $("enrollStatus").textContent = "Código inválido. Tente novamente (confira o horário do celular).";
+          return;
+        }
+
+        await setDoc(mfaDocRef(), {
+          enabled: true,
+          secretBase32: pendingSecretBase32,
+          issuer: ISSUER,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        pendingSecretBase32 = null;
+        setSessionMfaValid(360);
+
+        $("enrollStatus").textContent = "Ativado ✅ Entrando…";
+        await goToApp();
+      } catch(e){
+        console.error(e);
+        $("enrollStatus").textContent = "Erro ao confirmar: " + (e.code || e.message);
+      }
+    });
+
+    $("btnMfaVerify").addEventListener("click", async () => {
+      try{
+        const user = auth.currentUser;
+        if (!user) { showLogin("Faça login novamente."); return; }
+
+        const code = $("mfaCode").value.trim();
+        if (!/^\d{6}$/.test(code)){
+          $("mfaStatus").textContent = "Digite um código válido de 6 dígitos.";
+          return;
+        }
+
+        $("mfaStatus").textContent = "Validando…";
+        const cfg = await loadCustomTotpConfig();
+        if (!cfg?.enabled || !cfg?.secretBase32){
+          showEnroll("Você precisa ativar o Authenticator primeiro.");
+          return;
+        }
+
+        const validCodes = await totp(cfg.secretBase32, { driftSteps: 1 });
+        if (!validCodes.includes(code)){
+          $("mfaStatus").textContent = "Código inválido. Confira o horário do celular e tente novamente.";
+          return;
+        }
+
+        setSessionMfaValid(360);
+        $("mfaStatus").textContent = "Ok ✅ Entrando…";
+        await goToApp();
+      } catch(e){
+        console.error(e);
+        $("mfaStatus").textContent = "Erro: " + (e.code || e.message);
+      }
+    });
+
+    async function goToApp(){
+      showApp();
+      try{
+        $("status").textContent = "Inicializando meses de 2026…";
+        await ensureMonthDocsExist();
+        await ensureReportSettingsExist();
+
+        $("status").textContent = "Pronto ✅";
+        listenAllMonths();
+        listenSelectedMonth();
+        listenReportSettings();
+
+        setTimeout(formatAllInputsNow, 50);
+      } catch(e){
+        console.error(e);
+        $("status").textContent = "Erro ao carregar dados. Veja o console (F12).";
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (unsubAllMonths) { unsubAllMonths(); unsubAllMonths = null; }
+      if (unsubSelected) { unsubSelected(); unsubSelected = null; }
+      if (unsubReportSettings) { unsubReportSettings(); unsubReportSettings = null; }
+
+      if (!user){
+        uid = null;
+        pendingSecretBase32 = null;
+        clearTotpUi();
+        clearSessionMfa();
+        showLogin("Faça login para acessar seus dados.");
+        return;
       }
 
-      window.__presentearImpl = presentearImpl;
-      window.__confirmarPresencaImpl = confirmarPresencaImpl;
-      watchAll();
-      try{ aplicarEstadoLista(); }catch(e){}
-    })();
-
-    // Admin functions
-    function showAdminLogin() {
-      document.getElementById('adminBackdrop').style.display = 'block';
-      document.getElementById('adminLoginModal').style.display = 'block';
-    }
-
-    function hideAdminLogin() {
-      document.getElementById('adminBackdrop').style.display = 'none';
-      document.getElementById('adminLoginModal').style.display = 'none';
-    }
-
-    async function loginAdmin() {
-      const email = document.getElementById('adminUser').value;
-      const pass = document.getElementById('adminPass').value;
-      try {
-        await firebase.auth().signInWithEmailAndPassword(email, pass);
-        hideAdminLogin();
-        showAdminPanel();
-      } catch (error) {
-        alert('Erro no login: ' + error.message);
+      await reload(user);
+      if (!user.emailVerified){
+        uid = null;
+        pendingSecretBase32 = null;
+        clearTotpUi();
+        clearSessionMfa();
+        showLogin("Verifique seu e-mail (link de confirmação) e faça login novamente.");
+        await signOut(auth);
+        return;
       }
-    }
 
-    function showAdminPanel() {
-      fetchPresence();
-      fetchGifts();
-      document.getElementById('adminPanelBackdrop').style.display = 'block';
-      document.getElementById('adminPanelModal').style.display = 'block';
-    }
+      uid = user.uid;
 
-    function hideAdminPanel() {
-      document.getElementById('adminPanelBackdrop').style.display = 'none';
-      document.getElementById('adminPanelModal').style.display = 'none';
-    }
-
-    async function fetchPresence() {
-      const list = document.getElementById('presenceList');
-      list.innerHTML = 'Carregando...';
-      try {
-        const snapshot = await db.collection('confirmacoes_presenca').get();
-        list.innerHTML = '';
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const li = document.createElement('li');
-          li.textContent = `${data.nome} - ${data.status} - Acompanhante: ${data.acompanhante || 'Nenhum'}`;
-          list.appendChild(li);
-        });
-      } catch (e) {
-        list.innerHTML = 'Erro ao carregar';
+      const cfg = await loadCustomTotpConfig();
+      if (!cfg?.enabled){
+        pendingSecretBase32 = null;
+        clearTotpUi();
+        showEnroll("Ative o Authenticator para continuar.");
+        return;
       }
-    }
 
-    async function fetchGifts() {
-      const list = document.getElementById('giftsList');
-      list.innerHTML = 'Carregando...';
-      try {
-        const snapshot = await db.collection('reservas').get();
-        list.innerHTML = '';
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.reservado) {
-            const li = document.createElement('li');
-            li.textContent = `${doc.id} - Reservado por ${data.nome} (${data.email})`;
-            list.appendChild(li);
-          }
-        });
-      } catch (e) {
-        list.innerHTML = 'Erro ao carregar';
+      if (isSessionMfaValid()){
+        await goToApp();
+        return;
       }
-    }
+
+      $("mfaCode").value = "";
+      showMfa("Digite o código do Authenticator.");
+    });
+
+    showLogin("Verificando sessão…");
   </script>
 </body>
 </html>
