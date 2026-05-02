@@ -76,7 +76,7 @@
 
   <script>
     /* ========= CONTROLE DE LIBERAÇÃO ========= */
-    window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI
+    window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
   </script>
 
   <style>
@@ -674,10 +674,8 @@
       -webkit-mask-composite:xor;
       mask-composite:exclude;
       opacity:.65;
-      animation:spinBorder 3.2s linear infinite;
       pointer-events:none;
     }
-    @keyframes spinBorder{ to{ transform:rotate(360deg); } }
     @keyframes modalIn{ to{ transform:translateY(0) scale(1); opacity:1; } }
     .modal-title{font-size:18px;font-weight:700;margin-bottom:8px}
     .modal-text{font-size:14px;opacity:.92;margin-bottom:14px;line-height:1.35}
