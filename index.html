@@ -1037,15 +1037,15 @@
   <button class="btn btn-primary" id="btn-RaladorEscorredordemassa" onclick="Presentear('RaladorEscorredordemassa')">Presentear</button>
 </div>
 
-<div class="card" data-item="CopomedidordealimentosColheresdemedidas" data-key="CopomedidordealimentosColheresdemedidas">
+<div class="card" data-item="Copo medidor de alimentos + colheres de medidas" data-key="CopomedidordealimentosColheresdemedidas">
   <span class="gold-line"></span>
   <div class="product-img"><img src="Imagens/copomedidordealimentoscolheresdemedidas.png" alt="Copo medidor de Alimentos + Colheres de Medidas"></div>
   <h3>Copo medidor de alimentos + colheres de medidas</h3>
   <div class="badge" id="badge-CopomedidordealimentosColheresdemedidas">Disponível</div>
   <div class="reserved-note" id="note-CopomedidordealimentosColheresdemedidas">Este item já foi reservado.</div>
   <input type="text" placeholder="Seu nome" id="nome-CopomedidordealimentosColheresdemedidas">
-  <input type="email" placeholder="Seu e-mail" id="email-Copo medidor de alimentos + colheres de medidas">
-  <button class="btn btn-primary" id="btn-CopomedidordealimentosColheresdemedidas" onclick="Presentear('CopomedidordealimentosColheresdemedidas')">Presentear</button>
+  <input type="email" placeholder="Seu e-mail" id="email-CopomedidordealimentosColheresdemedidas">
+  <button class="btn btn-primary" id="btn-CopomedidordealimentosColheresdemedidas" onclick="Presentear('Copo medidor de alimentos + colheres de medidas')">Presentear</button>
 </div>
 
 <div class="card" data-item="ColheresdepauEspremedor" data-key="ColheresdepauEspremedor">
@@ -2117,6 +2117,7 @@
         const card = document.querySelector(`.card[data-item="${item}"]`);
         const nome  = (card?.querySelector('input[type="text"][placeholder="Seu nome"]')?.value || "").trim();
         const email = (card?.querySelector('input[type="email"]')?.value || "").trim();
+        const itemLabel = card?.querySelector('h3')?.textContent?.trim() || item;
 
         if(!nome || !email){
           await uiAviso({ title:"Campos obrigatórios", text:"Preencha nome e e-mail para continuar.", note:"" });
@@ -2131,13 +2132,13 @@
           await db.runTransaction(async (tx)=>{
             const snap = await tx.get(ref);
             if(snap.exists && snap.data()?.reservado) throw new Error("ja_reservado");
-            tx.set(ref, { reservado:true, nome, email, ts: serverTimestamp() });
+            tx.set(ref, { reservado:true, nome, email, item:itemLabel, ts: serverTimestamp() });
           });
 
           try{
             if(window.emailjs?.send){
               await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESENTE,{
-                nome,email,item,
+                nome,email,item:itemLabel,
                 mensagem:"Obrigado por fazer parte deste momento 💛"
               });
             }
