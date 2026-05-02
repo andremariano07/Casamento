@@ -76,7 +76,7 @@
 
   <script>
     /* ========= CONTROLE DE LIBERAÇÃO ========= */
-    window.LISTA_PRESENTES_ABERTA = false; // <-- MUDE AQUI
+    window.LISTA_PRESENTES_ABERTA = true; // <-- MUDE AQUI
   </script>
 
   <style>
@@ -699,15 +699,50 @@
       border-radius: 5px;
       box-sizing: border-box;
     }
+    #adminPanelModal .modal-title {
+      margin-bottom: 18px;
+      font-size: clamp(22px, 4vw, 28px);
+      color: var(--gold2);
+    }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .admin-section {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid rgba(248,231,176,.18);
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+    }
+    .admin-section h3 {
+      margin-bottom: 12px;
+      color: var(--gold2);
+      font-size: 16px;
+      line-height: 1.25;
+      text-align: center;
+    }
     #adminPanelModal ul {
       list-style: none;
       padding: 0;
-      max-height: 200px;
+      max-height: min(42vh, 320px);
       overflow-y: auto;
+      scrollbar-width: thin;
     }
     #adminPanelModal li {
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      background: rgba(0,0,0,.16);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    #adminPanelModal li + li {
+      margin-top: 8px;
     }
     #adminBackdrop,
     #adminPanelBackdrop {
@@ -726,8 +761,27 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 1000;
-      width: min(420px, 100%);
+      width: min(420px, calc(100vw - 32px));
       margin: 0;
+      max-height: calc(100svh - 36px);
+      overflow-y: auto;
+      animation: adminModalIn .22s ease forwards;
+    }
+    #adminPanelModal {
+      width: min(760px, calc(100vw - 32px));
+      padding: 24px;
+    }
+    @keyframes adminModalIn {
+      from { transform: translate(-50%, calc(-50% + 10px)) scale(.98); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    @media(max-width:720px){
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+      #adminPanelModal {
+        padding: 20px 16px;
+      }
     }
   </style>
 </head>
@@ -764,10 +818,16 @@
   <div class="modal-backdrop" id="adminPanelBackdrop"></div>
   <div class="modal-box" id="adminPanelModal" role="dialog" aria-modal="true">
     <div class="modal-title">Painel Admin</div>
-    <h3>Confirmações de Presença</h3>
-    <ul id="presenceList"></ul>
-    <h3>Presentes Escolhidos</h3>
-    <ul id="giftsList"></ul>
+    <div class="admin-grid">
+      <section class="admin-section">
+        <h3>Confirmações de Presença</h3>
+        <ul id="presenceList"></ul>
+      </section>
+      <section class="admin-section">
+        <h3>Presentes Escolhidos</h3>
+        <ul id="giftsList"></ul>
+      </section>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="hideAdminPanel()">Fechar</button>
     </div>
@@ -2230,9 +2290,12 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           const li = document.createElement('li');
-          li.textContent = `${data.nome} - ${data.status} - Acompanhante: ${data.acompanhante || 'Nenhum'}`;
+          const status = data.status === 'sim' ? 'Confirmou presença' : 'Não comparecerá';
+          const acompanhante = data.acompanhante_nome || 'Nenhum';
+          li.textContent = `${data.nome} - ${status} - Acompanhante: ${acompanhante}`;
           list.appendChild(li);
         });
+        if (!list.children.length) list.innerHTML = '<li>Nenhuma confirmação registrada.</li>';
       } catch (e) {
         list.innerHTML = 'Erro ao carregar';
       }
@@ -2252,6 +2315,7 @@
             list.appendChild(li);
           }
         });
+        if (!list.children.length) list.innerHTML = '<li>Nenhum presente escolhido.</li>';
       } catch (e) {
         list.innerHTML = 'Erro ao carregar';
       }
