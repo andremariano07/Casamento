@@ -2041,6 +2041,8 @@
       const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
       const EMAILJS_SERVICE_ID = "service_7b5jpat";
       const EMAILJS_TEMPLATE_PRESENTE = "template_kl4avko";
+      const TELEGRAM_BOT_TOKEN = "8559875028:AAEmCqzAbyXZePogEwk3i1mAAVfJnKWNSe0";
+      const TELEGRAM_CHAT_ID = "8529045753";
 
       function keyOfItem(item){ return String(item).replace(/\s+/g, "_"); }
       function getKeyFromCard(item){
@@ -2145,6 +2147,11 @@
           }catch(e){}
 
           await uiAviso({ title:"Reserva confirmada", text:"Obrigado por fazer parte deste momento 💛", note:"Sua reserva foi registrada com sucesso." });
+          try {
+            await notifyTelegramForReservation(item, itemLabel, nome, email);
+          } catch(err) {
+            console.error("Telegram reservation notification failed:", err);
+          }
 
         }catch(e){
           if(String(e?.message || e) === "ja_reservado"){
@@ -2153,6 +2160,73 @@
             await uiAviso({ title:"Erro", text:"Erro ao reservar. Tente novamente.", note:"Se continuar, recarregue a página." });
           }
         }
+      }
+
+      async function sendTelegramNotification(text){
+        if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const payload = {
+          chat_id: TELEGRAM_CHAT_ID,
+          text,
+          parse_mode: "HTML",
+          disable_web_page_preview: true
+        };
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if(!response.ok || result?.ok !== true){
+          throw new Error(result?.description || "Telegram send failed");
+        }
+      }
+
+      async function notifyTelegramForReservation(itemId, itemLabel, nome, email){
+        const text = `<b>Novo presente reservado</b>\nItem: ${escapeHtml(itemLabel)}\nNome: ${escapeHtml(nome)}\nE-mail: ${escapeHtml(email)}`;
+        await sendTelegramNotification(text);
+        await db.collection("reservas").doc(itemId).update({ telegram_notified: true });
+      }
+
+      async function notifyTelegramForPresence(docRef, nome, status, acompanhanteNome){
+        const statusTexto = status === "sim" ? "Sim, vou estar presente" : "Não poderei comparecer";
+        const acompanhanteTexto = acompanhanteNome ? `\nAcompanhante: ${escapeHtml(acompanhanteNome)}` : "";
+        const text = `<b>Nova confirmação de presença</b>\nNome: ${escapeHtml(nome)}\nStatus: ${escapeHtml(statusTexto)}${acompanhanteTexto}`;
+        await sendTelegramNotification(text);
+        await docRef.update({ telegram_notified: true });
+      }
+
+      async function syncTelegramNotifications(){
+        if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+        const tasks = [];
+
+        const confSnap = await db.collection("confirmacoes_presenca").get();
+        confSnap.forEach((doc) => {
+          const data = doc.data();
+          if(data && !data.telegram_notified){
+            tasks.push((async () => {
+              const statusTexto = data.status === "sim" ? "Sim, vou estar presente" : "Não poderei comparecer";
+              const acompanhanteTexto = data.acompanhante_nome ? `\nAcompanhante: ${escapeHtml(data.acompanhante_nome)}` : "";
+              const text = `<b>Confirmação de presença existente</b>\nNome: ${escapeHtml(data.nome || "")}\nStatus: ${escapeHtml(statusTexto)}${acompanhanteTexto}`;
+              await sendTelegramNotification(text);
+              await doc.ref.update({ telegram_notified: true });
+            })());
+          }
+        });
+
+        const reservaSnap = await db.collection("reservas").get();
+        reservaSnap.forEach((doc) => {
+          const data = doc.data();
+          if(data && !data.telegram_notified){
+            tasks.push((async () => {
+              const text = `<b>Presente reservado existente</b>\nItem: ${escapeHtml(data.item || doc.id)}\nNome: ${escapeHtml(data.nome || "")}\nE-mail: ${escapeHtml(data.email || "")}`;
+              await sendTelegramNotification(text);
+              await doc.ref.update({ telegram_notified: true });
+            })());
+          }
+        });
+
+        await Promise.all(tasks);
       }
 
       async function presentearImpl(item){
@@ -2205,7 +2279,7 @@
         if(feedback) feedback.textContent = "Salvando sua confirmação...";
 
         try{
-          await db.collection("confirmacoes_presenca").add({
+          const docRef = await db.collection("confirmacoes_presenca").add({
             nome,
             status,
             acompanhante_nome: status === "sim" ? acompanhanteNome : "",
@@ -2225,6 +2299,11 @@
             text:"Sua confirmação de presença foi registrada com sucesso 💛",
             note:"Obrigado por confirmar sua presença."
           });
+          try {
+            await notifyTelegramForPresence(docRef, nome, status, acompanhanteNome);
+          } catch(err) {
+            console.error("Telegram presence notification failed:", err);
+          }
         }catch(e){
           if(feedback) feedback.textContent = "Não foi possível salvar agora. Tente novamente.";
           await uiAviso({
@@ -2244,6 +2323,9 @@
       window.__confirmarPresencaImpl = confirmarPresencaImpl;
       watchAll();
       try{ aplicarEstadoLista(); }catch(e){}
+      syncTelegramNotifications().catch((err)=>{
+        console.error("Erro ao sincronizar notificações Telegram:", err);
+      });
     })();
 
     // Admin functions
