@@ -846,7 +846,21 @@
 
     <button class="maps-btn btn fade-up rsvp-toggle" id="rsvp-toggle-btn" type="button" onclick="toggleRsvpPanel()" style="animation-delay:1.95s;">Confirmação de Presença</button>
 
-    <div class="rsvp-panel" id="rsvp-panel">
+    <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
+    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.2s;">Lista de Presente</button>
+  </div>
+
+  <audio id="bgMusic" loop preload="auto" autoplay muted>
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- CONTEÚDO -->
+  <div class="overlay" id="mainContent">
+    <h1>Luiza & André</h1>
+    <div class="date">20/06/2026 - 17:00 horas</div>
+    <div class="countdown" id="countdown-main"></div>
+    <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
+    <div class="rsvp-panel" id="rsvp-panel" style="margin: 0 auto 20px;">
       <div class="rsvp-title">Confirme sua presença</div>
       <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
       <div class="rsvp-form">
@@ -862,21 +876,6 @@
         <div class="rsvp-feedback" id="rsvp-feedback"></div>
       </div>
     </div>
-
-    <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
-    <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.2s;">Lista de Presente</button>
-  </div>
-
-  <audio id="bgMusic" loop preload="auto" autoplay muted>
-    <source src="musica.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- CONTEÚDO -->
-  <div class="overlay" id="mainContent">
-    <h1>Luiza & André</h1>
-    <div class="date">20/06/2026 - 17:00 horas</div>
-    <div class="countdown" id="countdown-main"></div>
-    <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
     <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
     <button class="btn btn-primary" type="button" onclick="toggleRsvpPanel()" style="margin:0 10px;">Confirmar presença</button>
     <button class="back-btn btn btn-secondary" onclick="voltarPreCapa()">Voltar</button>
