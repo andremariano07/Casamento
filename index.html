@@ -1983,11 +1983,13 @@
     function toggleRsvpPanel(force){
       const panel = document.getElementById("rsvp-panel");
       const btn = document.getElementById("rsvp-toggle-btn");
-      if(!panel || !btn) return;
+      if(!panel) return;
       const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("show");
       panel.classList.toggle("show", shouldShow);
-      btn.classList.toggle("active", shouldShow);
-      btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+      if(btn){
+        btn.classList.toggle("active", shouldShow);
+        btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+      }
     }
 
     async function ConfirmarPresenca(){
