@@ -846,6 +846,23 @@
 
     <button class="maps-btn btn fade-up rsvp-toggle" id="rsvp-toggle-btn" type="button" onclick="toggleRsvpPanel()" style="animation-delay:1.95s;">Confirmação de Presença</button>
 
+    <div class="rsvp-panel" id="rsvp-panel-precover" style="margin: 20px auto;">
+      <div class="rsvp-title">Confirme sua presença</div>
+      <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
+      <div class="rsvp-form">
+        <input type="text" id="rsvp-nome-precover" placeholder="Seu nome completo">
+        <div class="rsvp-grid">
+          <select id="rsvp-status-precover">
+            <option value="sim">Sim, vou estar presente</option>
+            <option value="nao">Não poderei comparecer</option>
+          </select>
+        </div>
+        <input type="text" id="rsvp-acompanhante-nome-precover" placeholder="Nome do acompanhante" style="display:none;">
+        <button class="btn btn-primary" id="rsvp-btn-precover" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
+        <div class="rsvp-feedback" id="rsvp-feedback-precover"></div>
+      </div>
+    </div>
+
     <button class="maps-btn btn fade-up" onclick="abrirMapa()" style="animation-delay:2s;">Ver no Maps</button>
     <button class="maps-btn btn fade-up btn-primary" onclick="entrarEvento()" style="animation-delay:2.2s;">Lista de Presente</button>
   </div>
@@ -860,20 +877,20 @@
     <div class="date">20/06/2026 - 17:00 horas</div>
     <div class="countdown" id="countdown-main"></div>
     <div class="location">Rua Vera Lucia, 215 - Sinimbu</div>
-    <div class="rsvp-panel" id="rsvp-panel" style="margin: 0 auto 20px;">
+    <div class="rsvp-panel" id="rsvp-panel-main" style="margin: 0 auto 20px;">
       <div class="rsvp-title">Confirme sua presença</div>
       <div class="rsvp-subtitle">Avise por aqui se você vai conseguir participar e quantas pessoas irão com você.</div>
       <div class="rsvp-form">
-        <input type="text" id="rsvp-nome" placeholder="Seu nome completo">
+        <input type="text" id="rsvp-nome-main" placeholder="Seu nome completo">
         <div class="rsvp-grid">
-          <select id="rsvp-status">
+          <select id="rsvp-status-main">
             <option value="sim">Sim, vou estar presente</option>
             <option value="nao">Não poderei comparecer</option>
           </select>
         </div>
-        <input type="text" id="rsvp-acompanhante-nome" placeholder="Nome do acompanhante" style="display:none;">
-        <button class="btn btn-primary" id="rsvp-btn" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
-        <div class="rsvp-feedback" id="rsvp-feedback"></div>
+        <input type="text" id="rsvp-acompanhante-nome-main" placeholder="Nome do acompanhante" style="display:none;">
+        <button class="btn btn-primary" id="rsvp-btn-main" type="button" onclick="ConfirmarPresenca()">Confirmar presença</button>
+        <div class="rsvp-feedback" id="rsvp-feedback-main"></div>
       </div>
     </div>
     <button class="maps-btn btn" onclick="abrirMapa()">Ver no Maps</button>
@@ -1971,23 +1988,30 @@
     window.Presentear = Presentear;
 
     function syncRsvpAcompanhantes(){
-      const status = document.getElementById("rsvp-status");
-      const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome");
-      if(!status || !acompanhanteNome) return;
-      const isSim = status.value === "sim";
-      acompanhanteNome.style.display = isSim ? "block" : "none";
-      if(!isSim) acompanhanteNome.value = "";
+      ["-precover", "-main"].forEach(suffix => {
+        const status = document.getElementById("rsvp-status" + suffix);
+        const acompanhanteNome = document.getElementById("rsvp-acompanhante-nome" + suffix);
+        if(!status || !acompanhanteNome) return;
+        const isSim = status.value === "sim";
+        acompanhanteNome.style.display = isSim ? "block" : "none";
+        if(!isSim) acompanhanteNome.value = "";
+      });
     }
 
     function toggleRsvpPanel(force){
-      const panel = document.getElementById("rsvp-panel");
-      const btn = document.getElementById("rsvp-toggle-btn");
+      const isPrecover = document.getElementById("precover").style.display !== "none";
+      const panelId = isPrecover ? "rsvp-panel-precover" : "rsvp-panel-main";
+      const btnId = isPrecover ? "rsvp-toggle-btn" : null; // only precover has the toggle btn
+      const panel = document.getElementById(panelId);
       if(!panel) return;
       const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("show");
       panel.classList.toggle("show", shouldShow);
-      if(btn){
-        btn.classList.toggle("active", shouldShow);
-        btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+      if(btnId){
+        const btn = document.getElementById(btnId);
+        if(btn){
+          btn.classList.toggle("active", shouldShow);
+          btn.textContent = shouldShow ? "Ocultar Formulário" : "Confirmar Presença";
+        }
       }
     }
 
@@ -2013,7 +2037,8 @@
         .replace(/'/g, "&#39;");
     }
 
-    document.getElementById("rsvp-status")?.addEventListener("change", syncRsvpAcompanhantes);
+    document.getElementById("rsvp-status-precover")?.addEventListener("change", syncRsvpAcompanhantes);
+    document.getElementById("rsvp-status-main")?.addEventListener("change", syncRsvpAcompanhantes);
     syncRsvpAcompanhantes();
   </script>
 
@@ -2248,11 +2273,13 @@
       }
 
       async function confirmarPresencaImpl(){
-        const nome = (document.getElementById("rsvp-nome")?.value || "").trim();
-        const status = (document.getElementById("rsvp-status")?.value || "sim").trim();
-        const acompanhanteNome = (document.getElementById("rsvp-acompanhante-nome")?.value || "").trim();
-        const btn = document.getElementById("rsvp-btn");
-        const feedback = document.getElementById("rsvp-feedback");
+        const isPrecover = document.getElementById("precover").style.display !== "none";
+        const suffix = isPrecover ? "-precover" : "-main";
+        const nome = (document.getElementById("rsvp-nome" + suffix)?.value || "").trim();
+        const status = (document.getElementById("rsvp-status" + suffix)?.value || "sim").trim();
+        const acompanhanteNome = (document.getElementById("rsvp-acompanhante-nome" + suffix)?.value || "").trim();
+        const btn = document.getElementById("rsvp-btn" + suffix);
+        const feedback = document.getElementById("rsvp-feedback" + suffix);
 
         if(!nome){
           await uiAviso({
@@ -2289,9 +2316,9 @@
             ts: serverTimestamp()
           });
 
-          document.getElementById("rsvp-nome").value = "";
-          document.getElementById("rsvp-status").value = "sim";
-          document.getElementById("rsvp-acompanhante-nome").value = "";
+          document.getElementById("rsvp-nome" + suffix).value = "";
+          document.getElementById("rsvp-status" + suffix).value = "sim";
+          document.getElementById("rsvp-acompanhante-nome" + suffix).value = "";
           try{ window.syncRsvpAcompanhantes?.(); }catch(e){}
           try{ window.toggleRsvpPanel?.(false); }catch(e){}
 
