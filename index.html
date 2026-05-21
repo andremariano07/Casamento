@@ -723,6 +723,13 @@
       line-height: 1.25;
       text-align: center;
     }
+    .admin-export-btn {
+      width: 100%;
+      margin: 0 0 12px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
     #adminPanelModal ul {
       list-style: none;
       padding: 0;
@@ -819,10 +826,12 @@
     <div class="admin-grid">
       <section class="admin-section">
         <h3>Confirmações de Presença</h3>
+        <button class="btn btn-primary admin-export-btn" type="button" onclick="exportPresenceCsv()">Exportar CSV</button>
         <ul id="presenceList"></ul>
       </section>
       <section class="admin-section">
         <h3>Presentes Escolhidos</h3>
+        <button class="btn btn-primary admin-export-btn" type="button" onclick="exportGiftsCsv()">Exportar CSV</button>
         <ul id="giftsList"></ul>
       </section>
     </div>
@@ -2429,6 +2438,83 @@
         if (!list.children.length) list.innerHTML = '<li>Nenhum presente escolhido.</li>';
       } catch (e) {
         list.innerHTML = 'Erro ao carregar';
+      }
+    }
+
+    function formatCsvDate(value) {
+      if (!value) return '';
+      const date = typeof value.toDate === 'function' ? value.toDate() : new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleString('pt-BR');
+    }
+
+    function csvCell(value) {
+      return `"${String(value ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`;
+    }
+
+    function downloadCsv(filename, headers, rows) {
+      const csv = [
+        headers.map(csvCell).join(';'),
+        ...rows.map(row => headers.map(header => csvCell(row[header])).join(';'))
+      ].join('\r\n');
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvDateStamp() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    }
+
+    async function exportPresenceCsv() {
+      try {
+        const snapshot = await db.collection('confirmacoes_presenca').get();
+        const rows = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          rows.push({
+            'ID': doc.id,
+            'Nome': data.nome || '',
+            'Status': data.status === 'sim' ? 'Sim, vou estar presente' : 'Não poderei comparecer',
+            'Acompanhante': data.acompanhante_nome || '',
+            'Origem': data.origem || '',
+            'Data': formatCsvDate(data.ts)
+          });
+        });
+        downloadCsv(`confirmacoes-presenca-${csvDateStamp()}.csv`, ['ID', 'Nome', 'Status', 'Acompanhante', 'Origem', 'Data'], rows);
+      } catch (e) {
+        alert('Erro ao exportar confirmações: ' + e.message);
+      }
+    }
+
+    async function exportGiftsCsv() {
+      try {
+        const snapshot = await db.collection('reservas').get();
+        const rows = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.reservado) {
+            rows.push({
+              'ID': doc.id,
+              'Presente': data.item || doc.id,
+              'Nome': data.nome || '',
+              'E-mail': data.email || '',
+              'Reservado': data.reservado ? 'Sim' : 'Não',
+              'Data': formatCsvDate(data.ts)
+            });
+          }
+        });
+        downloadCsv(`presentes-escolhidos-${csvDateStamp()}.csv`, ['ID', 'Presente', 'Nome', 'E-mail', 'Reservado', 'Data'], rows);
+      } catch (e) {
+        alert('Erro ao exportar presentes: ' + e.message);
       }
     }
   </script>
